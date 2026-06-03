@@ -9,5 +9,14 @@ import { about } from './documents/about'
 import { siteSettings } from './documents/siteSettings'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [project, post, testimonial, experience, education, skill, about, siteSettings],
+  types: [
+    project,
+    post,
+    testimonial,
+    experience,
+    education,
+    skill,
+    about,
+    siteSettings,
+  ],
 }
