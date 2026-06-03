@@ -13,7 +13,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   return (
     <main>
       <h1>{post.title}</h1>
-      <p>Slug: {post.slug?.isCurrent}</p>
+      <p>Slug: {post.slug?.current}</p>
       <p>{post.excerpt}</p>
       <pre>{JSON.stringify(post.body, null, 2)}</pre>
       <pre>{JSON.stringify(post.coverImage, null, 2)}</pre>

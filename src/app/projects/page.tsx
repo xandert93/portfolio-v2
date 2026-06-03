@@ -10,9 +10,7 @@ export default async function ProjectsPage() {
         {projects.map((project) => (
           <li key={project._id}>
             <h2>
-              <a href={`/projects/${project.slug?.isCurrent}`}>
-                {project.title}
-              </a>
+              <a href={`/projects/${project.slug?.current}`}>{project.title}</a>
             </h2>
             <p>{project.summary}</p>
             {project.date && (

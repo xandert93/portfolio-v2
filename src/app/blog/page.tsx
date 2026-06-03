@@ -10,7 +10,7 @@ export default async function BlogPage() {
         {posts.map((post) => (
           <li key={post._id}>
             <h2>
-              <a href={`/blog/${post.slug?.isCurrent}`}>{post.title}</a>
+              <a href={`/blog/${post.slug?.current}`}>{post.title}</a>
             </h2>
             <p>{post.excerpt}</p>
             {post.publishedAt && (

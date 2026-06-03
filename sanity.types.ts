@@ -239,7 +239,7 @@ export type Post = {
 
 export type Slug = {
   _type: 'slug'
-  isCurrent?: string
+  current?: string
   source?: string
 }
 

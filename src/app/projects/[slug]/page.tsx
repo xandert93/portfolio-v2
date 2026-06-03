@@ -8,10 +8,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params
   const project = await fetchProject(slug)
 
+  if (!project) return 'Project doesnt existo'
+
   return (
     <main>
       <h1>{project.title}</h1>
-      <p>Slug: {project.slug?.isCurrent}</p>
+      <p>Slug: {project.slug?.current}</p>
       <p>{project.summary}</p>
       <pre>{JSON.stringify(project.description, null, 2)}</pre>
       {project.techStack && project.techStack.length > 0 && (

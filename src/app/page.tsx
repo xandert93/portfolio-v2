@@ -23,7 +23,7 @@ export default async function Home() {
           {featuredProjects.map((project) => (
             <li key={project._id}>
               <h3>
-                <a href={`/projects/${project.slug?.isCurrent}`}>
+                <a href={`/projects/${project.slug?.current}`}>
                   {project.title}
                 </a>
               </h3>
