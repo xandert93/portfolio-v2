@@ -19,7 +19,7 @@ export default async function ProjectsPage() {
             {project.techStack && project.techStack.length > 0 && (
               <ul>
                 {project.techStack.map((tech) => (
-                  <li key={tech._id}>{tech.name}</li>
+                  <li key={tech._id}>'{tech.name}'</li>
                 ))}
               </ul>
             )}
