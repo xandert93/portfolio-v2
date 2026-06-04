@@ -24,7 +24,7 @@ export const PROJECTS_QUERY = defineQuery(`
     title,
     slug,
     summary,
-    techStack,
+    techStack[]->{ _id, name },
     repoUrl,
     liveUrl,
     coverImage,
@@ -39,7 +39,7 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(`
     title,
     slug,
     summary,
-    techStack,
+    techStack[]->{ _id, name },
     repoUrl,
     liveUrl,
     coverImage,
@@ -54,7 +54,7 @@ export const PROJECT_QUERY = defineQuery(`
     slug,
     summary,
     description,
-    techStack,
+    techStack[]->{ _id, name },
     repoUrl,
     liveUrl,
     coverImage,
@@ -71,7 +71,7 @@ export const POSTS_QUERY = defineQuery(`
     excerpt,
     coverImage,
     publishedAt,
-    tags
+    tags[]->{ _id, name }
   }
 `)
 
@@ -84,7 +84,7 @@ export const POST_QUERY = defineQuery(`
     body,
     coverImage,
     publishedAt,
-    tags
+    tags[]->{ _id, name }
   }
 `)
 
@@ -99,7 +99,7 @@ export const EXPERIENCE_QUERY = defineQuery(`
     isCurrent,
     description,
     logo,
-    skills
+    skills[]->{ _id, name }
   }
 `)
 

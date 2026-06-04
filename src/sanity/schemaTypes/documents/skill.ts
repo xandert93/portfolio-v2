@@ -19,4 +19,7 @@ export const skill = defineType({
       options: { list: ['Beginner', 'Intermediate', 'Advanced', 'Expert'] },
     }),
   ],
+  preview: {
+    select: { title: 'name', subtitle: 'category' },
+  },
 })

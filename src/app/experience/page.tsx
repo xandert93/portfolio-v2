@@ -34,7 +34,7 @@ export default async function ExperiencePage() {
               {entry.skills && entry.skills.length > 0 && (
                 <ul>
                   {entry.skills.map((skill) => (
-                    <li key={skill}>{skill}</li>
+                    <li key={skill._id}>{skill.name}</li>
                   ))}
                 </ul>
               )}

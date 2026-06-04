@@ -46,7 +46,7 @@ export const experience = defineType({
       name: 'skills',
       title: 'Skills Used',
       type: 'array',
-      of: [{ type: 'string' }],
+      of: [{ type: 'reference', to: [{ type: 'skill' }] }],
     }),
   ],
   orderings: [

@@ -20,10 +20,11 @@ export default async function PostDetailPage({ params }: PageProps) {
       {post.publishedAt && (
         <time dateTime={post.publishedAt}>{post.publishedAt}</time>
       )}
+
       {post.tags && post.tags.length > 0 && (
         <ul>
           {post.tags.map((tag) => (
-            <li key={tag}>{tag}</li>
+            <li key={tag._id}>{tag.name}</li>
           ))}
         </ul>
       )}

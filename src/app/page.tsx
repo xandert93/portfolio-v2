@@ -31,7 +31,7 @@ export default async function Home() {
               {project.techStack && project.techStack.length > 0 && (
                 <ul>
                   {project.techStack.map((tech) => (
-                    <li key={tech}>{tech}</li>
+                    <li key={tech._id}>{tech.name}</li>
                   ))}
                 </ul>
               )}

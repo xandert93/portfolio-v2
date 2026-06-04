@@ -5,6 +5,7 @@ import { testimonial } from './documents/testimonial'
 import { experience } from './documents/experience'
 import { education } from './documents/education'
 import { skill } from './documents/skill'
+import { tag } from './documents/tag'
 import { about } from './documents/about'
 import { siteSettings } from './documents/siteSettings'
 
@@ -16,6 +17,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     experience,
     education,
     skill,
+    tag,
     about,
     siteSettings,
   ],

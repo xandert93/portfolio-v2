@@ -11,7 +11,12 @@ export const post = defineType({
     defineField({ name: 'body', title: 'Body', type: 'array', of: [{ type: 'block' }, { type: 'image', options: { hotspot: true } }] }),
     defineField({ name: 'coverImage', title: 'Cover Image', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'publishedAt', title: 'Published At', type: 'datetime' }),
-    defineField({ name: 'tags', title: 'Tags', type: 'array', of: [{ type: 'string' }] }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'tag' }] }],
+    }),
   ],
   orderings: [{ title: 'Published, newest', name: 'publishedDesc', by: [{ field: 'publishedAt', direction: 'desc' }] }],
 })

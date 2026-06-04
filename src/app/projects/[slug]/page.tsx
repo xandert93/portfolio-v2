@@ -8,6 +8,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params
   const project = await fetchProject(slug)
 
+  console.log(project)
+
   if (!project) return 'Project doesnt existo'
 
   return (
@@ -19,7 +21,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {project.techStack && project.techStack.length > 0 && (
         <ul>
           {project.techStack.map((tech) => (
-            <li key={tech}>{tech}</li>
+            <li key={tech._id}>{tech.name}</li>
           ))}
         </ul>
       )}

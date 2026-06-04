@@ -30,7 +30,7 @@ export const project = defineType({
       name: 'techStack',
       title: 'Tech Stack',
       type: 'array',
-      of: [{ type: 'string' }],
+      of: [{ type: 'reference', to: [{ type: 'skill' }] }],
     }),
     defineField({ name: 'repoUrl', title: 'Repository URL', type: 'url' }),
     defineField({ name: 'liveUrl', title: 'Live URL', type: 'url' }),

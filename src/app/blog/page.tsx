@@ -19,7 +19,7 @@ export default async function BlogPage() {
             {post.tags && post.tags.length > 0 && (
               <ul>
                 {post.tags.map((tag) => (
-                  <li key={tag}>{tag}</li>
+                  <li key={tag._id}>{tag.name}</li>
                 ))}
               </ul>
             )}
