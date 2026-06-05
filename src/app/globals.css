@@ -1,1 +1,25 @@
-@import 'tailwindcss'; /* loads Tailwind v4 correctly via PostCSS plugin pipeline. */
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #fafaf8;
+  --color-ink: #1a1a18;
+  --color-muted: #888880;
+  --color-faint: #e8e6df;
+  --color-warm: #f2f0e8;
+  --color-accent: #8b6f47;
+  --color-accent-light: #f0ede4;
+  --color-green-badge: #2d7a4f;
+  --color-green-badge-bg: #e8f5ee;
+
+  --font-sans: 'DM Sans', sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+}
+
+@layer base {
+  * {
+    @apply border-faint;
+  }
+  body {
+    @apply bg-paper text-ink antialiased;
+  }
+}

@@ -1,0 +1,492 @@
+warning: in the working copy of 'src/app/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/page.tsx', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/package-lock.json b/package-lock.json[m
+[1mindex b2524f7..fe0e259 100644[m
+[1m--- a/package-lock.json[m
+[1m+++ b/package-lock.json[m
+[36m@@ -12,6 +12,7 @@[m
+         "@sanity/image-url": "^2.1.1",[m
+         "@sanity/vision": "^5.28.0",[m
+         "axios": "^1.17.0",[m
+[32m+[m[32m        "lucide-react": "^1.17.0",[m
+         "next": "16.2.7",[m
+         "next-sanity": "^12.4.5",[m
+         "react": "19.2.4",[m
+[36m@@ -14339,6 +14340,15 @@[m
+         "yallist": "^3.0.2"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/lucide-react": {[m
+[32m+[m[32m      "version": "1.17.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/lucide-react/-/lucide-react-1.17.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-9FA9evdox/JQL5PT57fdA1x/yg8T7knJ98+zjTL3UfKza6pflQUUh3XtaQIHKvnsJw1lmsEyHVlt5jchYxOQ5w==",[m
+[32m+[m[32m      "license": "ISC",[m
+[32m+[m[32m      "peerDependencies": {[m
+[32m+[m[32m        "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "node_modules/magic-string": {[m
+       "version": "0.30.21",[m
+       "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz",[m
+[1mdiff --git a/package.json b/package.json[m
+[1mindex 408da1a..f9c1de6 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -14,6 +14,7 @@[m
+     "@sanity/image-url": "^2.1.1",[m
+     "@sanity/vision": "^5.28.0",[m
+     "axios": "^1.17.0",[m
+[32m+[m[32m    "lucide-react": "^1.17.0",[m
+     "next": "16.2.7",[m
+     "next-sanity": "^12.4.5",[m
+     "react": "19.2.4",[m
+[1mdiff --git a/src/app/globals.css b/src/app/globals.css[m
+[1mindex 462fff4..7acec4b 100644[m
+[1m--- a/src/app/globals.css[m
+[1m+++ b/src/app/globals.css[m
+[36m@@ -1 +1,25 @@[m
+[31m-@import 'tailwindcss'; /* loads Tailwind v4 correctly via PostCSS plugin pipeline. */[m
+[32m+[m[32m@import 'tailwindcss';[m
+[32m+[m
+[32m+[m[32m@theme {[m
+[32m+[m[32m  --color-paper: #fafaf8;[m
+[32m+[m[32m  --color-ink: #1a1a18;[m
+[32m+[m[32m  --color-muted: #888880;[m
+[32m+[m[32m  --color-faint: #e8e6df;[m
+[32m+[m[32m  --color-warm: #f2f0e8;[m
+[32m+[m[32m  --color-accent: #8b6f47;[m
+[32m+[m[32m  --color-accent-light: #f0ede4;[m
+[32m+[m[32m  --color-green-badge: #2d7a4f;[m
+[32m+[m[32m  --color-green-badge-bg: #e8f5ee;[m
+[32m+[m
+[32m+[m[32m  --font-sans: 'DM Sans', sans-serif;[m
+[32m+[m[32m  --font-serif: 'DM Serif Display', Georgia, serif;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m@layer base {[m
+[32m+[m[32m  * {[m
+[32m+[m[32m    @apply border-faint;[m
+[32m+[m[32m  }[m
+[32m+[m[32m  body {[m
+[32m+[m[32m    @apply bg-paper text-ink antialiased;[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/app/layout.tsx b/src/app/layout.tsx[m
+[1mindex af32fbb..4553d0a 100644[m
+[1m--- a/src/app/layout.tsx[m
+[1m+++ b/src/app/layout.tsx[m
+[36m@@ -1,24 +1,33 @@[m
+ import type { Metadata } from 'next'[m
+[31m-import { Geist, Geist_Mono } from 'next/font/google' // Loads Google fonts via Next’s built-in font optimizer (self-hosted, no runtime request).[m
+[32m+[m[32mimport { DM_Sans, DM_Serif_Display } from 'next/font/google'[m
+[32m+[m[32mimport './globals.css'[m
+ [m
+[31m-import './globals.css' // Global CSS applied to the whole app.[m
+[31m-[m
+[31m-// Font configs (currently unused, but apply to <body> if desired via <body className={`${geistSans.variable} ${geistMono.variable}`}>):[m
+[31m-const geistSans = Geist({[m
+[31m-  variable: '--font-geist-sans',[m
+[32m+[m[32mconst dmSans = DM_Sans({[m
+[32m+[m[32m  variable: '--font-dm-sans',[m
+   subsets: ['latin'],[m
+[32m+[m[32m  weight: ['300', '400', '500'],[m
+ })[m
+ [m
+[31m-const geistMono = Geist_Mono({[m
+[31m-  variable: '--font-geist-mono',[m
+[32m+[m[32mconst dmSerif = DM_Serif_Display({[m
+[32m+[m[32m  variable: '--font-dm-serif',[m
+   subsets: ['latin'],[m
+[32m+[m[32m  weight: '400',[m
+[32m+[m[32m  style: ['normal', 'italic'],[m
+ })[m
+ [m
+[31m-// 🔙📚 For a portfolio, treat metadata as your SEO + link preview identity card[m
+[32m+[m[32mconst fullName = 'Xander Tharmaratnam'[m
+[32m+[m[32mconst siteDescription =[m
+[32m+[m[32m  'Full-stack developer based in London, focused on React, Next.js, and backend systems.'[m
+[32m+[m[32mconst siteUrl = 'https://your-domain.com'[m
+[32m+[m[32mconst ogImage = `${siteUrl}/og.png`[m
+[32m+[m
+ export const metadata: Metadata = {[m
+[31m-  title: 'Xander Tharmaratnam | Portfolio',[m
+[31m-  description:[m
+[31m-    'Portfolio of Xander Tharmaratnam — software engineer focused on React, Next.js, and backend systems.',[m
+[32m+[m[32m  metadataBase: new URL(siteUrl),[m
+[32m+[m[32m  title: {[m
+[32m+[m[32m    default: `${fullName} | Portfolio`,[m
+[32m+[m[32m    template: `%s | ${fullName}`,[m
+[32m+[m[32m  },[m
+[32m+[m[32m  description: siteDescription,[m
+   keywords: [[m
+     'portfolio',[m
+     'software engineer',[m
+[36m@@ -26,49 +35,35 @@[m [mexport const metadata: Metadata = {[m
+     'react',[m
+     'typescript',[m
+   ],[m
+[31m-  authors: [{ name: 'Xander Tharmaratnam' }],[m
+[31m-  creator: 'Xander Tharmaratnam',[m
+[32m+[m[32m  authors: [{ name: fullName }],[m
+[32m+[m[32m  creator: fullName,[m
+   openGraph: {[m
+[31m-    title: 'Xander Tharmaratnam | Portfolio',[m
+[31m-    description:[m
+[31m-      'Software engineer portfolio showcasing projects and experience.',[m
+[31m-    url: 'https://your-domain.com',[m
+[31m-    siteName: 'Xander Tharmaratnam Portfolio',[m
+[31m-    images: [[m
+[31m-      {[m
+[31m-        url: 'https://your-domain.com/og.png',[m
+[31m-        width: 1200,[m
+[31m-        height: 630,[m
+[31m-      },[m
+[31m-    ],[m
+[32m+[m[32m    title: `${fullName} | Portfolio`,[m
+[32m+[m[32m    description: siteDescription,[m
+[32m+[m[32m    url: siteUrl,[m
+[32m+[m[32m    siteName: fullName,[m
+[32m+[m[32m    images: [{ url: ogImage, width: 1200, height: 630 }],[m
+     type: 'website',[m
+   },[m
+   twitter: {[m
+     card: 'summary_large_image',[m
+[31m-    title: 'Xander Tharmaratnam | Portfolio',[m
+[31m-    description:[m
+[31m-      'Software engineer portfolio showcasing projects and experience.',[m
+[31m-    images: ['https://your-domain.com/og.png'],[m
+[32m+[m[32m    title: `${fullName} | Portfolio`,[m
+[32m+[m[32m    description: siteDescription,[m
+[32m+[m[32m    images: [ogImage],[m
+   },[m
+[31m-  metadataBase: new URL('https://your-domain.com'),[m
+ }[m
+[31m-/*[m
+[31m-What matters most[m
+[31m-- title → browser tab + Google result headline[m
+[31m-- description → search snippet + link preview text[m
+[31m-- openGraph.images → what shows when you share on Discord/LinkedIn/Twitter[m
+[31m-- metadataBase → makes relative URLs in metadata work correctly[m
+[31m-*/[m
+ [m
+[31m-// RootLayout: Required wrapper for all routes in App Router. Must return <html> + <body>[m
+ type Props = {[m
+   children: React.ReactNode[m
+ }[m
+ [m
+ export default function RootLayout({ children }: Props) {[m
+   return ([m
+[31m-    <html lang="en">[m
+[31m-      <body>{children}</body>[m
+[32m+[m[32m    <html[m
+[32m+[m[32m      lang="en"[m
+[32m+[m[32m      className={`${dmSans.variable} ${dmSerif.variable} bg-paper`}[m
+[32m+[m[32m    >[m
+[32m+[m[32m      <body className="font-sans antialiased">{children}</body>[m
+     </html>[m
+   )[m
+ }[m
+[1mdiff --git a/src/app/page.tsx b/src/app/page.tsx[m
+[1mindex 221c7fd..b8b22fd 100644[m
+[1m--- a/src/app/page.tsx[m
+[1m+++ b/src/app/page.tsx[m
+[36m@@ -1,49 +1,250 @@[m
+[32m+[m[32mimport Link from 'next/link'[m
+ import {[m
+   fetchSiteSettings,[m
+   fetchFeaturedProjects,[m
+   fetchAbout,[m
+[32m+[m[32m  fetchSkills,[m
+[32m+[m[32m  fetchTestimonials,[m
+ } from '@/sanity/lib/fetch'[m
+ [m
+ export default async function Home() {[m
+[31m-  const [settings, featuredProjects, about] = await Promise.all([[m
+[31m-    fetchSiteSettings(),[m
+[31m-    fetchFeaturedProjects(),[m
+[31m-    fetchAbout(),[m
+[31m-  ])[m
+[32m+[m[32m  const [settings, featuredProjects, about, skills, testimonials] =[m
+[32m+[m[32m    await Promise.all([[m
+[32m+[m[32m      fetchSiteSettings(),[m
+[32m+[m[32m      fetchFeaturedProjects(),[m
+[32m+[m[32m      fetchAbout(),[m
+[32m+[m[32m      fetchSkills(),[m
+[32m+[m[32m      fetchTestimonials(),[m
+[32m+[m[32m    ])[m
+ [m
+   return ([m
+[31m-    <main>[m
+[31m-      <h1>{settings.name}</h1>[m
+[31m-      <p>{settings.tagline}</p>[m
+[31m-      <p>Open to work: {about.isOpenToWork ? 'Yes' : 'No'}</p>[m
+[31m-[m
+[31m-      <section>[m
+[31m-        <h2>Featured Projects</h2>[m
+[31m-        <ul>[m
+[31m-          {featuredProjects.map((project) => ([m
+[31m-            <li key={project._id}>[m
+[31m-              <h3>[m
+[31m-                <a href={`/projects/${project.slug?.current}`}>[m
+[31m-                  {project.title}[m
+[31m-                </a>[m
+[31m-              </h3>[m
+[31m-              <p>{project.summary}</p>[m
+[32m+[m[32m    <main className="bg-paper text-ink font-sans min-h-screen">[m
+[32m+[m[32m      {/* Nav */}[m
+[32m+[m[32m      <nav className="flex justify-between items-center px-12 py-6 border-b border-faint">[m
+[32m+[m[32m        <span className="font-serif text-lg">{settings.name}</span>[m
+[32m+[m[32m        <div className="flex gap-8">[m
+[32m+[m[32m          {[[m
+[32m+[m[32m            ['Work', '/projects'],[m
+[32m+[m[32m            ['About', '/about'],[m
+[32m+[m[32m            ['Experience', '/experience'],[m
+[32m+[m[32m            ['Blog', '/blog'],[m
+[32m+[m[32m          ].map(([label, href]) => ([m
+[32m+[m[32m            <Link[m
+[32m+[m[32m              key={href}[m
+[32m+[m[32m              href={href}[m
+[32m+[m[32m              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              {label}[m
+[32m+[m[32m            </Link>[m
+[32m+[m[32m          ))}[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </nav>[m
+[32m+[m
+[32m+[m[32m      {/* Hero */}[m
+[32m+[m[32m      <div className="grid grid-cols-2 min-h-[88vh]">[m
+[32m+[m[32m        <div className="flex flex-col justify-center px-12 py-20 border-r border-faint">[m
+[32m+[m[32m          {about.isOpenToWork && ([m
+[32m+[m[32m            <div className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase bg-green-badge-bg text-green-badge px-4 py-1.5 rounded-full w-fit mb-10">[m
+[32m+[m[32m              <span className="w-1.5 h-1.5 rounded-full bg-green-badge animate-pulse" />[m
+[32m+[m[32m              Open to work[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m          )}[m
+[32m+[m[32m          <h1 className="font-serif text-6xl leading-[1.05] mb-6">[m
+[32m+[m[32m            Full-stack[m
+[32m+[m[32m            <br />[m
+[32m+[m[32m            <em className="text-accent">developer</em>[m
+[32m+[m[32m            <br />[m
+[32m+[m[32m            based in London[m
+[32m+[m[32m          </h1>[m
+[32m+[m[32m          <p className="text-sm text-muted leading-relaxed max-w-sm mb-10 font-light">[m
+[32m+[m[32m            {settings.tagline}[m
+[32m+[m[32m          </p>[m
+[32m+[m[32m          <div className="flex gap-3">[m
+[32m+[m[32m            <Link[m
+[32m+[m[32m              href="/projects"[m
+[32m+[m[32m              className="text-2xs tracking-widest uppercase px-7 py-3 bg-ink text-paper rounded hover:opacity-80 transition-opacity"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              View my work[m
+[32m+[m[32m            </Link>[m
+[32m+[m[32m            <a[m
+[32m+[m[32m              href={`mailto:${settings.email}`}[m
+[32m+[m[32m              className="text-2xs tracking-widest uppercase px-7 py-3 border border-faint text-ink rounded hover:bg-warm transition-colors"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              Get in touch[m
+[32m+[m[32m            </a>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </div>[m
+[32m+[m
+[32m+[m[32m        <div className="flex flex-col justify-end px-12 py-20 bg-warm">[m
+[32m+[m[32m          <p className="text-2xs tracking-widest uppercase text-muted mb-4">[m
+[32m+[m[32m            Selected technologies[m
+[32m+[m[32m          </p>[m
+[32m+[m[32m          <div className="grid grid-cols-2 gap-2">[m
+[32m+[m[32m            {skills.slice(0, 8).map((skill) => ([m
+[32m+[m[32m              <span[m
+[32m+[m[32m                key={skill._id}[m
+[32m+[m[32m                className="text-sm px-3 py-2.5 bg-paper border border-faint rounded-md text-ink font-medium"[m
+[32m+[m[32m              >[m
+[32m+[m[32m                {skill.name}[m
+[32m+[m[32m              </span>[m
+[32m+[m[32m            ))}[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </div>[m
+[32m+[m
+[32m+[m[32m      {/* Featured Projects */}[m
+[32m+[m[32m      <section className="px-12 py-20 border-t border-faint">[m
+[32m+[m[32m        <div className="flex justify-between items-baseline mb-12">[m
+[32m+[m[32m          <h2 className="font-serif text-4xl">Featured work</h2>[m
+[32m+[m[32m          <Link[m
+[32m+[m[32m            href="/projects"[m
+[32m+[m[32m            className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m          >[m
+[32m+[m[32m            All projects →[m
+[32m+[m[32m          </Link>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m        <div className="grid grid-cols-2 gap-px bg-faint border border-faint">[m
+[32m+[m[32m          {featuredProjects.map((project, i) => ([m
+[32m+[m[32m            <div[m
+[32m+[m[32m              key={project._id}[m
+[32m+[m[32m              className="bg-paper p-8 hover:bg-warm transition-colors group"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              <p className="text-2xs tracking-widest uppercase text-muted mb-5">[m
+[32m+[m[32m                Project {String(i + 1).padStart(2, '0')}[m
+[32m+[m[32m              </p>[m
+[32m+[m[32m              <Link[m
+[32m+[m[32m                href={`/projects/${project.slug?.current}`}[m
+[32m+[m[32m                className="font-serif text-2xl text-ink block mb-3 group-hover:text-accent transition-colors"[m
+[32m+[m[32m              >[m
+[32m+[m[32m                {project.title}[m
+[32m+[m[32m              </Link>[m
+[32m+[m[32m              <p className="text-sm text-muted leading-relaxed mb-5 font-light">[m
+[32m+[m[32m                {project.summary}[m
+[32m+[m[32m              </p>[m
+               {project.techStack && project.techStack.length > 0 && ([m
+[31m-                <ul>[m
+[32m+[m[32m                <div className="flex gap-2 flex-wrap mb-5">[m
+                   {project.techStack.map((tech) => ([m
+[31m-                    <li key={tech._id}>{tech.name}</li>[m
+[32m+[m[32m                    <span[m
+[32m+[m[32m                      key={tech._id}[m
+[32m+[m[32m                      className="text-2xs px-2.5 py-1 bg-accent-light rounded-full text-muted"[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                      {tech.name}[m
+[32m+[m[32m                    </span>[m
+                   ))}[m
+[31m-                </ul>[m
+[32m+[m[32m                </div>[m
+               )}[m
+[31m-              <p>[m
+[31m-                {project.repoUrl && <a href={project.repoUrl}>Repository</a>}[m
+[31m-                {project.repoUrl && project.liveUrl && ' · '}[m
+[31m-                {project.liveUrl && <a href={project.liveUrl}>Live site</a>}[m
+[31m-              </p>[m
+[31m-            </li>[m
+[32m+[m[32m              <div className="flex gap-6">[m
+[32m+[m[32m                {project.repoUrl && ([m
+[32m+[m[32m                  <a[m
+[32m+[m[32m                    href={project.repoUrl}[m
+[32m+[m[32m                    target="_blank"[m
+[32m+[m[32m                    rel="noopener noreferrer"[m
+[32m+[m[32m                    className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    Repository ↗[m
+[32m+[m[32m                  </a>[m
+[32m+[m[32m                )}[m
+[32m+[m[32m                {project.liveUrl && ([m
+[32m+[m[32m                  <a[m
+[32m+[m[32m                    href={project.liveUrl}[m
+[32m+[m[32m                    target="_blank"[m
+[32m+[m[32m                    rel="noopener noreferrer"[m
+[32m+[m[32m                    className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    Live site ↗[m
+[32m+[m[32m                  </a>[m
+[32m+[m[32m                )}[m
+[32m+[m[32m              </div>[m
+[32m+[m[32m            </div>[m
+           ))}[m
+[31m-        </ul>[m
+[32m+[m[32m        </div>[m
+       </section>[m
+[32m+[m
+[32m+[m[32m      {/* Testimonials */}[m
+[32m+[m[32m      {testimonials.length > 0 && ([m
+[32m+[m[32m        <section className="px-12 py-20 border-t border-faint">[m
+[32m+[m[32m          <h2 className="font-serif text-4xl mb-12">What people say</h2>[m
+[32m+[m[32m          <div className="grid grid-cols-3 gap-6">[m
+[32m+[m[32m            {testimonials.map((t) => ([m
+[32m+[m[32m              <div[m
+[32m+[m[32m                key={t._id}[m
+[32m+[m[32m                className="p-7 border border-faint rounded-lg bg-white"[m
+[32m+[m[32m              >[m
+[32m+[m[32m                <p className="text-sm text-muted leading-relaxed mb-6 font-light italic">[m
+[32m+[m[32m                  &ldquo;{t.quote}&rdquo;[m
+[32m+[m[32m                </p>[m
+[32m+[m[32m                <p className="text-sm font-medium text-ink">{t.authorName}</p>[m
+[32m+[m[32m                <p className="text-xs text-muted mt-0.5">[m
+[32m+[m[32m                  {t.role}[m
+[32m+[m[32m                  {t.company ? `, ${t.company}` : ''}[m
+[32m+[m[32m                </p>[m
+[32m+[m[32m              </div>[m
+[32m+[m[32m            ))}[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </section>[m
+[32m+[m[32m      )}[m
+[32m+[m
+[32m+[m[32m      {/* About teaser */}[m
+[32m+[m[32m      <section className="px-12 py-20 border-t border-faint">[m
+[32m+[m[32m        <div className="grid grid-cols-2 gap-16 items-center">[m
+[32m+[m[32m          <div>[m
+[32m+[m[32m            <p className="text-2xs tracking-widest uppercase text-muted mb-4">[m
+[32m+[m[32m              About me[m
+[32m+[m[32m            </p>[m
+[32m+[m[32m            <h2 className="font-serif text-4xl leading-snug">[m
+[32m+[m[32m              Self-taught,[m
+[32m+[m[32m              <br />[m
+[32m+[m[32m              <em className="text-accent">detail-obsessed</em>[m
+[32m+[m[32m            </h2>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m          <div>[m
+[32m+[m[32m            <p className="text-sm text-muted leading-relaxed font-light mb-6">[m
+[32m+[m[32m              {about.headline}[m
+[32m+[m[32m            </p>[m
+[32m+[m[32m            <Link[m
+[32m+[m[32m              href="/about"[m
+[32m+[m[32m              className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-ink border-b border-ink pb-0.5 hover:text-accent hover:border-accent transition-colors"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              More about me →[m
+[32m+[m[32m            </Link>[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </section>[m
+[32m+[m
+[32m+[m[32m      {/* Footer */}[m
+[32m+[m[32m      <footer className="px-12 py-8 border-t border-faint flex justify-between items-center">[m
+[32m+[m[32m        <span className="font-serif text-sm text-muted">{settings.name}</span>[m
+[32m+[m[32m        <div className="flex gap-6">[m
+[32m+[m[32m          {settings.githubUrl && ([m
+[32m+[m[32m            <a[m
+[32m+[m[32m              href={settings.githubUrl}[m
+[32m+[m[32m              target="_blank"[m
+[32m+[m[32m              rel="noopener noreferrer"[m
+[32m+[m[32m              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              GitHub[m
+[32m+[m[32m            </a>[m
+[32m+[m[32m          )}[m
+[32m+[m[32m          {settings.linkedinUrl && ([m
+[32m+[m[32m            <a[m
+[32m+[m[32m              href={settings.linkedinUrl}[m
+[32m+[m[32m              target="_blank"[m
+[32m+[m[32m              rel="noopener noreferrer"[m
+[32m+[m[32m              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              LinkedIn[m
+[32m+[m[32m            </a>[m
+[32m+[m[32m          )}[m
+[32m+[m[32m          {settings.email && ([m
+[32m+[m[32m            <a[m
+[32m+[m[32m              href={`mailto:${settings.email}`}[m
+[32m+[m[32m              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              Email[m
+[32m+[m[32m            </a>[m
+[32m+[m[32m          )}[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </footer>[m
+     </main>[m
+   )[m
+ }[m
+[1mdiff --git a/tailwind.config.js b/tailwind.config.js[m
+[1mdeleted file mode 100644[m
+[1mindex 0b4c17d..0000000[m
+[1m--- a/tailwind.config.js[m
+[1m+++ /dev/null[m
+[36m@@ -1,12 +0,0 @@[m
+[31m-/** @type {import('tailwindcss').Config} */[m
+[31m-module.exports = {[m
+[31m-  content: [[m
+[31m-    './app/**/*.{js,ts,jsx,tsx,mdx}',[m
+[31m-    './pages/**/*.{js,ts,jsx,tsx,mdx}',[m
+[31m-    './components/**/*.{js,ts,jsx,tsx,mdx}',[m
+[31m-  ],[m
+[31m-  theme: {[m
+[31m-    extend: {},[m
+[31m-  },[m
+[31m-  plugins: [],[m
+[31m-}[m

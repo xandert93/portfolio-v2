@@ -1,24 +1,33 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google' // Loads Google fonts via Next’s built-in font optimizer (self-hosted, no runtime request).
+import { DM_Sans, DM_Serif_Display } from 'next/font/google'
+import './globals.css'
 
-import './globals.css' // Global CSS applied to the whole app.
-
-// Font configs (currently unused, but apply to <body> if desired via <body className={`${geistSans.variable} ${geistMono.variable}`}>):
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const dmSans = DM_Sans({
+  variable: '--font-dm-sans',
   subsets: ['latin'],
+  weight: ['300', '400', '500'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const dmSerif = DM_Serif_Display({
+  variable: '--font-dm-serif',
   subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
 })
 
-// 🔙📚 For a portfolio, treat metadata as your SEO + link preview identity card
+const fullName = 'Xander Tharmaratnam'
+const siteDescription =
+  'Full-stack developer based in London, focused on React, Next.js, and backend systems.'
+const siteUrl = 'https://your-domain.com'
+const ogImage = `${siteUrl}/og.png`
+
 export const metadata: Metadata = {
-  title: 'Xander Tharmaratnam | Portfolio',
-  description:
-    'Portfolio of Xander Tharmaratnam — software engineer focused on React, Next.js, and backend systems.',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${fullName} | Portfolio`,
+    template: `%s | ${fullName}`,
+  },
+  description: siteDescription,
   keywords: [
     'portfolio',
     'software engineer',
@@ -26,49 +35,35 @@ export const metadata: Metadata = {
     'react',
     'typescript',
   ],
-  authors: [{ name: 'Xander Tharmaratnam' }],
-  creator: 'Xander Tharmaratnam',
+  authors: [{ name: fullName }],
+  creator: fullName,
   openGraph: {
-    title: 'Xander Tharmaratnam | Portfolio',
-    description:
-      'Software engineer portfolio showcasing projects and experience.',
-    url: 'https://your-domain.com',
-    siteName: 'Xander Tharmaratnam Portfolio',
-    images: [
-      {
-        url: 'https://your-domain.com/og.png',
-        width: 1200,
-        height: 630,
-      },
-    ],
+    title: `${fullName} | Portfolio`,
+    description: siteDescription,
+    url: siteUrl,
+    siteName: fullName,
+    images: [{ url: ogImage, width: 1200, height: 630 }],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Xander Tharmaratnam | Portfolio',
-    description:
-      'Software engineer portfolio showcasing projects and experience.',
-    images: ['https://your-domain.com/og.png'],
+    title: `${fullName} | Portfolio`,
+    description: siteDescription,
+    images: [ogImage],
   },
-  metadataBase: new URL('https://your-domain.com'),
 }
-/*
-What matters most
-- title → browser tab + Google result headline
-- description → search snippet + link preview text
-- openGraph.images → what shows when you share on Discord/LinkedIn/Twitter
-- metadataBase → makes relative URLs in metadata work correctly
-*/
 
-// RootLayout: Required wrapper for all routes in App Router. Must return <html> + <body>
 type Props = {
   children: React.ReactNode
 }
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={`${dmSans.variable} ${dmSerif.variable} bg-paper`}
+    >
+      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }
