@@ -1,7 +1,7 @@
 import { createClient } from 'next-sanity'
-
 import { apiVersion, dataset, projectId } from '../env'
 
+// Current client for frontend read ops
 export const client = createClient({
   projectId,
   dataset,
