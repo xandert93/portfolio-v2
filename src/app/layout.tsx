@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { DM_Sans, DM_Serif_Display } from 'next/font/google'
 import './globals.css'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 const dmSans = DM_Sans({
   variable: '--font-dm-sans',
@@ -59,11 +61,20 @@ type Props = {
 
 export default function RootLayout({ children }: Props) {
   return (
-    <html
-      lang="en"
-      className={`${dmSans.variable} ${dmSerif.variable} bg-paper`}
-    >
-      <body className="font-sans antialiased">{children}</body>
+    <html lang="en" className={`${dmSans.variable} ${dmSerif.variable}`}>
+      <body className="font-sans bg-paper text-ink">
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   )
 }
+
+/*
+1. Font variables
+- Assigned on <html> so that the CSS variables available throughout the document.
+
+2. Global styling
+- Applies fonts, colors and layout to <body>, the page content container.
+*/

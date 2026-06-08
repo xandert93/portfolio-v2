@@ -19,27 +19,6 @@ export default async function Home() {
 
   return (
     <main className="bg-paper text-ink font-sans min-h-screen">
-      {/* Nav */}
-      <nav className="flex justify-between items-center px-12 py-6 border-b border-faint">
-        <span className="font-serif text-lg">{settings.name}</span>
-        <div className="flex gap-8">
-          {[
-            ['Work', '/projects'],
-            ['About', '/about'],
-            ['Experience', '/experience'],
-            ['Blog', '/blog'],
-          ].map(([label, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
-
       {/* Hero */}
       <div className="grid grid-cols-2 min-h-[88vh]">
         <div className="flex flex-col justify-center px-12 py-20 border-r border-faint">
@@ -210,41 +189,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="px-12 py-8 border-t border-faint flex justify-between items-center">
-        <span className="font-serif text-sm text-muted">{settings.name}</span>
-        <div className="flex gap-6">
-          {settings.githubUrl && (
-            <a
-              href={settings.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"
-            >
-              GitHub
-            </a>
-          )}
-          {settings.linkedinUrl && (
-            <a
-              href={settings.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"
-            >
-              LinkedIn
-            </a>
-          )}
-          {settings.email && (
-            <a
-              href={`mailto:${settings.email}`}
-              className="text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"
-            >
-              Email
-            </a>
-          )}
-        </div>
-      </footer>
     </main>
   )
 }
