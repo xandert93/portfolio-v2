@@ -1,5 +1,6 @@
-import { fetchPost } from '@/sanity/lib/fetch'
+import Link from 'next/link'
 import { PortableText } from '@portabletext/react'
+import { fetchPost } from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
 
 type PageProps = {
@@ -10,10 +11,9 @@ export default async function PostDetailPage({ params }: PageProps) {
   const { slug } = await params
   const post = await fetchPost(slug)
 
-  if (!post) return 'Post not found!'
+  if (!post) return 'Not Found'
 
   const { title, excerpt, body, coverImage, publishedAt } = post
-
   const tags = post.tags ?? []
 
   const formattedDate = publishedAt
@@ -25,32 +25,20 @@ export default async function PostDetailPage({ params }: PageProps) {
     : null
 
   return (
-    <main
-      style={{ maxWidth: '680px', margin: '0 auto', padding: '4rem 1.5rem' }}
-    >
-      {/* Tags */}
+    <main className="max-w-2xl mx-auto px-6 py-16">
+      <Link
+        href="/blog"
+        className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors mb-12"
+      >
+        ← All posts
+      </Link>
+
       {tags.length > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            marginBottom: '1.5rem',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="flex gap-2 flex-wrap mb-6">
           {tags.map((tag) => (
             <span
-              key={tag.name}
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '999px',
-                border: '1px solid #e2e8f0',
-                color: '#64748b',
-              }}
+              key={tag._id}
+              className="text-2xs tracking-widest uppercase px-2.5 py-1 bg-accent-light border border-faint rounded-full text-accent"
             >
               {tag.name}
             </span>
@@ -58,73 +46,42 @@ export default async function PostDetailPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Title */}
-      <h1
-        style={{
-          fontSize: '2.5rem',
-          fontWeight: 700,
-          lineHeight: 1.2,
-          marginBottom: '1rem',
-          color: '#0f172a',
-        }}
-      >
+      <h1 className="font-serif text-5xl text-ink leading-tight mb-4">
         {title}
       </h1>
 
-      {/* Excerpt */}
       {excerpt && (
-        <p
-          style={{
-            fontSize: '1.2rem',
-            color: '#475569',
-            lineHeight: 1.6,
-            marginBottom: '1.5rem',
-          }}
-        >
+        <p className="text-base text-muted leading-relaxed font-light mb-6">
           {excerpt}
         </p>
       )}
 
-      {/* Date */}
       {formattedDate && (
         <time
           dateTime={publishedAt ?? ''}
-          style={{ fontSize: '0.875rem', color: '#94a3b8' }}
+          className="text-xs text-muted block mb-10"
         >
           {formattedDate}
         </time>
       )}
 
-      {/* Cover Image */}
       {coverImage && (
-        <div style={{ margin: '2rem 0' }}>
-          <img
-            src={urlFor(coverImage)
-              .width(680)
-              .height(400)
-              .fit('crop')
-              .auto('format')
-              .url()}
-            alt={post.title ?? ''}
-            style={{ width: '100%', borderRadius: '0.5rem', display: 'block' }}
-          />
-        </div>
+        <img
+          src={urlFor(coverImage)
+            .width(672)
+            .height(378)
+            .fit('crop')
+            .auto('format')
+            .url()}
+          alt={title ?? ''}
+          className="w-full rounded-xl border border-faint mb-10 block"
+        />
       )}
 
-      {/* Divider */}
-      <hr
-        style={{
-          margin: '2rem 0',
-          border: 'none',
-          borderTop: '1px solid #e2e8f0',
-        }}
-      />
+      <hr className="border-none border-t border-faint mb-10" />
 
-      {/* Body */}
       {body && (
-        <div
-          style={{ fontSize: '1.0625rem', lineHeight: 1.8, color: '#1e293b' }}
-        >
+        <div className="text-sm leading-relaxed text-ink">
           <PortableText value={body} />
         </div>
       )}

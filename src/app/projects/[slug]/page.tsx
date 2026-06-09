@@ -1,7 +1,7 @@
+import Link from 'next/link'
+import { PortableText } from '@portabletext/react'
 import { fetchProject } from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
-import { PortableText } from '@portabletext/react'
-import Link from 'next/link'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -11,7 +11,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params
   const project = await fetchProject(slug)
 
-  if (!project) return '404'
+  if (!project) return 'Not Found!'
 
   const {
     title,
@@ -32,90 +32,37 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     : null
 
   return (
-    <main
-      style={{
-        maxWidth: '860px',
-        margin: '0 auto',
-        padding: '3rem 1.5rem',
-        fontFamily: 'sans-serif',
-      }}
-    >
+    <main className="max-w-3xl mx-auto px-6 py-16">
       <Link
         href="/projects"
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          fontSize: '13px',
-          color: '#64748b',
-          textDecoration: 'none',
-          marginBottom: '2.5rem',
-        }}
+        className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors mb-12"
       >
         ← All projects
       </Link>
 
-      <h1
-        style={{
-          fontSize: '2.5rem',
-          fontWeight: 600,
-          lineHeight: 1.15,
-          color: '#0f172a',
-          margin: '0 0 1rem',
-        }}
-      >
+      <h1 className="font-serif text-5xl text-ink leading-tight mb-4">
         {title}
       </h1>
 
       {summary && (
-        <p
-          style={{
-            fontSize: '1.1rem',
-            color: '#475569',
-            lineHeight: 1.7,
-            margin: '0 0 1.75rem',
-            maxWidth: '640px',
-          }}
-        >
+        <p className="text-base text-muted leading-relaxed font-light mb-8 max-w-xl">
           {summary}
         </p>
       )}
 
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.5rem',
-          marginBottom: '2rem',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="flex items-center gap-6 mb-10 flex-wrap">
         {formattedDate && (
-          <time
-            dateTime={date ?? ''}
-            style={{ fontSize: '13px', color: '#94a3b8' }}
-          >
+          <time dateTime={date ?? ''} className="text-xs text-muted">
             {formattedDate}
           </time>
         )}
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="flex gap-3">
           {repoUrl && (
             <a
               href={repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '13px',
-                fontWeight: 500,
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '1px solid #e2e8f0',
-                color: '#0f172a',
-                textDecoration: 'none',
-              }}
+              className="text-2xs tracking-widest uppercase px-5 py-2.5 border border-faint text-ink rounded hover:bg-warm transition-colors"
             >
               Repository
             </a>
@@ -125,19 +72,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '13px',
-                fontWeight: 500,
-                padding: '8px 16px',
-                borderRadius: '8px',
-                background: '#0f172a',
-                color: '#fff',
-                textDecoration: 'none',
-                border: '1px solid transparent',
-              }}
+              className="text-2xs tracking-widest uppercase px-5 py-2.5 bg-ink text-paper rounded hover:opacity-80 transition-opacity"
             >
               Live site ↗
             </a>
@@ -148,62 +83,33 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {coverImage && (
         <img
           src={urlFor(coverImage)
-            .width(860)
-            .height(484)
+            .width(768)
+            .height(432)
             .fit('crop')
             .auto('format')
             .url()}
           alt={title ?? ''}
-          style={{
-            width: '100%',
-            borderRadius: '12px',
-            display: 'block',
-            marginBottom: '2.5rem',
-            border: '1px solid #f1f5f9',
-          }}
+          className="w-full rounded-xl border border-faint mb-12 block"
         />
       )}
 
       {description && (
-        <div style={{ fontSize: '1rem', lineHeight: 1.85, color: '#1e293b' }}>
+        <div className="prose prose-sm max-w-none text-ink leading-relaxed">
           <PortableText value={description} />
         </div>
       )}
 
       {techStack && techStack.length > 0 && (
         <>
-          <hr
-            style={{
-              border: 'none',
-              borderTop: '1px solid #f1f5f9',
-              margin: '2.5rem 0',
-            }}
-          />
-          <p
-            style={{
-              fontSize: '12px',
-              fontWeight: 600,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: '#94a3b8',
-              marginBottom: '0.75rem',
-            }}
-          >
+          <hr className="border-none border-t border-faint my-10" />
+          <p className="text-2xs tracking-widest uppercase text-muted mb-4">
             Tech stack
           </p>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="flex gap-2 flex-wrap">
             {techStack.map((tech) => (
               <span
                 key={tech._id}
-                style={{
-                  fontSize: '13px',
-                  padding: '5px 14px',
-                  borderRadius: '8px',
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  color: '#0f172a',
-                  fontWeight: 500,
-                }}
+                className="text-xs px-3 py-1.5 bg-warm border border-faint rounded-md text-ink font-medium"
               >
                 {tech.name}
               </span>
