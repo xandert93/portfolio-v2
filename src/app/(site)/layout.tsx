@@ -59,7 +59,7 @@ type Props = {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: Props) {
+export default function SiteLayout({ children }: Props) {
   return (
     <html lang="en" className={`${dmSans.variable} ${dmSerif.variable}`}>
       <body className="font-sans bg-paper text-ink">
