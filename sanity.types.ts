@@ -204,42 +204,31 @@ export type Post = {
   title?: string;
   slug?: Slug;
   excerpt?: string;
-  body?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "normal"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "blockquote";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-      }
-  >;
+  body?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  } | {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
   coverImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -405,28 +394,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes =
-  | SiteSettings
-  | SanityImageAssetReference
-  | About
-  | SanityImageCrop
-  | SanityImageHotspot
-  | Skill
-  | Tag
-  | Education
-  | Experience
-  | Testimonial
-  | Post
-  | Slug
-  | Project
-  | SanityImagePaletteSwatch
-  | SanityImagePalette
-  | SanityImageDimensions
-  | SanityImageMetadata
-  | SanityFileAsset
-  | SanityAssetSourceData
-  | SanityImageAsset
-  | Geopoint;
+export type AllSanitySchemaTypes = SiteSettings | SanityImageAssetReference | About | SanityImageCrop | SanityImageHotspot | Skill | Tag | Education | Experience | Testimonial | Post | Slug | Project | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 
 // Source: src/sanity/lib/queries.ts
 // Variable: SITE_SETTINGS_QUERY
@@ -603,42 +571,31 @@ export type POST_QUERY_RESULT = {
   title: string | null;
   slug: Slug | null;
   excerpt: string | null;
-  body: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "blockquote"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "normal";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        asset?: SanityImageAssetReference;
-        media?: unknown;
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-      }
-  > | null;
+  body: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  } | {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }> | null;
   coverImage: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -742,20 +699,3 @@ export type TESTIMONIALS_QUERY_RESULT = Array<{
   date: string | null;
 }>;
 
-// Query TypeMap
-import "@sanity/client";
-declare module "@sanity/client" {
-  interface SanityQueries {
-    '\n  *[_type == "siteSettings"][0]\n': SITE_SETTINGS_QUERY_RESULT;
-    '\n  *[_type == "about"][0]{\n    headline,\n    bio,\n    avatar,\n    location,\n    isOpenToWork,\n    resumeUrl\n  }\n': ABOUT_QUERY_RESULT;
-    '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT;
-    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT;
-    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    summary,\n    description,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    date\n  }\n': PROJECT_QUERY_RESULT;
-    '\n  *[_type == "post"] | order(publishedAt desc){\n    _id,\n    title,\n    slug,\n    excerpt,\n    coverImage,\n    publishedAt,\n    tags[]->{ _id, name }\n  }\n': POSTS_QUERY_RESULT;
-    '\n  *[_type == "post" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    excerpt,\n    body,\n    coverImage,\n    publishedAt,\n    tags[]->{ _id, name }\n  }\n': POST_QUERY_RESULT;
-    '\n  *[_type == "experience"] | order(startDate desc){\n    _id,\n    company,\n    role,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n    logo,\n    skills[]->{ _id, name }\n  }\n': EXPERIENCE_QUERY_RESULT;
-    '\n  *[_type == "education"] | order(startYear desc){\n    _id,\n    institution,\n    degree,\n    startYear,\n    endYear,\n    description,\n    logo\n  }\n': EDUCATION_QUERY_RESULT;
-    '\n  *[_type == "skill"] | order(category asc, name asc){\n    _id,\n    name,\n    category,\n    proficiency\n  }\n': SKILLS_QUERY_RESULT;
-    '\n  *[_type == "testimonial"] | order(date desc){\n    _id,\n    authorName,\n    role,\n    company,\n    quote,\n    avatar,\n    date\n  }\n': TESTIMONIALS_QUERY_RESULT;
-  }
-}

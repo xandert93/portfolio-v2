@@ -12,6 +12,7 @@ import { structureTool } from 'sanity/structure'
 import { apiVersion, dataset, projectId } from './src/sanity/env'
 import { schema } from './src/sanity/schemaTypes'
 import { structure } from './src/sanity/structure'
+import { codeInput } from '@sanity/code-input'
 
 export default defineConfig({
   basePath: '/studio',
@@ -24,5 +25,8 @@ export default defineConfig({
     // Vision is for querying with GROQ from inside the Studio
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
+
+    // 📚 Sanity core does not ship a code block type. Studio only understands it if something has registered that type globally. codeInput() is what does that registration. The Studio editor UI then allows syntax-highlighted code editing.
+    codeInput(),
   ],
 })
