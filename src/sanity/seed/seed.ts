@@ -13,7 +13,7 @@ import fs from 'fs'
 // }
 
 // 🧠 Types to wipe before reseeding
-const TYPES_TO_RESET = ['tag', 'post', 'testimonial'] as const
+const TYPES_TO_RESET = ['tag', 'post', 'testimonial', 'enquiry'] as const
 
 // /**
 //  * 🚀 Main seed runner
