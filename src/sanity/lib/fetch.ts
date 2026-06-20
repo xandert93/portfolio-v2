@@ -11,6 +11,10 @@ import {
   EDUCATION_QUERY,
   SKILLS_QUERY,
   TESTIMONIALS_QUERY,
+  POSTS_COUNT_QUERY,
+  PAGINATED_POSTS_QUERY,
+  PROJECTS_COUNT_QUERY,
+  PAGINATED_PROJECTS_QUERY,
 } from './queries'
 
 import type {
@@ -58,6 +62,31 @@ export async function fetchProject(
 
 export async function fetchPosts(): Promise<POSTS_QUERY_RESULT> {
   return client.fetch(POSTS_QUERY)
+}
+
+export async function fetchPaginatedProjects(page: number) {
+  const PAGE_SIZE = 2
+
+  const start = (page - 1) * PAGE_SIZE
+  const end = start + PAGE_SIZE
+  const [projects, total] = await Promise.all([
+    client.fetch(PAGINATED_PROJECTS_QUERY, { start, end }),
+    client.fetch(PROJECTS_COUNT_QUERY),
+  ])
+  return { projects, totalPages: Math.ceil(total / PAGE_SIZE) }
+}
+
+export async function fetchPaginatedPosts(page: number) {
+  const PAGE_SIZE = 2
+
+  const start = (page - 1) * PAGE_SIZE
+  const end = start + PAGE_SIZE
+  const [posts, total] = await Promise.all([
+    client.fetch(PAGINATED_POSTS_QUERY, { start, end }),
+    client.fetch(POSTS_COUNT_QUERY),
+  ])
+
+  return { posts, totalPages: Math.ceil(total / PAGE_SIZE) }
 }
 
 export async function fetchPost(slug: string): Promise<POST_QUERY_RESULT> {

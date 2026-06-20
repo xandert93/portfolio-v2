@@ -1,12 +1,25 @@
 import Link from 'next/link'
-import { fetchProjects } from '@/sanity/lib/fetch'
+import {
+  fetchFeaturedProjects,
+  fetchPaginatedProjects,
+  fetchProjects,
+} from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
+import Pagination from '@/components/Pagination'
 
-export default async function ProjectsPage() {
-  const projects = await fetchProjects()
+type PageProps = {
+  searchParams: Promise<{ page?: string }>
+}
 
-  const featuredProjects = projects.filter((p) => p.isFeatured)
-  const otherProjects = projects.filter((p) => !p.isFeatured)
+export default async function ProjectsPage({ searchParams }: PageProps) {
+  const { page } = await searchParams
+  const currentPage = Number(page) || 1
+
+  const [featuredProjects, { projects: otherProjects, totalPages }] =
+    await Promise.all([
+      fetchFeaturedProjects(),
+      fetchPaginatedProjects(currentPage),
+    ])
 
   return (
     <main className="max-w-7xl mx-auto px-12 py-16">
@@ -116,7 +129,7 @@ export default async function ProjectsPage() {
 
       {/* All projects */}
       {otherProjects.length > 0 && (
-        <section>
+        <section id="all-projects">
           <p className="text-2xs tracking-widest uppercase text-muted mb-8">
             All projects
           </p>
@@ -200,6 +213,13 @@ export default async function ProjectsPage() {
               </div>
             ))}
           </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            basePath="/projects"
+            hash="all-projects"
+          />
         </section>
       )}
     </main>

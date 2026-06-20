@@ -15,6 +15,25 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type Enquiry = {
+  _id: string;
+  _type: "enquiry";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  email?: string;
+  projectType?:
+    | "New website"
+    | "Existing site update"
+    | "Freelance enquiry"
+    | "Job opportunity"
+    | "Other";
+  message?: string;
+  status?: "New" | "Replied" | "Archived";
+  submittedAt?: string;
+};
+
 export type SiteSettings = {
   _id: string;
   _type: "siteSettings";
@@ -91,6 +110,15 @@ export type SanityImageHotspot = {
   width?: number;
 };
 
+export type Tag = {
+  _id: string;
+  _type: "tag";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+};
+
 export type Skill = {
   _id: string;
   _type: "skill";
@@ -100,15 +128,6 @@ export type Skill = {
   name?: string;
   category?: "Language" | "Framework" | "Tool" | "Platform" | "Other";
   proficiency?: "Beginner" | "Intermediate" | "Advanced" | "Expert";
-};
-
-export type Tag = {
-  _id: string;
-  _type: "tag";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
 };
 
 export type Education = {
@@ -129,6 +148,13 @@ export type Education = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+};
+
+export type SkillReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "skill";
 };
 
 export type Experience = {
@@ -167,12 +193,11 @@ export type Experience = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-  skills?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "skill";
-  }>;
+  skills?: Array<
+    {
+      _key: string;
+    } & SkillReference
+  >;
 };
 
 export type Testimonial = {
@@ -195,6 +220,13 @@ export type Testimonial = {
   date?: string;
 };
 
+export type TagReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "tag";
+};
+
 export type Post = {
   _id: string;
   _type: "post";
@@ -204,31 +236,45 @@ export type Post = {
   title?: string;
   slug?: Slug;
   excerpt?: string;
-  body?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-    _key: string;
-  }>;
+  body?: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          | "normal"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "blockquote";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+        _key: string;
+      }
+    | ({
+        _key: string;
+      } & Code)
+  >;
   coverImage?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -237,12 +283,11 @@ export type Post = {
     _type: "image";
   };
   publishedAt?: string;
-  tags?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "tag";
-  }>;
+  tags?: Array<
+    {
+      _key: string;
+    } & TagReference
+  >;
 };
 
 export type Slug = {
@@ -278,12 +323,11 @@ export type Project = {
     _type: "block";
     _key: string;
   }>;
-  techStack?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "skill";
-  }>;
+  techStack?: Array<
+    {
+      _key: string;
+    } & SkillReference
+  >;
   repoUrl?: string;
   liveUrl?: string;
   coverImage?: {
@@ -295,6 +339,14 @@ export type Project = {
   };
   isFeatured?: boolean;
   date?: string;
+};
+
+export type Code = {
+  _type: "code";
+  language?: string;
+  filename?: string;
+  code?: string;
+  highlightedLines?: Array<number>;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -394,7 +446,32 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = SiteSettings | SanityImageAssetReference | About | SanityImageCrop | SanityImageHotspot | Skill | Tag | Education | Experience | Testimonial | Post | Slug | Project | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes =
+  | Enquiry
+  | SiteSettings
+  | SanityImageAssetReference
+  | About
+  | SanityImageCrop
+  | SanityImageHotspot
+  | Tag
+  | Skill
+  | Education
+  | SkillReference
+  | Experience
+  | Testimonial
+  | TagReference
+  | Post
+  | Slug
+  | Project
+  | Code
+  | SanityImagePaletteSwatch
+  | SanityImagePalette
+  | SanityImageDimensions
+  | SanityImageMetadata
+  | SanityFileAsset
+  | SanityAssetSourceData
+  | SanityImageAsset
+  | Geopoint;
 
 // Source: src/sanity/lib/queries.ts
 // Variable: SITE_SETTINGS_QUERY
@@ -542,6 +619,36 @@ export type PROJECT_QUERY_RESULT = {
 } | null;
 
 // Source: src/sanity/lib/queries.ts
+// Variable: PAGINATED_PROJECTS_QUERY
+// Query: *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{    _id,    title,    slug,    summary,    techStack[]->{ _id, name },    repoUrl,    liveUrl,    coverImage,    isFeatured,    date  }
+export type PAGINATED_PROJECTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  summary: string | null;
+  techStack: Array<{
+    _id: string;
+    name: string | null;
+  }> | null;
+  repoUrl: string | null;
+  liveUrl: string | null;
+  coverImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  isFeatured: boolean | null;
+  date: string | null;
+}>;
+
+// Source: src/sanity/lib/queries.ts
+// Variable: PROJECTS_COUNT_QUERY
+// Query: count(*[_type == "project" && isFeatured != true])
+export type PROJECTS_COUNT_QUERY_RESULT = number;
+
+// Source: src/sanity/lib/queries.ts
 // Variable: POSTS_QUERY
 // Query: *[_type == "post"] | order(publishedAt desc){    _id,    title,    slug,    excerpt,    coverImage,    publishedAt,    tags[]->{ _id, name }  }
 export type POSTS_QUERY_RESULT = Array<{
@@ -564,6 +671,33 @@ export type POSTS_QUERY_RESULT = Array<{
 }>;
 
 // Source: src/sanity/lib/queries.ts
+// Variable: PAGINATED_POSTS_QUERY
+// Query: *[_type == "post"] | order(publishedAt desc) [$start...$end]{    _id,    title,    slug,    excerpt,    coverImage,    publishedAt,    tags[]->{ _id, name }  }
+export type PAGINATED_POSTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  excerpt: string | null;
+  coverImage: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  publishedAt: string | null;
+  tags: Array<{
+    _id: string;
+    name: string | null;
+  }> | null;
+}>;
+
+// Source: src/sanity/lib/queries.ts
+// Variable: POSTS_COUNT_QUERY
+// Query: count(*[_type == "post"])
+export type POSTS_COUNT_QUERY_RESULT = number;
+
+// Source: src/sanity/lib/queries.ts
 // Variable: POST_QUERY
 // Query: *[_type == "post" && slug.current == $slug][0]{    _id,    title,    slug,    excerpt,    body,    coverImage,    publishedAt,    tags[]->{ _id, name }  }
 export type POST_QUERY_RESULT = {
@@ -571,31 +705,45 @@ export type POST_QUERY_RESULT = {
   title: string | null;
   slug: Slug | null;
   excerpt: string | null;
-  body: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  } | {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-    _key: string;
-  }> | null;
+  body: Array<
+    | ({
+        _key: string;
+      } & Code)
+    | {
+        children?: Array<{
+          marks?: Array<string>;
+          text?: string;
+          _type: "span";
+          _key: string;
+        }>;
+        style?:
+          | "blockquote"
+          | "h1"
+          | "h2"
+          | "h3"
+          | "h4"
+          | "h5"
+          | "h6"
+          | "normal";
+        listItem?: "bullet" | "number";
+        markDefs?: Array<{
+          href?: string;
+          _type: "link";
+          _key: string;
+        }>;
+        level?: number;
+        _type: "block";
+        _key: string;
+      }
+    | {
+        asset?: SanityImageAssetReference;
+        media?: unknown;
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        _type: "image";
+        _key: string;
+      }
+  > | null;
   coverImage: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -699,3 +847,24 @@ export type TESTIMONIALS_QUERY_RESULT = Array<{
   date: string | null;
 }>;
 
+// Query TypeMap
+import "@sanity/client";
+declare module "@sanity/client" {
+  interface SanityQueries {
+    '\n  *[_type == "siteSettings"][0]\n': SITE_SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "about"][0]{\n    headline,\n    bio,\n    avatar,\n    location,\n    isOpenToWork,\n    resumeUrl\n  }\n': ABOUT_QUERY_RESULT;
+    '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT;
+    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT;
+    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    summary,\n    description,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    date\n  }\n': PROJECT_QUERY_RESULT;
+    '\n  *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    isFeatured,\n    date\n  }\n': PAGINATED_PROJECTS_QUERY_RESULT;
+    '\n  count(*[_type == "project" && isFeatured != true])\n': PROJECTS_COUNT_QUERY_RESULT;
+    '\n  *[_type == "post"] | order(publishedAt desc){\n    _id,\n    title,\n    slug,\n    excerpt,\n    coverImage,\n    publishedAt,\n    tags[]->{ _id, name }\n  }\n': POSTS_QUERY_RESULT;
+    '\n  *[_type == "post"] | order(publishedAt desc) [$start...$end]{\n    _id,\n    title,\n    slug,\n    excerpt,\n    coverImage,\n    publishedAt,\n    tags[]->{ _id, name }\n  }\n': PAGINATED_POSTS_QUERY_RESULT;
+    '\n  count(*[_type == "post"])\n': POSTS_COUNT_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current == $slug][0]{\n    _id,\n    title,\n    slug,\n    excerpt,\n    body,\n    coverImage,\n    publishedAt,\n    tags[]->{ _id, name }\n  }\n': POST_QUERY_RESULT;
+    '\n  *[_type == "experience"] | order(startDate desc){\n    _id,\n    company,\n    role,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n    logo,\n    skills[]->{ _id, name }\n  }\n': EXPERIENCE_QUERY_RESULT;
+    '\n  *[_type == "education"] | order(startYear desc){\n    _id,\n    institution,\n    degree,\n    startYear,\n    endYear,\n    description,\n    logo\n  }\n': EDUCATION_QUERY_RESULT;
+    '\n  *[_type == "skill"] | order(category asc, name asc){\n    _id,\n    name,\n    category,\n    proficiency\n  }\n': SKILLS_QUERY_RESULT;
+    '\n  *[_type == "testimonial"] | order(date desc){\n    _id,\n    authorName,\n    role,\n    company,\n    quote,\n    avatar,\n    date\n  }\n': TESTIMONIALS_QUERY_RESULT;
+  }
+}

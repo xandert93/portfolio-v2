@@ -62,6 +62,25 @@ export const PROJECT_QUERY = defineQuery(`
   }
 `)
 
+export const PAGINATED_PROJECTS_QUERY = defineQuery(`
+  *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{
+    _id,
+    title,
+    slug,
+    summary,
+    techStack[]->{ _id, name },
+    repoUrl,
+    liveUrl,
+    coverImage,
+    isFeatured,
+    date
+  }
+`)
+
+export const PROJECTS_COUNT_QUERY = defineQuery(`
+  count(*[_type == "project" && isFeatured != true])
+`)
+
 // Blog Posts
 export const POSTS_QUERY = defineQuery(`
   *[_type == "post"] | order(publishedAt desc){
@@ -73,6 +92,22 @@ export const POSTS_QUERY = defineQuery(`
     publishedAt,
     tags[]->{ _id, name }
   }
+`)
+
+export const PAGINATED_POSTS_QUERY = defineQuery(`
+  *[_type == "post"] | order(publishedAt desc) [$start...$end]{
+    _id,
+    title,
+    slug,
+    excerpt,
+    coverImage,
+    publishedAt,
+    tags[]->{ _id, name }
+  }
+`)
+
+export const POSTS_COUNT_QUERY = defineQuery(`
+  count(*[_type == "post"])
 `)
 
 export const POST_QUERY = defineQuery(`

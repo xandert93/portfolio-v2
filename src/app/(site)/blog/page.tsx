@@ -1,9 +1,17 @@
 import Link from 'next/link'
-import { fetchPosts } from '@/sanity/lib/fetch'
+import { fetchPaginatedPosts, fetchPosts } from '@/sanity/lib/fetch'
 import { urlFor } from '@/sanity/lib/image'
+import Pagination from '@/components/Pagination'
 
-export default async function BlogPage() {
-  const posts = await fetchPosts()
+type PageProps = {
+  searchParams: Promise<{ page?: string }>
+}
+
+export default async function BlogPage({ searchParams }: PageProps) {
+  const { page } = await searchParams
+  const currentPage = Number(page) || 1
+
+  const { posts, totalPages } = await fetchPaginatedPosts(currentPage)
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-16">
@@ -18,7 +26,7 @@ export default async function BlogPage() {
         </p>
       </div>
 
-      <div className="divide-y divide-faint">
+      <div id="posts" className="divide-y divide-faint">
         {posts.map((post) => {
           const formattedDate = post.publishedAt
             ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
@@ -95,6 +103,13 @@ export default async function BlogPage() {
           )
         })}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath="/blog"
+        hash="posts"
+      />
     </main>
   )
 }
