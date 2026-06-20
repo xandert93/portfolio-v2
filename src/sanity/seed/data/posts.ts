@@ -80,8 +80,7 @@ export const posts = [
       pt.h2('Token Generation'),
       pt.code(
         `const jwt = require('jsonwebtoken');
-
-const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
   expiresIn: '1h',
 });`,
         'js',

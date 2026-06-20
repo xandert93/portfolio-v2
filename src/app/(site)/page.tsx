@@ -6,6 +6,8 @@ import {
   fetchSkills,
   fetchTestimonials,
 } from '@/sanity/lib/fetch'
+import { urlFor } from '@/sanity/lib/image'
+import Image from 'next/image'
 
 export default async function Home() {
   const [settings, featuredProjects, about, skills, testimonials] =
@@ -143,20 +145,42 @@ export default async function Home() {
       {testimonials.length > 0 && (
         <section className="px-12 py-20 border-t border-faint">
           <h2 className="font-serif text-4xl mb-12">What people say</h2>
-          <div className="grid grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((t) => (
               <div
                 key={t._id}
-                className="p-7 border border-faint rounded-lg bg-white"
+                className="p-7 border border-faint rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
               >
                 <p className="text-sm text-muted leading-relaxed mb-6 font-light italic">
                   &ldquo;{t.quote}&rdquo;
                 </p>
-                <p className="text-sm font-medium text-ink">{t.authorName}</p>
-                <p className="text-xs text-muted mt-0.5">
-                  {t.role}
-                  {t.company ? `, ${t.company}` : ''}
-                </p>
+
+                <div className="flex items-center gap-3">
+                  {t.avatar ? (
+                    <div className="relative w-10 h-10">
+                      <img
+                        src={urlFor(t.avatar).width(80).height(80).url()}
+                        alt={t.authorName!}
+                        className="rounded-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-faint flex items-center justify-center text-xs text-muted">
+                      {t.authorName?.charAt(0)}
+                    </div>
+                  )}
+
+                  <div>
+                    <p className="text-sm font-medium text-ink leading-tight">
+                      {t.authorName}
+                    </p>
+                    <p className="text-xs text-muted">
+                      {t.role}
+                      {t.company ? `, ${t.company}` : ''}
+                    </p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

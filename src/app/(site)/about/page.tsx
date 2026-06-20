@@ -116,26 +116,31 @@ export default async function AboutPage() {
           <p className="text-2xs tracking-widest uppercase text-muted mb-10">
             Testimonials
           </p>
-          <div className="flex flex-col gap-8">
+
+          <div className="flex flex-col gap-10">
             {testimonials.map((t) => (
-              <div key={t._id} className="p-8 border border-faint bg-paper">
-                <blockquote className="font-serif text-xl text-ink leading-relaxed mb-6 italic">
-                  &ldquo;{t.quote}&rdquo;
-                </blockquote>
-                <div className="flex items-center gap-4">
+              <div
+                key={t._id}
+                className="p-10 border border-faint bg-paper rounded-xl hover:bg-white transition-colors"
+              >
+                {/* Avatar as primary visual */}
+                <div className="flex flex-col items-start gap-6">
                   {t.avatar && (
-                    <img
-                      src={urlFor(t.avatar)
-                        .width(80)
-                        .height(80)
-                        .fit('crop')
-                        .auto('format')
-                        .url()}
-                      alt={t.authorName ?? ''}
-                      className="w-10 h-10 rounded-full border border-faint block"
-                    />
+                    <div className="relative">
+                      <img
+                        src={urlFor(t.avatar).fit('crop').auto('format').url()}
+                        alt={t.authorName ?? ''}
+                        className="rounded-full object-cover border border-faint shadow-sm"
+                        loading="lazy"
+                      />
+                    </div>
                   )}
-                  <div>
+
+                  <blockquote className="font-serif text-xl md:text-2xl text-ink leading-relaxed italic">
+                    &ldquo;{t.quote}&rdquo;
+                  </blockquote>
+
+                  <div className="pt-2">
                     <p className="text-sm font-medium text-ink">
                       {t.authorName}
                     </p>
