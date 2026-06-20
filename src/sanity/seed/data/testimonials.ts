@@ -11,13 +11,13 @@ export const testimonials = [
   },
   {
     _type: 'testimonial',
-    authorName: 'Daniel Wright',
+    authorName: 'Amit Singh',
     role: 'Tech Lead',
     company: 'Netlify',
     quote:
       'Strong grasp of React and API design. Very easy to collaborate with.',
     date: '2025-03-20',
-    avatarFilename: 'daniel-wright.jpg',
+    avatarFilename: 'amit-singh.jpg',
   },
   {
     _type: 'testimonial',
@@ -41,13 +41,13 @@ export const testimonials = [
   },
   {
     _type: 'testimonial',
-    authorName: 'Dick Robinson',
+    authorName: 'Richard Robinson',
     role: 'Senior Frontend Engineer',
     company: 'Vercel',
     quote:
       'Xander delivered a clean, scalable implementation and communicated clearly throughout the project.',
-    date: '2024-06-01',
-    avatarFilename: 'dick-robinson.jpg',
+    date: '2025-02-01',
+    avatarFilename: 'richard-robinson.jpg',
   },
   {
     _type: 'testimonial',
