@@ -1,6 +1,7 @@
 import { fetchAbout, fetchSkills, fetchTestimonials } from '@/sanity/lib/fetch'
 import { PortableText } from '@portabletext/react'
 import { urlFor } from '@/sanity/lib/image'
+import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
 
 export default async function AboutPage() {
   const [about, skills, testimonials] = await Promise.all([
@@ -20,7 +21,7 @@ export default async function AboutPage() {
   )
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-16">
+    <main className="max-w-4xl mx-auto px-6 py-16">
       <div className="mb-16">
         <p className="text-2xs tracking-widest uppercase text-muted mb-4">
           About
@@ -112,48 +113,7 @@ export default async function AboutPage() {
 
       {/* Testimonials */}
       {testimonials.length > 0 && (
-        <section>
-          <p className="text-2xs tracking-widest uppercase text-muted mb-10">
-            Testimonials
-          </p>
-
-          <div className="flex flex-col gap-10">
-            {testimonials.map((t) => (
-              <div
-                key={t._id}
-                className="p-10 border border-faint bg-paper rounded-xl hover:bg-white transition-colors"
-              >
-                {/* Avatar as primary visual */}
-                <div className="flex flex-col items-start gap-6">
-                  {t.avatar && (
-                    <div className="relative">
-                      <img
-                        src={urlFor(t.avatar).fit('crop').auto('format').url()}
-                        alt={t.authorName ?? ''}
-                        className="rounded-full object-cover border border-faint shadow-sm"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-
-                  <blockquote className="font-serif text-xl md:text-2xl text-ink leading-relaxed italic">
-                    &ldquo;{t.quote}&rdquo;
-                  </blockquote>
-
-                  <div className="pt-2">
-                    <p className="text-sm font-medium text-ink">
-                      {t.authorName}
-                    </p>
-                    <p className="text-xs text-muted mt-0.5">
-                      {t.role}
-                      {t.company ? `, ${t.company}` : ''}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <TestimonialsSection testimonials={testimonials} />
       )}
     </main>
   )

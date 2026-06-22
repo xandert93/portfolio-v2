@@ -170,6 +170,7 @@ export const TESTIMONIALS_QUERY = defineQuery(`
     company,
     quote,
     avatar,
-    date
+    date,
+    isFeatured
   }
 `)

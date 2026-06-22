@@ -209,7 +209,6 @@ export type Testimonial = {
   authorName?: string;
   role?: string;
   company?: string;
-  quote?: string;
   avatar?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -217,7 +216,9 @@ export type Testimonial = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  quote?: string;
   date?: string;
+  isFeatured?: boolean;
 };
 
 export type TagReference = {
@@ -282,6 +283,7 @@ export type Post = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  featured?: boolean;
   publishedAt?: string;
   tags?: Array<
     {
@@ -830,7 +832,7 @@ export type SKILLS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/lib/queries.ts
 // Variable: TESTIMONIALS_QUERY
-// Query: *[_type == "testimonial"] | order(date desc){    _id,    authorName,    role,    company,    quote,    avatar,    date  }
+// Query: *[_type == "testimonial"] | order(date desc){    _id,    authorName,    role,    company,    quote,    avatar,    date,    isFeatured  }
 export type TESTIMONIALS_QUERY_RESULT = Array<{
   _id: string;
   authorName: string | null;
@@ -845,6 +847,7 @@ export type TESTIMONIALS_QUERY_RESULT = Array<{
     _type: "image";
   } | null;
   date: string | null;
+  isFeatured: boolean | null;
 }>;
 
 // Query TypeMap
@@ -865,6 +868,6 @@ declare module "@sanity/client" {
     '\n  *[_type == "experience"] | order(startDate desc){\n    _id,\n    company,\n    role,\n    startDate,\n    endDate,\n    isCurrent,\n    description,\n    logo,\n    skills[]->{ _id, name }\n  }\n': EXPERIENCE_QUERY_RESULT;
     '\n  *[_type == "education"] | order(startYear desc){\n    _id,\n    institution,\n    degree,\n    startYear,\n    endYear,\n    description,\n    logo\n  }\n': EDUCATION_QUERY_RESULT;
     '\n  *[_type == "skill"] | order(category asc, name asc){\n    _id,\n    name,\n    category,\n    proficiency\n  }\n': SKILLS_QUERY_RESULT;
-    '\n  *[_type == "testimonial"] | order(date desc){\n    _id,\n    authorName,\n    role,\n    company,\n    quote,\n    avatar,\n    date\n  }\n': TESTIMONIALS_QUERY_RESULT;
+    '\n  *[_type == "testimonial"] | order(date desc){\n    _id,\n    authorName,\n    role,\n    company,\n    quote,\n    avatar,\n    date,\n    isFeatured\n  }\n': TESTIMONIALS_QUERY_RESULT;
   }
 }

@@ -1,4 +1,13 @@
-export const testimonials = [
+import { Testimonial } from '../../../../sanity.types'
+
+type TestimonialSeed = Omit<
+  Testimonial,
+  '_id' | '_rev' | '_createdAt' | '_updatedAt' | 'avatar'
+> & {
+  avatarFilename: string
+}
+
+export const testimonials: TestimonialSeed[] = [
   {
     _type: 'testimonial',
     authorName: 'Priya Shah',
@@ -47,6 +56,7 @@ export const testimonials = [
     quote:
       'Xander delivered a clean, scalable implementation and communicated clearly throughout the project.',
     date: '2025-02-01',
+    isFeatured: true,
     avatarFilename: 'richard-robinson.jpg',
   },
   {
