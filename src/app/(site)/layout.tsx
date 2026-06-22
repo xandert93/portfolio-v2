@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { fetchSiteSettings, fetchUsersNames } from '@/sanity/lib/fetch'
+import { genFirstNameAndSurnameInitial } from '@/utils/string'
 
 const dmSans = DM_Sans({
   variable: '--font-dm-sans',
@@ -61,16 +62,14 @@ type Props = {
 }
 
 export default async function RootLayout({ children }: Props) {
-  const names = await fetchUsersNames()
-
-  const navbarName = `${names?.firstName} ${names?.surname?.charAt(0)}.`
+  const { firstName, surname } = await fetchUsersNames()
 
   return (
     <html lang="en">
       <body
         className={`${dmSans.variable} ${fraunces.variable} font-sans bg-paper text-ink`}
       >
-        <Navbar name={navbarName} />
+        <Navbar name={genFirstNameAndSurnameInitial(firstName, surname)} />
         {children}
         <Footer />
       </body>
