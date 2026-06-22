@@ -36,6 +36,12 @@ export const post = defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: 'featured',
+      title: 'Featured Post',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
       name: 'publishedAt',
       title: 'Published At',
       type: 'datetime',

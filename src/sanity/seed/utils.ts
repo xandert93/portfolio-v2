@@ -6,9 +6,8 @@ import { SanityAssetDocument } from 'next-sanity'
 import { SanityClient } from 'sanity'
 
 import pluralize from 'pluralize'
-import { nanoid } from 'nanoid'
 
-export const formatLabel = (label: string) =>
+export const formatLabel = (label: string): string =>
   pluralize(label[0].toUpperCase() + label.slice(1))
 
 export const uploadImage = async (
@@ -54,47 +53,3 @@ npm i -D @types/pluralize
 Import into script:
 import pluralize from 'pluralize'
 */
-
-export const genTag = (id: string) => ({
-  _key: id,
-  _type: 'reference',
-  _ref: id,
-})
-
-const genSpan = (text: string) => ({
-  _key: nanoid(),
-  _type: 'span',
-  text,
-})
-
-const genBlock = ({ style = 'normal', text, children, listItem } = {}) => ({
-  _key: nanoid(),
-  _type: 'block',
-  style,
-  ...(listItem ? { listItem } : {}),
-  children: children ?? [genSpan(text)],
-})
-
-const genCode = (code, language = 'bash') => ({
-  _key: nanoid(),
-  _type: 'code',
-  code,
-  language,
-})
-
-export const pt = {
-  h2: (text: string) => {
-    return genBlock({
-      style: 'h2',
-      children: [genSpan(text)],
-    })
-  },
-  p: (text: string) => genBlock({ text }),
-  bullet: (text: string) => {
-    return genBlock({
-      listItem: 'bullet',
-      text,
-    })
-  },
-  code: genCode,
-}
