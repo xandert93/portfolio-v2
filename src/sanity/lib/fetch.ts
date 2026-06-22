@@ -15,11 +15,10 @@ import {
   PAGINATED_POSTS_QUERY,
   PROJECTS_COUNT_QUERY,
   PAGINATED_PROJECTS_QUERY,
+  USER_NAMES_QUERY,
 } from './queries'
 
 import type {
-  SITE_SETTINGS_QUERY_RESULT,
-  ABOUT_QUERY_RESULT,
   PROJECTS_QUERY_RESULT,
   FEATURED_PROJECTS_QUERY_RESULT,
   PROJECT_QUERY_RESULT,
@@ -29,6 +28,7 @@ import type {
   EDUCATION_QUERY_RESULT,
   SKILLS_QUERY_RESULT,
   TESTIMONIALS_QUERY_RESULT,
+  USER_NAMES_QUERY_RESULT,
 } from '../../../sanity.types'
 
 export async function fetchSiteSettings() {
@@ -37,6 +37,10 @@ export async function fetchSiteSettings() {
 
   /*  TSC knows `settings` is non-null via control flow narrowing i.e. if you reached the return line, settings can't be null — because the only way to get past the if is if it wasn't. Else, execution would stop at the if statement. */
   return settings
+}
+
+export const fetchUsersNames = (): Promise<USER_NAMES_QUERY_RESULT> => {
+  return client.fetch(USER_NAMES_QUERY)
 }
 
 export async function fetchAbout() {

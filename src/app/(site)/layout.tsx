@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { DM_Sans, DM_Serif_Display } from 'next/font/google'
+import { DM_Sans, Fraunces } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { fetchSiteSettings, fetchUsersNames } from '@/sanity/lib/fetch'
 
 const dmSans = DM_Sans({
   variable: '--font-dm-sans',
@@ -10,10 +11,10 @@ const dmSans = DM_Sans({
   weight: ['300', '400', '500'],
 })
 
-const dmSerif = DM_Serif_Display({
-  variable: '--font-dm-serif',
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
   subsets: ['latin'],
-  weight: '400',
+  weight: ['300', '400', '500'],
   style: ['normal', 'italic'],
 })
 
@@ -59,11 +60,17 @@ type Props = {
   children: React.ReactNode
 }
 
-export default function SiteLayout({ children }: Props) {
+export default async function RootLayout({ children }: Props) {
+  const names = await fetchUsersNames()
+
+  const navbarName = `${names?.firstName} ${names?.surname?.charAt(0)}.`
+
   return (
-    <html lang="en" className={`${dmSans.variable} ${dmSerif.variable}`}>
-      <body className="font-sans bg-paper text-ink">
-        <Navbar />
+    <html lang="en">
+      <body
+        className={`${dmSans.variable} ${fraunces.variable} font-sans bg-paper text-ink`}
+      >
+        <Navbar name={navbarName} />
         {children}
         <Footer />
       </body>

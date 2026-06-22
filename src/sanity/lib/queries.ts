@@ -5,6 +5,13 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0]
 `)
 
+export const USER_NAMES_QUERY = defineQuery(`
+  *[_type == "siteSettings"][0]{
+  firstName,
+  surname
+  }
+`)
+
 // About
 export const ABOUT_QUERY = defineQuery(`
   *[_type == "about"][0]{

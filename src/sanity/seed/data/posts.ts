@@ -274,9 +274,9 @@ export const posts = [
         ', right after you create the app.',
       ]),
 
-      pt.h2('Organizing Routes Properly'),
+      pt.h2('organising Routes Properly'),
       pt.pWithFormatting([
-        'As your API grows, keeping everything in one file gets messy fast. Express gives us Router to organize routes into separate modules. Create a new folder called ',
+        'As your API grows, keeping everything in one file gets messy fast. Express gives us Router to organise routes into separate modules. Create a new folder called ',
         { code: 'routes' },
         ' and a file inside it called ',
         { code: 'tasks.js' },
@@ -542,7 +542,7 @@ export const posts = [
       ),
       ...pt.bullets([
         'Persisting data to a real database (MongoDB, PostgreSQL, or SQLite are good starting points)',
-        'Authentication and authorization (JWT-based auth is a common next step)',
+        'Authentication and authorisation (JWT-based auth is a common next step)',
         'Pagination for the GET /api/tasks endpoint when the list grows large',
         'Automated tests using a tool like Jest or Vitest with Supertest',
         'Environment-based configuration using a .env file and the dotenv package',
@@ -554,7 +554,7 @@ export const posts = [
 
       pt.h2('Conclusion'),
       pt.p(
-        'We went from an empty folder to a fully functional REST API with routing, validation, structured error handling, and basic security middleware. The biggest takeaway here is not the code itself — it is the pattern: organize routes by resource, validate input early, return consistent status codes, and centralize error handling. That pattern scales from a tiny side project all the way up to production systems handling real traffic.',
+        'We went from an empty folder to a fully functional REST API with routing, validation, structured error handling, and basic security middleware. The biggest takeaway here is not the code itself — it is the pattern: organise routes by resource, validate input early, return consistent status codes, and centralize error handling. That pattern scales from a tiny side project all the way up to production systems handling real traffic.',
       ),
     ],
 
@@ -648,7 +648,7 @@ export const posts = [
     slug: { current: 'fullstack-project-structure-scalability' },
     coverImageFilename: 'fullstack-project-structure.jpg',
     excerpt:
-      'A look into how I organize full-stack applications for maintainability and long-term scalability.',
+      'A look into how I organise full-stack applications for maintainability and long-term scalability.',
     publishedAt: '2026-05-28T16:00:00.000Z',
 
     body: [

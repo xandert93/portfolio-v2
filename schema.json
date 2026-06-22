@@ -149,7 +149,14 @@
           "type": "string"
         }
       },
-      "name": {
+      "firstName": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "surname": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
@@ -157,6 +164,20 @@
         "optional": true
       },
       "tagline": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "seoTitle": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "seoDescription": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
@@ -191,17 +212,17 @@
         },
         "optional": true
       },
-      "seoTitle": {
+      "phone": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
         },
         "optional": true
       },
-      "seoDescription": {
+      "hasWhatsApp": {
         "type": "objectAttribute",
         "value": {
-          "type": "string"
+          "type": "boolean"
         },
         "optional": true
       }

@@ -40,14 +40,17 @@ export type SiteSettings = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  name?: string;
+  firstName?: string;
+  surname?: string;
   tagline?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   email?: string;
   githubUrl?: string;
   linkedinUrl?: string;
   twitterUrl?: string;
-  seoTitle?: string;
-  seoDescription?: string;
+  phone?: string;
+  hasWhatsApp?: boolean;
 };
 
 export type SanityImageAssetReference = {
@@ -484,14 +487,25 @@ export type SITE_SETTINGS_QUERY_RESULT = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  name?: string;
+  firstName?: string;
+  surname?: string;
   tagline?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   email?: string;
   githubUrl?: string;
   linkedinUrl?: string;
   twitterUrl?: string;
-  seoTitle?: string;
-  seoDescription?: string;
+  phone?: string;
+  hasWhatsApp?: boolean;
+} | null;
+
+// Source: src/sanity/lib/queries.ts
+// Variable: USER_NAMES_QUERY
+// Query: *[_type == "siteSettings"][0]{  firstName,  surname  }
+export type USER_NAMES_QUERY_RESULT = {
+  firstName: string | null;
+  surname: string | null;
 } | null;
 
 // Source: src/sanity/lib/queries.ts
@@ -855,6 +869,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "siteSettings"][0]\n': SITE_SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "siteSettings"][0]{\n  firstName,\n  surname\n  }\n': USER_NAMES_QUERY_RESULT;
     '\n  *[_type == "about"][0]{\n    headline,\n    bio,\n    avatar,\n    location,\n    isOpenToWork,\n    resumeUrl\n  }\n': ABOUT_QUERY_RESULT;
     '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT;
     '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    slug,\n    summary,\n    techStack[]->{ _id, name },\n    repoUrl,\n    liveUrl,\n    coverImage,\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT;
