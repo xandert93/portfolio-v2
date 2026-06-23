@@ -273,7 +273,7 @@ export default async function PostDetailPage({ params }: PageProps) {
               .auto('format')
               .url()}
             alt={title ?? ''}
-            className="w-full aspect-[16/9] object-cover rounded-xl border border-faint"
+            className="w-full aspect-video object-cover rounded-xl border border-faint"
           />
         </figure>
       )}
