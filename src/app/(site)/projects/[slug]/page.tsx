@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { PortableText } from '@portabletext/react'
 import { fetchProject } from '@/sanity/lib/fetch'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -82,7 +82,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
       {coverImage && (
         <img
-          src={urlFor(coverImage)
+          src={genImageBuilder(coverImage)
             .width(768)
             .height(432)
             .fit('crop')

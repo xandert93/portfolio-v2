@@ -1,11 +1,14 @@
-import { fetchExperience, fetchEducation } from '@/sanity/lib/fetch'
+import { fetchExperience, fetchEducation, fetchCV } from '@/sanity/lib/fetch'
 import { PortableText } from '@portabletext/react'
 
 export default async function ExperiencePage() {
-  const [experience, education] = await Promise.all([
+  const [cv, experience, education] = await Promise.all([
+    fetchCV(),
     fetchExperience(),
     fetchEducation(),
   ])
+
+  const cvUrl = cv?.asset?.url
 
   return (
     <main className="max-w-3xl mx-auto px-6 py-16">
@@ -13,7 +16,20 @@ export default async function ExperiencePage() {
         <p className="text-2xs tracking-widest uppercase text-muted mb-4">
           Background
         </p>
-        <h1 className="font-serif text-5xl text-ink">Experience</h1>
+        <div className="flex items-center justify-between gap-6">
+          <h1 className="font-serif text-5xl text-ink">Experience</h1>
+
+          {cvUrl && (
+            <a
+              href={cvUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-sm font-normal md:px-8 px-6 py-3.5 bg-accent text-paper rounded hover:opacity-90 transition-opacity"
+            >
+              View CV ↗
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Work */}

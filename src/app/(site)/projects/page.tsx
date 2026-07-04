@@ -4,7 +4,7 @@ import {
   fetchPaginatedProjects,
   fetchProjects,
 } from '@/sanity/lib/fetch'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 import Pagination from '@/components/Pagination'
 
 type PageProps = {
@@ -48,7 +48,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
               >
                 {project.coverImage ? (
                   <img
-                    src={urlFor(project.coverImage)
+                    src={genImageBuilder(project.coverImage)
                       .width(720)
                       .height(480)
                       .fit('crop')
@@ -75,7 +75,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                   </p>
 
                   <Link
-                    href={`/projects/${project.slug?.current}`}
+                    href={`/projects/${project.slug}`}
                     className="font-serif text-4xl text-ink mb-4 group-hover:text-accent transition-colors leading-tight"
                   >
                     {project.title}
@@ -141,7 +141,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
               >
                 {project.coverImage ? (
                   <img
-                    src={urlFor(project.coverImage)
+                    src={genImageBuilder(project.coverImage)
                       .width(720)
                       .height(405)
                       .fit('crop')
@@ -164,7 +164,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                   </p>
 
                   <Link
-                    href={`/projects/${project.slug?.current}`}
+                    href={`/projects/${project.slug}`}
                     className="font-serif text-2xl text-ink block mb-3 group-hover:text-accent transition-colors"
                   >
                     {project.title}

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { fetchPost } from '@/sanity/lib/fetch'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 import { codeToHtml } from 'shiki'
 
 type PageProps = {
@@ -131,7 +131,11 @@ const portableTextComponents: PortableTextComponents = {
       return (
         <figure className="my-8 sm:my-10">
           <img
-            src={urlFor(value).width(1400).fit('max').auto('format').url()}
+            src={genImageBuilder(value)
+              .width(1400)
+              .fit('max')
+              .auto('format')
+              .url()}
             alt={value.alt ?? ''}
             className="w-full rounded-xl border border-faint"
           />
@@ -203,7 +207,7 @@ export default async function PostDetailPage({ params }: PageProps) {
     )
   }
 
-  const { title, excerpt, body, coverImage, publishedAt } = post
+  const { title, excerpt, body, coverImage, publishedAt, updatedAt } = post
   const tags = post.tags ?? []
 
   const readingTime = estimateReadingTime(body)
@@ -216,6 +220,19 @@ export default async function PostDetailPage({ params }: PageProps) {
         year: 'numeric',
       })
     : null
+
+  const formattedUpdatedDate = updatedAt
+    ? new Date(updatedAt).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : null
+
+  // Only surface "Updated" if it's a distinct, later date than publish —
+  // guards against updatedAt being set to the same instant as publishedAt.
+  const isMeaningfullyUpdated =
+    !!updatedAt && !!publishedAt && new Date(updatedAt) > new Date(publishedAt)
 
   return (
     <main className="max-w-3xl mx-auto px-5 sm:px-6 py-12 sm:py-20">
@@ -253,6 +270,19 @@ export default async function PostDetailPage({ params }: PageProps) {
           )}
           {formattedDate && <span className="w-1 h-1 rounded-full bg-faint" />}
           <span>{readingTime} min read</span>
+
+          {isMeaningfullyUpdated && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-faint" />
+              <span className="inline-flex items-center gap-1.5 text-accent">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                Updated{' '}
+                <time dateTime={updatedAt ?? ''} className="font-medium">
+                  {formattedUpdatedDate}
+                </time>
+              </span>
+            </>
+          )}
         </div>
 
         {excerpt && (
@@ -266,7 +296,7 @@ export default async function PostDetailPage({ params }: PageProps) {
       {coverImage && (
         <figure className="mb-8 sm:mb-12">
           <img
-            src={urlFor(coverImage)
+            src={genImageBuilder(coverImage)
               .width(1200)
               .height(675)
               .fit('crop')

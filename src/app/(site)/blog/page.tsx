@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { fetchPaginatedPosts, fetchPosts } from '@/sanity/lib/fetch'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 import Pagination from '@/components/Pagination'
 
 type PageProps = {
@@ -43,7 +43,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
             >
               {post.coverImage ? (
                 <img
-                  src={urlFor(post.coverImage)
+                  src={genImageBuilder(post.coverImage)
                     .width(400)
                     .height(250)
                     .fit('crop')
@@ -78,7 +78,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                   </div>
                 )}
 
-                <Link href={`/blog/${post.slug?.current}`}>
+                <Link href={`/blog/${post.slug}`}>
                   <h2 className="font-serif text-2xl text-ink group-hover:text-accent transition-colors">
                     {post.title}
                   </h2>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 import { TESTIMONIALS_QUERY_RESULT } from '../../../sanity.types'
 
 type TestimonialsProps = {
@@ -32,7 +32,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
 
   return (
     <section className="relative px-8 md:px-20 py-24 border-t border-faint">
-      <div className="absolute top-0 left-1/4 w-[600px] h-[400px] rounded-full bg-accent/[0.08] blur-[80px] pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-[600px] h-[400px] rounded-full bg-accent/8 blur-[80px] pointer-events-none" />
       <p className="text-2xs tracking-widest uppercase text-accent mb-2 relative z-10">
         What people say
       </p>
@@ -43,7 +43,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-6">
         {/* Featured testimonial */}
         <div className="relative overflow-hidden bg-warm border border-accent/20 rounded-2xl p-10 flex flex-col">
-          <p className="absolute -top-6 right-6 font-serif italic text-[10rem] text-accent/[0.1] leading-none select-none">
+          <p className="absolute -top-6 right-6 font-serif italic text-[10rem] text-accent/10 leading-none select-none">
             &rdquo;
           </p>
 
@@ -68,7 +68,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
           <div className="relative z-10 flex items-center gap-4 mt-auto mb-8">
             {main.avatar ? (
               <Image
-                src={urlFor(main.avatar)
+                src={genImageBuilder(main.avatar)
                   .width(116)
                   .height(116)
                   .fit('crop')
@@ -136,7 +136,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
             >
               {t.avatar ? (
                 <Image
-                  src={urlFor(t.avatar)
+                  src={genImageBuilder(t.avatar)
                     .width(96)
                     .height(96)
                     .fit('crop')
@@ -145,10 +145,10 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                   alt={t.authorName ?? ''}
                   width={48}
                   height={48}
-                  className="rounded-full border border-faint flex-shrink-0"
+                  className="rounded-full border border-faint shrink-0"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-faint border border-faint flex items-center justify-center font-serif text-sm text-muted flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-faint border border-faint flex items-center justify-center font-serif text-sm text-muted shrink-0">
                   {getInitials(t.authorName)}
                 </div>
               )}

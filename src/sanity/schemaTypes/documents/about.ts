@@ -28,3 +28,51 @@ export const about = defineType({
     defineField({ name: 'resumeUrl', title: 'Résumé URL', type: 'url' }),
   ],
 })
+
+/*
+📚 { type: 'image' } fields in Sanity do not store image URLs. They store a reference to an asset via an asset ID and generates URLs when needed. about.avatar will look roughly like this:
+
+{
+  _type: "image",
+  asset: {
+    _type: "reference",
+    _ref: "image-abc123-1200x1200-png"
+  }
+}
+
+This approach has several benefits over storing URls:
+
+- resize images on demand
+- gives browsers the format they support best e.g. Chrome → avatar.avif (~120 KB), Firefox → avatar.webp (~180 KB), Old IE → avatar.png (900 KB)
+- crop using hotspots
+- update CDN behavior
+
+To consume it in our FE and convert it into a URL the FE underestands, we need to install @sanity/image-url:
+
+npm i @sanity/image-url
+
+Then create a helper named `urlFor` (see docs...)
+
+As a result, instead of storing multiple versions of an image e.g.:
+
+avatar-small.jpg
+avatar-medium.jpg
+avatar-large.jpg
+
+You have one original image and then request exactly what you need:
+
+urlFor(about.avatar).width(64).url()
+urlFor(about.avatar).width(300).url()
+urlFor(about.avatar).width(1200).url()
+
+Sanity generates and caches each version automatically.
+
+You can also do:
+
+urlFor(about.avatar)
+  .width(300)
+  .height(300)
+  .fit("crop") // If width & height are both set, crop to exactly those dimensions (uses the image hotspot if configured)
+  .auto("format") // Serve the most efficient format the browser supports (e.g. AVIF/WebP, otherwise JPEG/PNG)
+  .url(); // Generate the final CDN URL string
+*/

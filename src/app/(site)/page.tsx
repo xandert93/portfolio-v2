@@ -9,11 +9,10 @@ import {
   fetchSkills,
   fetchTestimonials,
 } from '@/sanity/lib/fetch'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 import Testimonials from '@/components/sections/TestimonialsSection'
-
-// Toggle between 'photo' and 'code' to compare hero variants
-const HERO_VARIANT: 'photo' | 'code' = 'photo'
+import HeroSection from './(home)/_components/HeroSection'
+import FeaturedProjectsSection from './(home)/_components/FeaturedProjectsSection'
 
 const techIcons: Record<string, { path: string; color: string }> = {
   React: {
@@ -43,373 +42,20 @@ const techIcons: Record<string, { path: string; color: string }> = {
 }
 
 export default async function Home() {
-  const [settings, featuredProjects, about, skills, testimonials] =
-    await Promise.all([
-      fetchSiteSettings(),
-      fetchFeaturedProjects(),
-      fetchAbout(),
-      fetchSkills(),
-      fetchTestimonials(),
-    ])
+  const [settings, about, skills, testimonials] = await Promise.all([
+    fetchSiteSettings(),
+    fetchAbout(),
+    fetchSkills(),
+    fetchTestimonials(),
+  ])
 
   const mainTestimonial = testimonials[0]
   const sideTestimonials = testimonials.slice(1, 3)
 
-  const CodePanel = () => {
-    /*     
-    Mimics close, minimise, maximise controls from macOS code editors/terminals
-    Purely visual, offering instant recognisability.
-    */
-    const TrafficLights = () => {
-      return (
-        <div className="flex gap-1.5 px-4 py-3 border-b border-faint shrink-0">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-400/70" />
-          <span className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
-          <span className="ml-auto text-[0.6rem] text-muted tracking-wide">
-            xander.ts
-          </span>
-        </div>
-      )
-    }
-
-    return (
-      <div className="aspect-4/5 max-h-[480px] rounded-sm overflow-hidden border border-faint bg-[#13121a] font-mono text-[13px] flex flex-col">
-        <TrafficLights />
-        {/* Code */}
-        <div className="p-6 leading-[1.95] text-[#ccc8be] overflow-hidden">
-          <div>
-            <span className="text-purple-400">export</span>{' '}
-            <span className="text-purple-400">async</span>{' '}
-            <span className="text-purple-400">function</span>{' '}
-            <span className="text-blue-300">build</span>() {'{'}
-          </div>
-          <div>
-            &nbsp;&nbsp;<span className="text-purple-400">const</span> idea ={' '}
-            <span className="text-green-300">'something useful'</span>
-          </div>
-          <div>
-            &nbsp;&nbsp;
-            <span className="text-muted">// design → build → ship</span>
-          </div>
-          <div className="mt-1">
-            &nbsp;&nbsp;<span className="text-purple-400">const</span> result ={' '}
-            <span className="text-purple-400">await</span>{' '}
-            <span className="text-blue-300">deploy</span>(idea)
-          </div>
-          <div>
-            &nbsp;&nbsp;<span className="text-purple-400">return</span> result
-          </div>
-          <div>{'}'}</div>
-          <div className="mt-6 text-muted text-[0.7rem]">
-            <span className="text-accent/60">▸</span> currently:{' '}
-            <span className="text-accent">
-              {about.isOpenToWork ? 'open to work' : 'heads down building'}
-            </span>
-          </div>
-          <div className="mt-8 border-t border-faint pt-6 flex flex-col gap-3">
-            {[
-              {
-                label: 'Stack',
-                value: 'Next.js · TypeScript · Postgres',
-              },
-              { label: 'Based in', value: 'London, UK' },
-              { label: 'Focus', value: 'Full-stack · Systems' },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex gap-3 text-[0.7rem]">
-                <span className="text-muted w-16 shrink-0">{label}</span>
-                <span className="text-[#ccc8be]">{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const HeroImage = () => {
-    return (
-      <Image
-        src={urlFor(about.avatar)
-          .width(1000)
-          .height(1250)
-          .fit('crop')
-          .auto('format')
-          .quality(100)
-          .url()}
-        alt={settings.name ?? 'Profile photo'}
-        fill
-        className="object-cover"
-        priority
-        sizes="420px"
-      />
-    )
-  }
-
-  const MobileHeroVisual = () => {
-    if (!about.avatar) return <div className="absolute inset-0 bg-[#15141a]" />
-    else
-      return (
-        <Image
-          src={urlFor(about.avatar)
-            .width(1200)
-            .height(1600)
-            .fit('crop')
-            .auto('format')
-            .quality(95)
-            .url()}
-          alt=""
-          fill
-          className="object-cover"
-          priority
-        />
-      )
-  }
-
-  const MobileHeroVisualOverlay = () => {
-    return (
-      <div className="absolute inset-0 bg-linear-to-b from-paper/40 via-paper/80 to-paper" />
-    )
-  }
-
-  const OpenToWorkBadge = () => {
-    return (
-      <div className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-accent border border-accent/40 bg-accent-light px-4 py-1.5 rounded-full mb-8">
-        {/* Indicator Light */}
-        <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-        Open to work
-      </div>
-    )
-  }
-
-  const Tagline = () => {
-    return (
-      <p className="font-serif md:text-6xl text-5xl md:leading-[1.04] leading-[1.08] mb-6">
-        Code with <em className="italic text-accent font-medium">craft</em>.
-        <br />
-        Built to <em className="italic text-accent font-medium">last</em>.
-      </p>
-    )
-  }
-
-  const Heading = () => {
-    return (
-      <h1 className="text-base text-muted leading-relaxed md:max-w-md mb-10 font-light">
-        {settings.tagline}
-      </h1>
-    )
-  }
-
-  /*
-  📚 Don’t force equal width for those two button-styled.
-  In most hero CTAs, width should be content-driven, not equalized, unless you have a very specific visual system (like a full-width segmented control or grid of identical buttons).
-  
-  Why content-based width is better
-  “View my work” is naturally longer than “Get in touch”
-  Equal widths create unnecessary empty space in one button
-  It reduces scan clarity (users read CTAs by label, not shape symmetry)
-  It feels more “componentized UI kit” than intentional product design
-  */
-
-  const ProjectsLink = () => {
-    return (
-      <Link
-        href="/projects"
-        className="text-sm font-normal md:px-8 px-6 py-3.5 bg-accent text-paper rounded hover:opacity-90 transition-opacity"
-      >
-        View my work
-      </Link>
-    )
-  }
-
-  const ContactLink = () => {
-    return (
-      <Link
-        href="/contact"
-        className="text-sm font-medium md:px-8 px-6 py-3.5 border border-faint text-ink rounded hover:bg-warm transition-colors"
-      >
-        Get in touch
-      </Link>
-    )
-  }
-
-  const HeroContent = () => {
-    return (
-      <div className="flex flex-col items-start">
-        {about.isOpenToWork && <OpenToWorkBadge />}
-        <Tagline />
-        <Heading />
-        <div className="flex gap-4">
-          <ProjectsLink />
-          <ContactLink />
-        </div>
-      </div>
-    )
-  }
-
-  const HeroVisual = () => {
-    return (
-      <div className="flex justify-center">
-        <div className="relative aspect-4/5 w-full max-w-[420px] max-h-[520px] rounded-2xl overflow-hidden border border-faint">
-          {about.avatar ? (
-            <HeroImage />
-          ) : (
-            <div className="absolute inset-0 bg-warm flex items-center justify-center text-muted text-sm">
-              No photo set
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
-  const MobileHeroContent = () => {
-    return (
-      <div className="md:hidden flex flex-col items-start">
-        {about.isOpenToWork && <OpenToWorkBadge />}
-        <Tagline />
-        <Heading />
-        <div className="flex gap-3 flex-wrap">
-          <ProjectsLink />
-          <ContactLink />
-        </div>
-      </div>
-    )
-  }
-
-  const navbarHeight = 90
-
-  const OldHeroSection = () => {
-    return (
-      <div className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 -right-40 w-[560px] h-[560px] rounded-full bg-accent/13 blur-[96px]"
-        />
-      </div>
-    )
-  }
-
-  return (
-    <section
-      style={{ minHeight: `calc(100vh - ${navbarHeight}px)` }}
-      className={`relative flex items-center overflow-hidden`}
-    >
-      {/* Single restrained glow — top-right only */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 -right-40 w-[560px] h-[560px] rounded-full bg-accent/13 blur-[96px]"
-      />
-      {/* Content container */}
-      <div className="relative z-10 w-full md:px-20 px-8 py-16">
-        <div className="md:grid hidden grid-cols-2 gap-x-24 items-center max-w-6xl mx-auto">
-          <HeroContent />
-          <HeroVisual />
-        </div>
-        <MobileHeroContent />
-      </div>
-
-      {/* Mobile background image with overlay. MobileHeroContent superimposes it */}
-      <div className="md:hidden absolute inset-0">
-        <MobileHeroVisual />
-        <MobileHeroVisualOverlay />
-      </div>
-    </section>
-  )
-
   return (
     <main className="bg-paper text-ink min-h-screen">
-      {/* ── Hero ──────────────────────────────────────────── */}
-
-      {/* ── Featured Projects ──────────────────────────────── */}
-      <section className="section">
-        <div className="container">
-          <div className="ruled pl-0 md:pl-8">
-            <span className="label">Selected work</span>
-            <div className="flex justify-between items-baseline mb-10">
-              <h2 className="section-heading">Featured projects</h2>
-              <Link
-                href="/projects"
-                className="link-underline hidden sm:inline-flex"
-              >
-                All projects →
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {featuredProjects.map((project) => (
-                <Link
-                  key={project._id}
-                  href={`/projects/${project.slug?.current}`}
-                  className="card p-6 block group"
-                >
-                  {project.coverImage && (
-                    <div className="relative aspect-video rounded-sm overflow-hidden mb-5 border border-faint">
-                      <Image
-                        src={urlFor(project.coverImage)
-                          .width(640)
-                          .height(360)
-                          .fit('crop')
-                          .auto('format')
-                          .url()}
-                        alt={project.title ?? ''}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                      />
-                    </div>
-                  )}
-                  <p className="font-serif text-xl mb-2 group-hover:text-accent transition-colors">
-                    {project.title}
-                  </p>
-                  <p className="text-sm text-muted leading-relaxed mb-4 font-light">
-                    {project.summary}
-                  </p>
-                  {project.techStack && project.techStack.length > 0 && (
-                    <div className="flex gap-2 flex-wrap mb-4">
-                      {project.techStack.map((tech) => (
-                        <span
-                          key={tech._id}
-                          className="text-[0.6rem] tracking-wide uppercase px-2.5 py-1 bg-faint rounded-sm text-muted"
-                        >
-                          {tech.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <div className="flex gap-5">
-                    {project.repoUrl && (
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[0.65rem] tracking-widest uppercase text-muted hover:text-ink transition-colors"
-                      >
-                        Repository ↗
-                      </a>
-                    )}
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[0.65rem] tracking-widest uppercase text-muted hover:text-ink transition-colors"
-                      >
-                        Live site ↗
-                      </a>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-8 sm:hidden">
-              <Link href="/projects" className="link-underline">
-                All projects →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection {...{ settings, about }} />
+      <FeaturedProjectsSection />
 
       {/* ── Skills / Toolkit ──────────────────────────────── */}
       {skills.length > 0 && (
@@ -451,8 +97,6 @@ export default async function Home() {
         </section>
       )}
 
-      <Testimonials testimonials={testimonials} />
-
       {/* ── Testimonials ──────────────────────────────────── */}
       {mainTestimonial && (
         <section className="section">
@@ -476,7 +120,7 @@ export default async function Home() {
                   <div className="mt-auto flex items-center gap-4">
                     {mainTestimonial.avatar ? (
                       <Image
-                        src={urlFor(mainTestimonial.avatar)
+                        src={genImageBuilder(mainTestimonial.avatar)
                           .width(112)
                           .height(112)
                           .fit('crop')
@@ -518,7 +162,7 @@ export default async function Home() {
                     >
                       {t.avatar ? (
                         <Image
-                          src={urlFor(t.avatar)
+                          src={genImageBuilder(t.avatar)
                             .width(72)
                             .height(72)
                             .fit('crop')
@@ -567,14 +211,14 @@ export default async function Home() {
               {about.avatar ? (
                 <div className="relative aspect-square rounded-sm overflow-hidden border border-faint">
                   <Image
-                    src={urlFor(about.avatar)
+                    src={genImageBuilder(about.avatar)
                       .width(600)
                       .height(600)
                       .fit('crop')
                       .auto('format')
                       .quality(95)
                       .url()}
-                    alt={settings.firstName ?? ''}
+                    alt={settings.names?.full ?? ''}
                     fill
                     className="object-cover"
                   />

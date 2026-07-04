@@ -2,26 +2,40 @@ import { defineQuery } from 'next-sanity'
 
 // Site Settings
 export const SITE_SETTINGS_QUERY = defineQuery(`
-  *[_type == "siteSettings"][0]
+  *[_type == "siteSettings"][0]{
+    ..., // spreads all existing fields
+    names{
+      ...,
+      "full": first + " " + last
+    },
+    'ogImage': *[_type == "about"][0].avatar,
+    favicon{
+      asset->{
+        _id,
+        url
+      }
+    },
+    cv{
+      asset->{
+        _id,
+        url,
+        originalFilename,
+        size
+      }
+    }
+  }
 `)
 
 export const USER_NAMES_QUERY = defineQuery(`
-  *[_type == "siteSettings"][0]{
-  firstName,
-  surname
-  }
+  *[_type == "siteSettings"][0].names{
+      ...,
+      "full": first + " " + last
+    }
 `)
 
 // About
 export const ABOUT_QUERY = defineQuery(`
-  *[_type == "about"][0]{
-    headline,
-    bio,
-    avatar,
-    location,
-    isOpenToWork,
-    resumeUrl
-  }
+  *[_type == "about"][0]
 `)
 
 // Projects
@@ -29,7 +43,7 @@ export const PROJECTS_QUERY = defineQuery(`
   *[_type == "project"] | order(date desc){
     _id,
     title,
-    slug,
+    'slug': slug.current,
     summary,
     techStack[]->{ _id, name },
     repoUrl,
@@ -44,7 +58,7 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(`
   *[_type == "project" && isFeatured == true] | order(date desc){
     _id,
     title,
-    slug,
+    'slug': slug.current,
     summary,
     techStack[]->{ _id, name },
     repoUrl,
@@ -58,7 +72,7 @@ export const PROJECT_QUERY = defineQuery(`
   *[_type == "project" && slug.current == $slug][0]{
     _id,
     title,
-    slug,
+    'slug': slug.current,
     summary,
     description,
     techStack[]->{ _id, name },
@@ -73,7 +87,7 @@ export const PAGINATED_PROJECTS_QUERY = defineQuery(`
   *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{
     _id,
     title,
-    slug,
+    'slug': slug.current,
     summary,
     techStack[]->{ _id, name },
     repoUrl,
@@ -93,11 +107,12 @@ export const POSTS_QUERY = defineQuery(`
   *[_type == "post"] | order(publishedAt desc){
     _id,
     title,
-    slug,
+    'slug': slug.current,
     excerpt,
     coverImage,
+    tags[]->{ _id, name },
     publishedAt,
-    tags[]->{ _id, name }
+    updatedAt
   }
 `)
 
@@ -105,11 +120,12 @@ export const PAGINATED_POSTS_QUERY = defineQuery(`
   *[_type == "post"] | order(publishedAt desc) [$start...$end]{
     _id,
     title,
-    slug,
+    'slug': slug.current,
     excerpt,
     coverImage,
+    tags[]->{ _id, name },
     publishedAt,
-    tags[]->{ _id, name }
+    updatedAt
   }
 `)
 
@@ -121,12 +137,13 @@ export const POST_QUERY = defineQuery(`
   *[_type == "post" && slug.current == $slug][0]{
     _id,
     title,
-    slug,
+    'slug': slug.current,
     excerpt,
     body,
     coverImage,
+    tags[]->{ _id, name },
     publishedAt,
-    tags[]->{ _id, name }
+    updatedAt
   }
 `)
 
@@ -155,6 +172,18 @@ export const EDUCATION_QUERY = defineQuery(`
     endYear,
     description,
     logo
+  }
+`)
+
+// CV
+export const CV_QUERY = defineQuery(`
+  *[_type == "siteSettings"][0].cv{
+    asset->{
+      _id,
+      url,
+      originalFilename,
+      size
+    }
   }
 `)
 

@@ -16,6 +16,7 @@ import {
   PROJECTS_COUNT_QUERY,
   PAGINATED_PROJECTS_QUERY,
   USER_NAMES_QUERY,
+  CV_QUERY,
 } from './queries'
 
 import type {
@@ -29,6 +30,7 @@ import type {
   SKILLS_QUERY_RESULT,
   TESTIMONIALS_QUERY_RESULT,
   USER_NAMES_QUERY_RESULT,
+  CV_QUERY_RESULT,
 } from '../../../sanity.types'
 
 export async function fetchSiteSettings() {
@@ -39,7 +41,7 @@ export async function fetchSiteSettings() {
   return settings
 }
 
-export const fetchUsersNames = (): Promise<USER_NAMES_QUERY_RESULT> => {
+export const fetchUserNames = (): Promise<USER_NAMES_QUERY_RESULT> => {
   return client.fetch(USER_NAMES_QUERY)
 }
 
@@ -104,6 +106,10 @@ export async function fetchExperience(): Promise<EXPERIENCE_QUERY_RESULT> {
 
 export async function fetchEducation(): Promise<EDUCATION_QUERY_RESULT> {
   return client.fetch(EDUCATION_QUERY)
+}
+
+export async function fetchCV(): Promise<CV_QUERY_RESULT> {
+  return client.fetch(CV_QUERY)
 }
 
 export async function fetchSkills(): Promise<SKILLS_QUERY_RESULT> {

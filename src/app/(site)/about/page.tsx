@@ -1,6 +1,6 @@
 import { fetchAbout, fetchSkills, fetchTestimonials } from '@/sanity/lib/fetch'
 import { PortableText } from '@portabletext/react'
-import { urlFor } from '@/sanity/lib/image'
+import { genImageBuilder } from '@/sanity/lib/image'
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
 
 export default async function AboutPage() {
@@ -68,7 +68,7 @@ export default async function AboutPage() {
 
         {about.avatar && (
           <img
-            src={urlFor(about.avatar)
+            src={genImageBuilder(about.avatar)
               .width(400)
               .height(400)
               .fit('crop')

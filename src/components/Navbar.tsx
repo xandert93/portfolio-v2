@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { USER_NAMES_QUERY_RESULT } from '../../sanity.types'
 
 const navLinks = [
   ['Work', '/projects'],
@@ -12,10 +13,10 @@ const navLinks = [
 ] as const
 
 type NavbarProps = {
-  name: string
+  displayName: string | undefined
 }
 
-export default function Navbar({ name }: NavbarProps) {
+export default function Navbar({ displayName }: NavbarProps) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -31,7 +32,7 @@ export default function Navbar({ name }: NavbarProps) {
         href="/"
         className="font-serif italic text-xl text-ink flex items-center gap-1.5"
       >
-        <span className="text-accent not-italic">✦</span> {name}
+        <span className="text-accent not-italic">✦</span> {displayName}
       </Link>
 
       {/* 💻 Navbar */}
@@ -129,7 +130,7 @@ export default function Navbar({ name }: NavbarProps) {
   )
 }
 
-function Poobar({ name }: NavbarProps) {
+function Poobar({ displayName }: NavbarProps) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -160,7 +161,7 @@ function Poobar({ name }: NavbarProps) {
           className="font-serif italic text-lg text-ink flex items-center gap-2 select-none"
         >
           <span className="text-accent not-italic leading-none">✦</span>
-          {name}
+          {displayName}
         </Link>
 
         {/* Mobile toggle */}
