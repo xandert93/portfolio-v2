@@ -1,0 +1,48 @@
+// src/app/not-found.tsx
+import Link from 'next/link'
+
+export default function NotFound() {
+  return (
+    <div className="bg-paper text-ink flex min-h-screen flex-col">
+      {/* Subtle navbar to maintain site consistency */}
+      <main className="flex flex-1 items-center">
+        <div className="section w-full">
+          <div className="section-child relative flex flex-col items-center text-center">
+            {/* Background decorative elements */}
+            <div className="number-glyph pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">
+              404
+            </div>
+
+            <div className="section-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+
+            {/* Content */}
+            <div className="relative z-10 max-w-md">
+              <div className="eyebrow mb-6">Lost in the Archive</div>
+
+              <h1 className="section-heading mb-6 font-serif text-[clamp(6rem,15vw,10rem)] leading-none tracking-tighter text-balance italic">
+                404
+              </h1>
+
+              <p className="text-muted mx-auto mb-10 max-w-sm text-xl">
+                The page you&apos;re looking for has slipped into the void.
+              </p>
+
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                <Link href="/" className="btn btn-primary px-10 py-4 text-base">
+                  Return Home
+                </Link>
+              </div>
+            </div>
+
+            {/* Decorative rule */}
+            <div className="via-accent mt-20 h-px w-24 bg-linear-to-r from-transparent to-transparent" />
+
+            <p className="text-muted mt-6 text-sm font-light tracking-widest">
+              © {new Date().getFullYear()} — All paths eventually lead home
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}

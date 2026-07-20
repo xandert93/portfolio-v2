@@ -144,6 +144,10 @@
     border-top: 1px solid var(--faint);
   }
 
+  .section:first-of-type {
+    border-top: none;
+  }
+
   .section-child {
     max-width: var(--content-max);
     margin-inline: auto;
@@ -213,7 +217,7 @@
   }
 
   /* Oversized index glyph sitting behind each section */
-  .index-glyph {
+  .number-glyph {
     position: absolute;
     pointer-events: none;
     user-select: none;
