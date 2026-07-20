@@ -1,199 +1,249 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { USER_NAMES_QUERY_RESULT } from '../../sanity.types'
 
-const navLinks = [
-  ['Work', '/projects'],
-  ['About', '/about'],
-  ['Experience', '/experience'],
-  ['Blog', '/blog'],
+import NavLink from './NavLink'
+import ThemeToggleButton from './ThemeToggleButton'
+import clsx from 'clsx'
+
+const NAV_LINKS = [
+  { label: 'Work', href: '/projects' },
+  { label: 'About', href: '/about' },
+  { label: 'Experience', href: '/experience' },
+  { label: 'Blog', href: '/blog' },
 ] as const
 
+const SCROLL_THRESHOLD = 12
+const HIDE_AFTER_Y = 140
+
 type NavbarProps = {
-  displayName: string | undefined
+  displayName: string
 }
 
 export default function Navbar({ displayName }: NavbarProps) {
   const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
+  const drawerId = useId()
+  const toggleButtonRef = useRef<HTMLButtonElement>(null)
 
-  const toggleNavbar = (
-    e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement | HTMLButtonElement>,
-  ) => {
-    setIsOpen((prev) => !prev)
-  }
+  const [isMobNavOpen, setIsMobNavOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [showDesktopNav, setShowDesktopNav] = useState(true)
+  const lastY = useRef(0)
 
-  return (
-    <nav className="relative flex justify-between items-center px-6 md:px-12 py-6 border-b border-faint bg-paper z-50">
-      <Link
-        href="/"
-        className="font-serif italic text-xl text-ink flex items-center gap-1.5"
-      >
-        <span className="text-accent not-italic">✦</span> {displayName}
-      </Link>
+  const closeMobileNav = useCallback(() => setIsMobNavOpen(false), [])
+  const toggleMobileNav = useCallback(() => setIsMobNavOpen((prev) => !prev), [])
 
-      {/* 💻 Navbar */}
-      <div className="hidden md:flex items-center gap-8">
-        {navLinks.map(([label, href]) => {
-          const isActive = pathname === href
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`relative text-2xs tracking-widest uppercasetransition-colors group ${
-                !isActive ? 'text-muted hover:text-ink' : 'text-ink'
-              }`}
-            >
-              {label}
-              {/* Underlining Pseudo Element */}
-              <span
-                className={`absolute left-1/2 -bottom-1.5 h-px bg-accent transition-transform duration-300 origin-center w-full ${
-                  isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                } -translate-x-1/2`}
-              />
-            </Link>
-          )
-        })}
-        <Link
-          href="/contact"
-          className={`text-2xs tracking-widest uppercase px-5 py-2 border border-accent/40 text-accent rounded-full hover:bg-accent-light transition-colors ${
-            pathname !== '/contact'
-              ? 'border-accent/40 text-accent hover:bg-accent-dim'
-              : 'border-accent bg-accent-dim text-accent'
-          }`}
-        >
-          Contact
-        </Link>
-      </div>
-
-      {/* 📱 Handburger Menu Button  */}
-      <button
-        onClick={toggleNavbar}
-        className="md:hidden relative w-6 h-[18px] flex flex-col justify-between z-50 cursor-pointer"
-        aria-label="Toggle menu"
-        aria-expanded={isOpen}
-      >
-        {[
-          isOpen ? 'rotate-45 translate-y-[9px]' : '',
-          isOpen ? 'opacity-0 scale-x-0' : '',
-          isOpen ? '-rotate-45 -translate-y-[9px]' : '',
-        ].map((cls, i) => (
-          <span
-            key={i}
-            className={`block h-px w-full bg-ink transition-all duration-300 origin-center ${cls}`}
-          />
-        ))}
-      </button>
-
-      {/* 📱 Overlay */}
-      <div
-        onClick={toggleNavbar}
-        aria-hidden="true"
-        className={`fixed inset-0 bg-paper/70 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
-          !isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      />
-
-      {/* 📱 Menu Drawer */}
-      <div
-        className={`fixed top-0 right-0 h-full w-72 bg-paper border-l border-faint flex flex-col gap-1 px-6 py-24 md:hidden transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        {navLinks.map(([label, href]) => {
-          const isActive = pathname === href
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={toggleNavbar}
-              className={`text-sm uppercase tracking-widest py-4 border-b border-faint hover:text-ink transition-colors ${
-                !isActive ? 'text-muted hover:text-ink' : 'text-ink'
-              } `}
-            >
-              {label}
-            </Link>
-          )
-        })}
-        <Link
-          href="/contact"
-          onClick={toggleNavbar}
-          className="mt-6 text-center text-sm tracking-[0.16em] uppercase py-3 border border-accent/40 text-accent rounded-sm hover:bg-accent-dim transition-colors"
-        >
-          Contact
-        </Link>
-      </div>
-    </nav>
-  )
-}
-
-function Poobar({ displayName }: NavbarProps) {
-  const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const pathname = usePathname()
-
+  // Scroll behavior: shrink header, hide on scroll-down / show on scroll-up
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => {
+      const y = window.scrollY
+      setIsScrolled(y > SCROLL_THRESHOLD)
+
+      const isScrollingDown = y > lastY.current && y > HIDE_AFTER_Y
+      setShowDesktopNav(!isScrollingDown)
+
+      lastY.current = y
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close drawer on route change
+  // Close mobile nav on route change
+  useEffect(closeMobileNav, [pathname, closeMobileNav])
+
+  // Escape key + body scroll lock, scoped to when the drawer is open
   useEffect(() => {
-    setOpen(false)
-  }, [pathname])
+    if (!isMobNavOpen) return
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+
+      closeMobileNav()
+      toggleButtonRef.current?.focus()
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleEsc)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleEsc)
+    }
+  }, [isMobNavOpen, closeMobileNav])
 
   return (
-    <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-paper/90 backdrop-blur-md border-b border-faint shadow-[0_1px_0_0_rgba(255,255,255,0.04)]'
-          : 'bg-paper border-b border-faint'
+    <>
+      <header
+        className={clsx(
+          'fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          showDesktopNav ? 'translate-y-0' : '-translate-y-full',
+        )}
+      >
+        <nav
+          className={clsx(
+            'flex h-(--navbar-h-mobile) border-b px-6 transition-all duration-500 md:h-(--navbar-h) md:px-12',
+            isScrolled
+              ? 'border-faint bg-paper/80 backdrop-blur-xl'
+              : 'bg-paper border-transparent',
+          )}
+        >
+          <div className="flex grow justify-between">
+            <WordmarkLink text={displayName} />
+            <div className="hidden items-center gap-8 text-xs font-medium md:flex">
+              <NavLinksList />
+            </div>
+            <div className="flex items-center gap-2 md:gap-3">
+              <ThemeToggleButton />
+              {/* 💻 - hidden @ < md  */}
+              <ContactLink />
+              {/* 📲 - hidden @ >= md  */}
+              <HamburgerMenuButton
+                ref={toggleButtonRef}
+                handleClick={toggleMobileNav}
+                isOpen={isMobNavOpen}
+                drawerId={drawerId}
+              />
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      {/* 📲 - hidden @ >= md  */}
+      <MobileNavOverlay isOpen={isMobNavOpen} handleClick={closeMobileNav} />
+      {/* 📲 - hidden @ >= md  */}
+      <MobileNavDrawer
+        id={drawerId}
+        isOpen={isMobNavOpen}
+        handleLinkClick={closeMobileNav}
+      />
+    </>
+  )
+}
+
+const WordmarkLink = ({ text }) => {
+  return (
+    <Link
+      href="/"
+      className="group text-ink flex items-center gap-2 font-serif text-lg italic"
+    >
+      <span className="text-accent not-italic transition-transform duration-500 group-hover:rotate-90">
+        ✦
+      </span>{' '}
+      {text}
+    </Link>
+  )
+}
+
+const NavLinksList = () => {
+  const pathname = usePathname()
+
+  return NAV_LINKS.map(({ label, href }) => (
+    <NavLink key={href} href={href} label={label} isActive={pathname === href} />
+  ))
+}
+
+const ContactLink = () => {
+  return (
+    <Link
+      href="/contact"
+      className="border-accent/40 text-accent hover=border-accent hover:bg-accent-dim hidden rounded-full border px-5 py-2 text-xs font-medium tracking-[0.16em] uppercase transition-all duration-300 md:inline-block"
+    >
+      Contact
+    </Link>
+  )
+}
+
+interface HamburgerMenuButtonProps {
+  /** Click handler for the button */
+  handleClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+  /** Whether the menu is currently open */
+  isOpen: boolean
+  /** ID of the drawer/panel this button controls */
+  drawerId: string
+}
+
+const HamburgerMenuButton = forwardRef<HTMLButtonElement, HamburgerMenuButtonProps>(
+  ({ handleClick, isOpen, drawerId }, ref) => {
+    return (
+      <button
+        ref={ref}
+        type="button"
+        onClick={handleClick}
+        aria-label="Toggle menu"
+        aria-expanded={isOpen}
+        aria-controls={drawerId}
+        className="relative z-50 flex h-9 w-9 flex-col items-center justify-center gap-[5px] md:hidden"
+      >
+        {/* Top line */}
+        <span
+          className={`bg-ink block h-px w-5 origin-center transition-all duration-300 ${
+            isOpen ? 'translate-y-[6px] rotate-45' : ''
+          }`}
+        />
+
+        {/* Middle line */}
+        <span
+          className={`bg-ink block h-px w-5 transition-all duration-300 ${
+            isOpen ? 'scale-x-0 opacity-0' : ''
+          }`}
+        />
+
+        {/* Bottom line */}
+        <span
+          className={`bg-ink block h-px w-5 origin-center transition-all duration-300 ${
+            isOpen ? 'translate-y-[-6px] -rotate-45' : ''
+          }`}
+        />
+      </button>
+    )
+  },
+)
+
+const MobileNavOverlay = ({ handleClick, isOpen }) => {
+  return (
+    <div
+      onClick={handleClick}
+      aria-hidden="true"
+      className={`bg-paper/70 fixed inset-0 z-40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+      }`}
+    />
+  )
+}
+
+const MobileNavDrawer = ({ id, isOpen, handleLinkClick }) => {
+  const pathname = usePathname()
+
+  return (
+    <aside
+      id={id}
+      aria-hidden={!isOpen}
+      className={`border-faint bg-paper fixed top-0 right-0 z-50 flex h-full w-72 flex-col gap-0.5 border-l px-8 pt-24 pb-10 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
-      <div className="container flex justify-between items-center h-16">
-        {/* Wordmark */}
-        <Link
-          href="/"
-          className="font-serif italic text-lg text-ink flex items-center gap-2 select-none"
-        >
-          <span className="text-accent not-italic leading-none">✦</span>
-          {displayName}
-        </Link>
+      {NAV_LINKS.map(({ label, href }) => (
+        <NavLink
+          key={href}
+          href={href}
+          label={label}
+          isActive={pathname === href}
+          onClick={handleLinkClick}
+          variant="mobile"
+        />
+      ))}
 
-        {/* Mobile toggle */}
-      </div>
-
-      {/* Mobile drawer */}
-      <div
-        className={`fixed top-0 right-0 h-full w-72 bg-paper border-l border-faint flex flex-col px-8 pt-24 pb-10 gap-0.5 md:hidden transition-transform duration-300 ease-out ${
-          open ? 'translate-x-0' : 'translate-x-full'
-        }`}
+      <Link
+        href="/contact"
+        onClick={handleLinkClick}
+        className="border-accent/40 text-accent hover:bg-accent-dim mt-6 rounded-sm border py-3 text-center text-[0.72rem] tracking-[0.16em] uppercase transition-colors"
       >
-        {navLinks.map(([label, href]) => {
-          const active = pathname === href
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`text-[0.7rem] tracking-[0.16em] uppercase py-4 border-b border-faint transition-colors ${
-                active ? 'text-ink' : 'text-muted hover:text-ink'
-              }`}
-            >
-              {label}
-            </Link>
-          )
-        })}
-        <Link
-          href="/contact"
-          className="mt-6 text-center text-[0.7rem] tracking-[0.16em] uppercase py-3 border border-accent/40 text-accent rounded-sm hover:bg-accent-dim transition-colors"
-        >
-          Contact
-        </Link>
-      </div>
-    </nav>
+        Contact
+      </Link>
+    </aside>
   )
 }
