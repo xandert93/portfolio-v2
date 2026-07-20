@@ -21,11 +21,15 @@ interface TagReference {
   _ref: string
 }
 
-const genTag = (id: string): TagReference => ({
-  _key: id,
-  _type: 'reference',
-  _ref: id,
-})
+const genTag = (name: string): TagReference => {
+  const identifier = 'tag-' + name
+
+  return {
+    _key: identifier,
+    _type: 'reference',
+    _ref: identifier,
+  }
+}
 
 interface Span {
   _key: string
@@ -154,7 +158,7 @@ const pt = {
 
 // To be added during hydration: { _type: post, coverImage: <asset._id> }
 
-export const posts = [
+export const POSTS = [
   {
     title: 'Building a REST API with Node.js and Express from Scratch',
     slug: { current: 'building-rest-api-node-express' },
@@ -558,7 +562,7 @@ export const posts = [
       ),
     ],
 
-    tags: [genTag('tag-nodejs'), genTag('tag-express'), genTag('tag-backend')],
+    tags: [genTag('nodejs'), genTag('express'), genTag('backend')],
   },
 
   {
@@ -583,7 +587,7 @@ export const posts = [
       pt.p('Context for shared app state'),
     ],
 
-    tags: [genTag('tag-react'), genTag('tag-frontend')],
+    tags: [genTag('react'), genTag('frontend')],
   },
 
   {
@@ -610,7 +614,7 @@ export const posts = [
       ),
     ],
 
-    tags: [genTag('tag-auth'), genTag('tag-nodejs')],
+    tags: [genTag('auth'), genTag('nodejs')],
   },
 
   {
@@ -640,7 +644,7 @@ export const posts = [
       pt.bullet('Keep URL structure predictable'),
     ],
 
-    tags: [genTag('tag-api'), genTag('tag-backend')],
+    tags: [genTag('api'), genTag('backend')],
   },
 
   {
@@ -669,7 +673,7 @@ shared/`,
       ),
     ],
 
-    tags: [genTag('tag-fullstack'), genTag('tag-architecture')],
+    tags: [genTag('fullstack'), genTag('architecture')],
   },
 
   {
@@ -694,6 +698,6 @@ shared/`,
       ]),
     ],
 
-    tags: [genTag('tag-nodejs'), genTag('tag-backend')],
+    tags: [genTag('nodejs'), genTag('backend')],
   },
 ]

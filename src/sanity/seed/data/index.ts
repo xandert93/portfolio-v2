@@ -1,0 +1,7 @@
+export { TESTIMONIALS } from './testimonials'
+export { EXPERIENCES } from './experiences'
+export { EDUCATIONS } from './educations'
+export { POSTS } from './posts'
+export { TAGS } from './tags'
+export { SKILLS } from './skills'
+export { PROJECTS } from './projects'

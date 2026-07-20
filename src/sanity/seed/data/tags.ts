@@ -6,6 +6,8 @@ const TAG_NAMES = [
   'TypeScript',
   'Frontend',
   'React',
+  'Vue.js',
+  'Material UI',
   'Redux',
   'Zustand',
   'State Management',
@@ -14,6 +16,8 @@ const TAG_NAMES = [
   'Backend',
   'Node.js',
   'Express',
+  'C#',
+  'ASP.NET Core',
   'API',
   'Auth',
   'NoSQL',
@@ -31,7 +35,7 @@ const toTagId = (name: string) => {
   return 'tag-' + name.toLowerCase().replace(/\s+/g, '').replace(/[^\w]/g, '') // e.g. 'Node.js' => 'tag-nodejs'
 }
 
-export const tags = TAG_NAMES.map((name) => ({
+export const TAGS = TAG_NAMES.map((name) => ({
   _type: 'tag',
   _id: toTagId(name),
   name,

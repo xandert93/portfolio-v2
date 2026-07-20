@@ -53,3 +53,19 @@ npm i -D @types/pluralize
 Import into script:
 import pluralize from 'pluralize'
 */
+
+interface SkillReference {
+  _key: string
+  _type: 'reference'
+  _ref: string
+}
+
+export const genSkill = (name: string): SkillReference => {
+  const identifier = 'skill-' + name
+
+  return {
+    _key: identifier,
+    _type: 'reference',
+    _ref: identifier,
+  }
+}
