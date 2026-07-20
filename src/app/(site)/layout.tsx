@@ -1,28 +1,41 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { DM_Sans, Fraunces } from 'next/font/google'
-import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { fetchUserNames, fetchSiteSettings } from '@/sanity/lib/fetch'
 import { genFaviconUrl, genImageBuilder } from '@/sanity/lib/image'
 
+import './globals.css'
+import { ThemeProvider } from '@/components/ThemeProvider'
+
 const dmSans = DM_Sans({
-  variable: '--font-dm-sans',
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
+  variable: '--font-dm-sans',
+  display: 'swap',
 })
 
 const fraunces = Fraunces({
-  variable: '--font-fraunces',
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
+  variable: '--font-fraunces',
+  display: 'swap',
+  axes: ['opsz'],
   style: ['normal', 'italic'],
 })
+
+export const viewport: Viewport = {
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f7f4ed' },
+    { media: '(prefers-color-scheme: dark)', color: '#0d0c10' },
+  ],
+}
 
 const siteUrl = process.env.SITE_URL!
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await fetchSiteSettings()
+
+  if (!settings) throw new Error('Site settings not found')
 
   if (!settings.names) throw new Error('Missing names')
   if (!settings.seo) throw new Error('Missing SEO')
@@ -51,13 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${fullName}`,
     },
     description,
-    keywords: [
-      'portfolio',
-      'software engineer',
-      'next.js',
-      'react',
-      'typescript',
-    ],
+    keywords: ['portfolio', 'software engineer', 'next.js', 'react', 'typescript'],
     authors: [{ name: fullName }],
     creator: fullName,
 
@@ -89,22 +96,29 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-type Props = {
-  children: React.ReactNode
-}
+type Props = Readonly<{ children: React.ReactNode }>
 
 export default async function RootLayout({ children }: Props) {
-  const names = await fetchUserNames()
-  if (!names) return 'Add names to Site Settings'
+  const settings = await fetchSiteSettings()
+  if (!settings) return 'Add Site Settings to Sanity'
 
   return (
-    <html lang="en">
-      <body
-        className={`${dmSans.variable} ${fraunces.variable} font-sans bg-paper text-ink`}
-      >
-        <Navbar displayName={names.display} />
-        {children}
-        <Footer />
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${dmSans.variable} ${fraunces.variable} bg-background`}
+    >
+      <body className="antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar displayName={settings.names.display} />
+          <main className="pt-(--navbar-h-mobile) md:pt-(--navbar-h)">{children}</main>
+          <Footer settings={settings} />
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -6,275 +6,56 @@ import {
   fetchSiteSettings,
   fetchFeaturedProjects,
   fetchAbout,
-  fetchSkills,
   fetchTestimonials,
+  fetchTechSkills,
 } from '@/sanity/lib/fetch'
-import { genImageBuilder } from '@/sanity/lib/image'
-import Testimonials from '@/components/sections/TestimonialsSection'
-import HeroSection from './(home)/_components/HeroSection'
-import FeaturedProjectsSection from './(home)/_components/FeaturedProjectsSection'
 
-const techIcons: Record<string, { path: string; color: string }> = {
-  React: {
-    path: 'M12 9.861a2.139 2.139 0 100 4.278 2.139 2.139 0 100-4.278zm-5.992 6.394l-.472-.12C2.018 15.246 0 13.737 0 11.996s2.018-3.25 5.536-4.139l.472-.119.133.468a23.53 23.53 0 001.363 3.578l.101.213-.101.213a23.307 23.307 0 00-1.363 3.578zm.247-8.198C3.51 8.853 1.235 10.156 1.235 12c0 1.844 2.276 3.147 5.02 3.943-.572-1.224-1.057-2.521-1.451-3.943.394-1.422.879-2.719 1.451-3.943zm5.745-8.198l.472.119c3.518.889 5.536 2.398 5.536 4.139s-2.018 3.25-5.536 4.139l-.472.12-.133-.469a23.31 23.31 0 00-1.363-3.578l-.101-.213.101-.213c.534-1.115.992-2.295 1.363-3.578zm-.247 8.198c1.522 1.224 2.276 2.521 1.451 3.943.572-1.224 1.057-2.521 1.451-3.943-.394-1.422-.879-2.719-1.451-3.943-1.522 1.224-2.276 2.521-1.451 3.943z',
-    color: '#61DAFB',
-  },
-  'Next.js': {
-    path: 'M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 01-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 00-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.25 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.179 2.977-.578 4.323-1.265.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 00-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.011 3.515-.052 3.595a.426.426 0 01-.206.214c-.075.038-.14.045-.495.045h-.34l-.108-.068a.438.438 0 01-.157-.171l-.05-.107.005-4.704.007-4.706.073-.092a.645.645 0 01.174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.328 10760.328 0 004.735 7.17l1.9 2.879.096-.063a12.318 12.318 0 002.073-1.94 11.876 11.876 0 002.553-5.385c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.86-8.292-8.208-9.695a12.597 12.597 0 00-2.499-.523A33.119 33.119 0 0011.573 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 01.246.288c.018.06.023 1.365.018 4.304l-.006 4.218-.766-1.176-.767-1.176v-3.044c0-1.966.008-3.06.02-3.107a.498.498 0 01.253-.298c.069-.032.12-.04.456-.05z',
-    color: '#FFFFFF',
-  },
-  TypeScript: {
-    path: 'M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm17.09 4.594H5.41l.213 2.531h12.487l-.232 2.83h-8.165l.227 2.412h7.715l-.683 5.92-3.84 1.05-3.86-1.06-.245-2.547H6.485l.464 4.5L12 21.516l6.116-1.62L19.412 4.594H18.59z',
-    color: '#3178C6',
-  },
-  'Tailwind CSS': {
-    path: 'M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.665,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.975,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2,1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.975,12,6.001,12z',
-    color: '#06B6D4',
-  },
-  Sanity: {
-    path: 'M3.34 17.087a3.66 3.66 0 01-.36-1.587c0-2.027 1.493-3.466 3.667-3.466 1.733 0 3 .787 3.493 2.067l-1.92.747c-.293-.587-.84-.92-1.573-.92-.787 0-1.32.4-1.32 1.013 0 .507.36.787 1.213 1.013l1.36.36c1.787.467 2.787 1.387 2.787 2.92 0 2.16-1.733 3.493-4.067 3.493-2.16 0-3.733-1.04-4.293-2.733l2-.733c.32.84 1.067 1.293 2.187 1.293.96 0 1.587-.4 1.587-1.04 0-.52-.36-.84-1.293-1.067l-1.387-.36c-1.493-.387-2.453-1.213-2.6-2.467zm9.213-9.32c0-2.4 1.84-4.054 4.387-4.054 2.467 0 4.213 1.467 4.36 3.787l-2.187.347c-.107-1.227-.92-1.973-2.147-1.973-1.187 0-2.027.747-2.027 1.84 0 1.067.787 1.547 2.04 1.92l1.013.293c2.04.587 3.387 1.733 3.387 3.787 0 2.4-1.84 3.96-4.493 3.96-2.667 0-4.52-1.547-4.733-4.054l2.227-.347c.16 1.36 1.067 2.187 2.467 2.187 1.32 0 2.187-.667 2.187-1.68 0-.96-.693-1.467-1.973-1.84l-1.04-.293c-1.973-.56-3.467-1.6-3.467-3.68z',
-    color: '#F03E2F',
-  },
-  PostgreSQL: {
-    path: 'M23.111 8.226c-.119-.36-.42-.61-.834-.667-.198-.028-.426-.024-.69.012-.466.064-1.045.063-1.748-.004.394-.65.717-1.32.964-1.991.39-1.045.62-2.044.654-2.871.034-.83-.124-1.55-.586-2.005C20.317.198 19.586.026 18.748.116c-.83.088-1.713.413-2.486.916-.586-.21-1.207-.36-1.851-.444C13.376.339 12.295.36 11.296.55c-.957-.5-1.857-.776-2.595-.776-.55 0-1.03.137-1.397.452-.485.413-.732 1.077-.69 1.871.026.49.165 1.063.402 1.673-.668.355-1.207.834-1.6 1.41-.392.575-.6 1.214-.6 1.847 0 .283.04.563.118.834-.69.222-1.255.563-1.66 1.005-.49.534-.752 1.214-.752 1.96 0 .613.183 1.275.522 1.91-.5.36-.86.84-1.04 1.41-.18.575-.16 1.214.07 1.847-.49.34-.838.78-1.005 1.275-.165.49-.16 1.005.03 1.5-.4.34-.667.752-.78 1.214-.114.46-.07.943.13 1.397-.327.34-.534.752-.6 1.197-.066.444.02.91.246 1.34-.246.296-.394.64-.42 1.005-.026.36.07.732.276 1.05.21.32.534.583.91.752.376.17.81.21 1.226.114.42-.096.81-.32 1.1-.63.29-.31.45-.71.45-1.13 0-.12-.014-.24-.04-.357.42-.06.81-.244 1.1-.524.29-.28.45-.652.45-1.045 0-.196-.04-.39-.117-.572.39-.143.71-.4.91-.736.196-.336.276-.732.226-1.13.31-.18.55-.45.69-.78.14-.327.166-.69.07-1.04.276-.218.476-.504.572-.83.096-.327.083-.677-.037-.99.243-.265.404-.6.452-.96.05-.36-.02-.73-.198-1.04.16-.31.22-.66.17-1.01-.05-.35-.21-.677-.46-.93.08-.36.06-.78-.226-1.12-.187-.34-.467-.62-.81-.79.14-1.107.05-2.07-.292-2.737z',
-    color: '#4169E1',
-  },
-}
+import {
+  HeroSection,
+  FeaturedProjectsSection,
+  TechSkillsSection,
+  TestimonialsSection,
+  AboutSection,
+  ContactCtaSection,
+} from './(home)/_components'
 
 export default async function Home() {
-  const [settings, about, skills, testimonials] = await Promise.all([
+  // Parallel fetch is best for a a page composed from one CMS payload + if same data is needed in several components e.g. about
+  const [settings, about, projects, techSkills, testimonials] = await Promise.all([
     fetchSiteSettings(),
     fetchAbout(),
-    fetchSkills(),
+    fetchFeaturedProjects(),
+    fetchTechSkills(),
     fetchTestimonials(),
   ])
 
-  const mainTestimonial = testimonials[0]
-  const sideTestimonials = testimonials.slice(1, 3)
+  // Page needs settings & about. Fail fast if absent.
+  if (!settings)
+    throw new Error('Site Settings document is missing. Please add to Sanity Studio!')
+
+  if (!about) throw new Error('About document is missing. Please add to Sanity Studio!')
 
   return (
-    <main className="bg-paper text-ink min-h-screen">
-      <HeroSection {...{ settings, about }} />
-      <FeaturedProjectsSection />
-
-      {/* ── Skills / Toolkit ──────────────────────────────── */}
-      {skills.length > 0 && (
-        <section className="section">
-          <div className="container">
-            <div className="ruled pl-0 md:pl-8">
-              <span className="label">Toolkit</span>
-              <h2 className="section-heading mb-10">What I work with</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {skills.map((skill) => {
-                  const icon = skill.name ? techIcons[skill.name] : undefined
-                  return (
-                    <div
-                      key={skill._id}
-                      className="card flex items-center gap-3 px-5 py-4"
-                    >
-                      {icon ? (
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 24 24"
-                          fill={icon.color}
-                          className="shrink-0"
-                        >
-                          <path d={icon.path} />
-                        </svg>
-                      ) : (
-                        <span className="w-5 h-5 rounded-full bg-faint shrink-0" />
-                      )}
-                      <span className="text-sm font-medium truncate">
-                        {skill.name}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Testimonials ──────────────────────────────────── */}
-      {mainTestimonial && (
-        <section className="section">
-          <div className="container">
-            <div className="ruled pl-0 md:pl-8">
-              <span className="label">What people say</span>
-              <h2 className="section-heading mb-10">Kind words</h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-5">
-                {/* Main testimonial */}
-                <div className="card relative overflow-hidden p-8 md:p-10 flex flex-col border-accent/20">
-                  <p
-                    aria-hidden
-                    className="absolute -top-6 right-4 font-serif italic text-[8rem] leading-none text-accent/[0.07] select-none pointer-events-none"
-                  >
-                    &rdquo;
-                  </p>
-                  <p className="relative font-serif text-xl md:text-2xl font-light leading-snug mb-8 text-ink">
-                    {mainTestimonial.quote}
-                  </p>
-                  <div className="mt-auto flex items-center gap-4">
-                    {mainTestimonial.avatar ? (
-                      <Image
-                        src={genImageBuilder(mainTestimonial.avatar)
-                          .width(112)
-                          .height(112)
-                          .fit('crop')
-                          .auto('format')
-                          .url()}
-                        alt={mainTestimonial.authorName ?? ''}
-                        width={48}
-                        height={48}
-                        className="rounded-full border border-accent/30 shrink-0"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-faint border border-accent/30 flex items-center justify-center font-serif text-sm text-accent shrink-0">
-                        {mainTestimonial.authorName
-                          ?.split(' ')
-                          .map((n) => n[0])
-                          .join('')}
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-sm font-medium">
-                        {mainTestimonial.authorName}
-                      </p>
-                      <p className="text-xs text-muted mt-0.5">
-                        {mainTestimonial.role}
-                        {mainTestimonial.company
-                          ? `, ${mainTestimonial.company}`
-                          : ''}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Side testimonials */}
-                <div className="flex flex-col gap-5">
-                  {sideTestimonials.map((t) => (
-                    <div
-                      key={t._id}
-                      className="card p-6 flex gap-4 items-start flex-1"
-                    >
-                      {t.avatar ? (
-                        <Image
-                          src={genImageBuilder(t.avatar)
-                            .width(72)
-                            .height(72)
-                            .fit('crop')
-                            .auto('format')
-                            .url()}
-                          alt={t.authorName ?? ''}
-                          width={36}
-                          height={36}
-                          className="rounded-full border border-faint shrink-0 mt-0.5"
-                        />
-                      ) : (
-                        <div className="w-9 h-9 rounded-full bg-faint border border-faint flex items-center justify-center font-serif text-xs text-muted shrink-0 mt-0.5">
-                          {t.authorName
-                            ?.split(' ')
-                            .map((n) => n[0])
-                            .join('')}
-                        </div>
-                      )}
-                      <div>
-                        <p className="text-sm text-muted leading-relaxed font-light mb-2">
-                          {t.quote}
-                        </p>
-                        <p className="text-sm font-medium">{t.authorName}</p>
-                        <p className="text-xs text-muted mt-0.5">
-                          {t.role}
-                          {t.company ? `, ${t.company}` : ''}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── About teaser ──────────────────────────────────── */}
-      <section className="section">
-        <div className="container">
-          <div className="ruled pl-0 md:pl-8">
-            <span className="label">About me</span>
-            <h2 className="section-heading mb-10">{about.headline}</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-[0.75fr_1.25fr] gap-10 items-start">
-              {about.avatar ? (
-                <div className="relative aspect-square rounded-sm overflow-hidden border border-faint">
-                  <Image
-                    src={genImageBuilder(about.avatar)
-                      .width(600)
-                      .height(600)
-                      .fit('crop')
-                      .auto('format')
-                      .quality(95)
-                      .url()}
-                    alt={settings.names?.full ?? ''}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-square rounded-sm bg-warm border border-faint flex items-center justify-center text-muted text-sm">
-                  No photo set
-                </div>
-              )}
-
-              <div>
-                <div className="text-base text-muted leading-loose font-light mb-6 [&_strong]:text-accent [&_strong]:font-medium">
-                  <PortableText value={about.bio} />
-                </div>
-                <div className="flex gap-2 flex-wrap mb-8">
-                  {['Sport', 'Music', 'Cooking', 'Travel'].map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[0.65rem] tracking-wide uppercase px-3.5 py-1.5 bg-accent-light border border-accent/20 rounded-sm text-accent"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <Link href="/about" className="link-underline">
-                  More about me →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Closing CTA ───────────────────────────────────── */}
-      <section className="section relative overflow-hidden text-center">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        >
-          <div className="w-[500px] h-[300px] rounded-full bg-accent/9 blur-[80px]" />
-        </div>
-        <div className="container relative z-10">
-          <h2 className="font-serif text-[clamp(2rem,5vw,3.5rem)] leading-tight mb-4">
-            Got a project in{' '}
-            <em className="italic text-accent font-light">mind</em>?
-          </h2>
-          <p className="text-base text-muted mb-8 font-light max-w-sm mx-auto">
-            {about.isOpenToWork
-              ? "I'm open to freelance work and new opportunities."
-              : "I'm currently taking on select projects."}
-          </p>
-          <Link href="/contact" className="btn-primary">
-            Let&apos;s talk →
-          </Link>
-        </div>
-      </section>
-    </main>
+    <>
+      <HeroSection settings={settings} about={about} />
+      <FeaturedProjectsSection projects={projects} />
+      <TechSkillsSection skills={techSkills} />
+      <TestimonialsSection testimonials={testimonials} />
+      <AboutSection about={about} />
+      <ContactCtaSection about={about} isOpenToWork={about.isOpenToWork} />
+    </>
   )
 }
+
+/*📚 How does a server component handle a throw?
+
+In a Next.js Server Component (whether it's async or not), throw new Error() does not crash your server process. Instead, Next.js catches the error and renders the nearest error boundary.
+
+In the component above:
+
+- In development, you'll see the Next.js error overlay with the stack trace.
+- In production, the user sees Next.js's generic 500 error page. The specific error message isn't exposed to the client, but it's logged on the server.
+
+If we have app/error.tsx, <Error error={error} reset={reset} /> is executed.
+
+*/

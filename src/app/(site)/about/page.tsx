@@ -1,7 +1,8 @@
 import { fetchAbout, fetchSkills, fetchTestimonials } from '@/sanity/lib/fetch'
 import { PortableText } from '@portabletext/react'
 import { genImageBuilder } from '@/sanity/lib/image'
-import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
+
+import TestimonialsSection from '@/components/sections/TestimonialsSection'
 
 export default async function AboutPage() {
   const [about, skills, testimonials] = await Promise.all([
@@ -15,50 +16,49 @@ export default async function AboutPage() {
       const category = skill.category ?? 'Other'
       if (!groups[category]) groups[category] = []
       groups[category].push(skill)
+
       return groups
     },
     {},
   )
 
+  const hasTestimonials = Boolean(testimonials.length)
+
   return (
-    <main className="max-w-4xl mx-auto px-6 py-16">
+    <main className="mx-auto max-w-4xl px-6 py-16">
       <div className="mb-16">
-        <p className="text-2xs tracking-widest uppercase text-muted mb-4">
-          About
-        </p>
-        <h1 className="font-serif text-5xl text-ink">Who I am</h1>
+        <p className="text-2xs text-muted mb-4 tracking-widest uppercase">About</p>
+        <h1 className="text-ink font-serif text-5xl">Who I am</h1>
       </div>
 
       {/* Hero */}
-      <section className="grid grid-cols-[1fr_200px] gap-12 items-start mb-20 pb-20 border-b border-faint">
+      <section className="border-faint mb-20 grid grid-cols-[1fr_200px] items-start gap-12 border-b pb-20">
         <div>
           {about.isOpenToWork && (
-            <div className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase bg-green-badge-bg text-green-badge px-4 py-1.5 rounded-full mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-badge animate-pulse" />
-              Open to work
+            <div className="text-2xs bg-green-badge-bg text-green-badge mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 tracking-widest uppercase">
+              <span className="bg-green-badge h-1.5 w-1.5 animate-pulse rounded-full" />
+              Available for Work
             </div>
           )}
 
-          <h2 className="font-serif text-3xl text-ink mb-6 leading-snug">
+          <h2 className="text-ink mb-6 font-serif text-3xl leading-snug">
             {about.headline}
           </h2>
 
           {about.bio && (
-            <div className="text-sm text-muted leading-relaxed font-light space-y-4">
+            <div className="text-muted space-y-4 text-sm leading-relaxed font-light">
               <PortableText value={about.bio} />
             </div>
           )}
 
-          <div className="flex gap-6 mt-8">
-            {about.location && (
-              <p className="text-xs text-muted">{about.location}</p>
-            )}
+          <div className="mt-8 flex gap-6">
+            {about.location && <p className="text-muted text-xs">{about.location}</p>}
             {about.resumeUrl && (
               <a
                 href={about.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-2xs tracking-widest uppercase text-ink border-b border-ink pb-0.5 hover:text-accent hover:border-accent transition-colors"
+                className="text-2xs text-ink border-ink hover:text-accent hover:border-accent border-b pb-0.5 tracking-widest uppercase transition-colors"
               >
                 Download résumé ↗
               </a>
@@ -75,46 +75,39 @@ export default async function AboutPage() {
               .auto('format')
               .url()}
             alt="Profile photo"
-            className="w-full rounded-lg border border-faint block"
+            className="border-faint block w-full rounded-lg border"
           />
         )}
       </section>
 
       {/* Skills */}
-      <section className="mb-20 pb-20 border-b border-faint">
-        <p className="text-2xs tracking-widest uppercase text-muted mb-10">
-          Skills
-        </p>
+      <section className="border-faint mb-20 border-b pb-20">
+        <p className="text-2xs text-muted mb-10 tracking-widest uppercase">Skills</p>
         <div className="flex flex-col gap-10">
-          {Object.entries(skillsByCategory).map(
-            ([category, categorySkills]) => (
-              <div key={category} className="grid grid-cols-[140px_1fr] gap-8">
-                <p className="text-xs text-muted pt-1">{category}</p>
-                <div className="flex gap-2 flex-wrap">
-                  {categorySkills.map((skill) => (
-                    <span
-                      key={skill._id}
-                      className="text-xs px-3 py-1.5 bg-warm border border-faint rounded-md text-ink font-medium"
-                    >
-                      {skill.name}
-                      {skill.proficiency && (
-                        <span className="text-muted font-normal ml-1.5">
-                          · {skill.proficiency}
-                        </span>
-                      )}
-                    </span>
-                  ))}
-                </div>
+          {Object.entries(skillsByCategory).map(([category, categorySkills]) => (
+            <div key={category} className="grid grid-cols-[140px_1fr] gap-8">
+              <p className="text-muted pt-1 text-xs">{category}</p>
+              <div className="flex flex-wrap gap-2">
+                {categorySkills.map(({ _id, name, proficiency }) => (
+                  <span
+                    key={_id}
+                    className="bg-warm border-faint text-ink rounded-md border px-3 py-1.5 text-xs font-medium"
+                  >
+                    {name}
+                    {proficiency && (
+                      <span className="text-muted ml-1.5 font-normal">
+                        · {proficiency}
+                      </span>
+                    )}
+                  </span>
+                ))}
               </div>
-            ),
-          )}
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Testimonials */}
-      {testimonials.length > 0 && (
-        <TestimonialsSection testimonials={testimonials} />
-      )}
+      {hasTestimonials && <TestimonialsSection testimonials={testimonials} />}
     </main>
   )
 }

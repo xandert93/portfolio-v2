@@ -4,10 +4,6 @@ import { fetchPost } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
 import { codeToHtml } from 'shiki'
 
-type PageProps = {
-  params: Promise<{ slug: string }>
-}
-
 const estimateReadingTime = (body: any): number => {
   const text = body
     ?.map((block: any) => {
@@ -77,9 +73,7 @@ const portableTextComponents: PortableTextComponents = {
   },
 
   list: {
-    bullet: ({ children }) => (
-      <ul className="my-6 space-y-2.5 pl-1">{children}</ul>
-    ),
+    bullet: ({ children }) => <ul className="my-6 space-y-2.5 pl-1">{children}</ul>,
     number: ({ children }) => (
       <ol className="my-6 space-y-2.5 pl-1 list-decimal list-inside marker:text-accent marker:font-medium">
         {children}
@@ -115,9 +109,7 @@ const portableTextComponents: PortableTextComponents = {
       <a
         href={value?.href}
         target={value?.href?.startsWith('http') ? '_blank' : undefined}
-        rel={
-          value?.href?.startsWith('http') ? 'noopener noreferrer' : undefined
-        }
+        rel={value?.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
         className="text-accent underline underline-offset-[3px] decoration-accent/30 hover:decoration-accent transition-colors"
       >
         {children}
@@ -131,11 +123,7 @@ const portableTextComponents: PortableTextComponents = {
       return (
         <figure className="my-8 sm:my-10">
           <img
-            src={genImageBuilder(value)
-              .width(1400)
-              .fit('max')
-              .auto('format')
-              .url()}
+            src={genImageBuilder(value).width(1400).fit('max').auto('format').url()}
             alt={value.alt ?? ''}
             className="w-full rounded-xl border border-faint"
           />
@@ -184,18 +172,21 @@ const portableTextComponents: PortableTextComponents = {
   },
 }
 
+type PageProps = {
+  params: Promise<{ slug: string }>
+}
+
 export default async function PostDetailPage({ params }: PageProps) {
   const { slug } = await params
 
   const post = await fetchPost(slug)
-  if (!post) {
+
+  if (!post)
     return (
       <main className="max-w-4xl mx-auto px-5 sm:px-6 py-20 sm:py-32 text-center">
-        <p className="text-2xs tracking-widest uppercase text-muted mb-4">
-          404
-        </p>
+        <p className="text-2xs tracking-widest uppercase text-muted mb-4">404</p>
         <h1 className="font-serif text-2xl sm:text-3xl text-ink mb-6">
-          We couldn&apos;t find that post
+          We couldn't find that post
         </h1>
         <Link
           href="/blog"
@@ -205,10 +196,8 @@ export default async function PostDetailPage({ params }: PageProps) {
         </Link>
       </main>
     )
-  }
 
-  const { title, excerpt, body, coverImage, publishedAt, updatedAt } = post
-  const tags = post.tags ?? []
+  const { title, excerpt, body, tags, coverImage, publishedAt, updatedAt } = post
 
   const readingTime = estimateReadingTime(body)
   const highlightedBody = await highlightCodeBlocks(body)
@@ -265,9 +254,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         </h1>
 
         <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted">
-          {formattedDate && (
-            <time dateTime={publishedAt ?? ''}>{formattedDate}</time>
-          )}
+          {formattedDate && <time dateTime={publishedAt ?? ''}>{formattedDate}</time>}
           {formattedDate && <span className="w-1 h-1 rounded-full bg-faint" />}
           <span>{readingTime} min read</span>
 
@@ -310,10 +297,7 @@ export default async function PostDetailPage({ params }: PageProps) {
 
       {/* body */}
       <article className="max-w-none">
-        <PortableText
-          value={highlightedBody}
-          components={portableTextComponents}
-        />
+        <PortableText value={highlightedBody} components={portableTextComponents} />
       </article>
 
       {/* footer nav */}

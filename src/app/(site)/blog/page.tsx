@@ -16,13 +16,10 @@ export default async function BlogPage({ searchParams }: PageProps) {
   return (
     <main className="max-w-3xl mx-auto px-6 py-16">
       <div className="mb-16">
-        <p className="text-2xs tracking-widest uppercase text-muted mb-4">
-          Blog
-        </p>
+        <p className="text-2xs tracking-widest uppercase text-muted mb-4">Blog</p>
         <h1 className="font-serif text-5xl text-ink mb-4">Writing</h1>
         <p className="text-sm text-muted font-light leading-relaxed">
-          Thoughts on development, process, and things I've figured out the hard
-          way.
+          Thoughts on development, process and things I've figured out the hard way.
         </p>
       </div>
 
@@ -91,10 +88,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                 )}
 
                 {formattedDate && (
-                  <time
-                    dateTime={post.publishedAt ?? ''}
-                    className="text-2xs text-muted"
-                  >
+                  <time dateTime={post.publishedAt ?? ''} className="text-2xs text-muted">
                     {formattedDate}
                   </time>
                 )}
