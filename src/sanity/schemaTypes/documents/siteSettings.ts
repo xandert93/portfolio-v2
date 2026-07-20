@@ -88,8 +88,7 @@ export const siteSettings = defineType({
         defineField({
           name: 'title',
           title: 'Title',
-          description:
-            'The SEO title shown in search engine results and browser tabs.',
+          description: 'The SEO title shown in search engine results and browser tabs.',
           type: 'string',
           validation: (r) => r.required(),
         }),
@@ -116,7 +115,7 @@ export const siteSettings = defineType({
       name: 'phone',
       title: 'Phone Number',
       type: 'string',
-      description: 'Use international format, e.g. +447700900123',
+      description: 'Use international format e.g. +447700900123.',
     }),
 
     defineField({
@@ -126,8 +125,7 @@ export const siteSettings = defineType({
       validation: (Rule) =>
         Rule.custom((value, context) => {
           const phone = context.document?.phone
-          if (value && !phone)
-            return 'Cannot enable WhatsApp without a phone number'
+          if (value && !phone) return 'Cannot enable WhatsApp without a phone number'
           return true
         }),
     }),
@@ -151,12 +149,27 @@ export const siteSettings = defineType({
     // 5. Downloads
     defineField({
       name: 'cv',
-      title: 'CV / Resume',
+      title: 'CV',
       type: 'file',
-      description: 'Upload your CV as a PDF',
+      description: 'Upload your CV as a PDF.',
       options: {
         accept: '.pdf',
       },
     }),
   ],
+
+  preview: {
+    select: {
+      display: 'names.display',
+      first: 'names.first',
+      last: 'names.last',
+      media: 'favicon',
+    },
+    prepare({ display, first, last, media }) {
+      return {
+        title: display || `${first} ${last}`,
+        media,
+      }
+    },
+  },
 })

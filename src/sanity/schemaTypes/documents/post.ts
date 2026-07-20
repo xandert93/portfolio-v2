@@ -23,6 +23,7 @@ export const post = defineType({
       name: 'body',
       title: 'Body',
       type: 'array',
+      validation: (r) => r.required(),
       of: [
         { type: 'block' },
         { type: 'image', options: { hotspot: true } },

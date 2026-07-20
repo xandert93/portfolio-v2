@@ -5,28 +5,66 @@ export const about = defineType({
   title: 'About',
   type: 'document',
   fields: [
-    defineField({ name: 'headline', title: 'Headline', type: 'string' }),
+    defineField({
+      name: 'headline',
+      title: 'Headline',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'bio',
       title: 'Bio',
       type: 'array',
       of: [{ type: 'block' }],
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: 'avatar',
       title: 'Avatar',
       type: 'image',
       options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          description:
+            'Describe the image to be read aloud by screen readers for users with visual impairments.',
+          validation: (Rule) => Rule.required(),
+        }),
+      ],
     }),
-    defineField({ name: 'location', title: 'Location', type: 'string' }),
+    defineField({
+      name: 'location',
+      title: 'Location',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'isOpenToWork',
-      title: 'Open to Work',
+      title: 'Available for Work',
       type: 'boolean',
       initialValue: false,
+      validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: 'resumeUrl', title: 'Résumé URL', type: 'url' }),
   ],
+
+  preview: {
+    select: {
+      title: 'headline',
+      location: 'location',
+      isOpenToWork: 'isOpenToWork',
+      media: 'avatar',
+    },
+    prepare({ title, location, isOpenToWork, media }) {
+      return {
+        title,
+        subtitle: `${location || 'No location'}${isOpenToWork ? ' • Available for Work' : ''}`,
+        media,
+      }
+    },
+  },
 })
 
 /*

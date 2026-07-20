@@ -4,60 +4,69 @@ export const testimonial = defineType({
   name: 'testimonial',
   title: 'Testimonials',
   type: 'document',
+  description: 'Customer testimonials and endorsements used throughout the website.',
   fields: [
     defineField({
-      name: 'authorName',
-      title: 'Author Name',
-      type: 'string',
+      name: 'author',
+      title: 'Author',
+      type: 'object',
+      description: 'Information about the person who provided the testimonial.',
       validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'role',
-      title: 'Role',
-      type: 'string',
-      validation: (r) =>
-        r.custom((role, context) => {
-          const company = (context.document as any)?.company
-          if (!role && !company) return 'Provide at least a role or a company'
-          return true
+      fields: [
+        defineField({
+          name: 'name',
+          title: 'Name',
+          type: 'string',
+          description: 'The full name of the person giving the testimonial.',
+          validation: (r) => r.required(),
         }),
-    }),
-    defineField({
-      name: 'company',
-      title: 'Company',
-      type: 'string',
-      validation: (r) =>
-        r.custom((company, context) => {
-          const role = (context.document as any)?.role
-          if (!role && !company) return 'Provide at least a role or a company'
-          return true
+
+        defineField({
+          name: 'avatar',
+          title: 'Avatar',
+          type: 'image',
+          description: 'Profile image of the testimonial author.',
+          options: {
+            hotspot: true,
+          },
         }),
+
+        defineField({
+          name: 'role',
+          title: 'Role',
+          type: 'string',
+          description:
+            'The author’s job title or position (for example, CEO or Marketing Director).',
+          validation: (r) => r.required(),
+        }),
+
+        defineField({
+          name: 'company',
+          title: 'Company',
+          type: 'string',
+          description: 'The organisation or company the author represents.',
+          validation: (r) => r.required(),
+        }),
+      ],
     }),
-    defineField({
-      name: 'avatar',
-      title: 'Avatar',
-      type: 'image',
-      options: { hotspot: true },
-    }),
+
     defineField({
       name: 'quote',
       title: 'Quote',
       type: 'text',
-      rows: 4,
-      validation: (r) => r.required(),
+      description: 'The testimonial text provided by the customer or user.',
+      rows: 5,
+      validation: (r) =>
+        r.required().min(20).error('A testimonial should contain at least 20 characters'),
     }),
-    defineField({
-      name: 'date',
-      title: 'Date',
-      type: 'date',
-    }),
+
     defineField({
       name: 'isFeatured',
       title: 'Featured',
       type: 'boolean',
-      initialValue: false,
       description:
-        'Mark this testimonial as featured for homepage or highlight sections',
+        'Display this testimonial in featured sections such as the homepage or highlighted testimonial blocks.',
+      initialValue: false,
     }),
   ],
 })
