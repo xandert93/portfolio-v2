@@ -109,7 +109,7 @@ export default function Section({
             aria-hidden
             style={{ y: numberY }}
             className={clsx(
-              'index-glyph',
+              'number-glyph',
               glowVertical === 'top' ? 'top-4 md:top-10' : 'bottom-4 md:bottom-10',
               glyphSide === 'left' ? 'left-4 md:left-20' : 'right-4 md:right-20',
             )}
@@ -189,7 +189,7 @@ const IndexGlyph = ({
       aria-hidden
       style={style}
       className={clsx(
-        'index-glyph',
+        'number-glyph',
         glowVertical === 'top' ? 'top-4 md:top-10' : 'bottom-4 md:bottom-10',
         glyphSide === 'left' ? '-left-2 md:-left-6' : '-right-2 md:-right-6',
         className,

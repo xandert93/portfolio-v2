@@ -7,19 +7,21 @@ import { usePathname } from 'next/navigation'
 import NavLink from './NavLink'
 import ThemeToggleButton from './ThemeToggleButton'
 import clsx from 'clsx'
+import { FEATURES } from '@/config/features'
+import { SiteSettings } from '@/sanity/types'
 
 const NAV_LINKS = [
-  { label: 'Work', href: '/projects' },
-  { label: 'About', href: '/about' },
-  { label: 'Experience', href: '/experience' },
-  { label: 'Blog', href: '/blog' },
-] as const
+  FEATURES.projects && { label: 'Work', href: '/projects' },
+  FEATURES.about && { label: 'About', href: '/about' },
+  FEATURES.experience && { label: 'Experience', href: '/experience' },
+  FEATURES.blog && { label: 'Blog', href: '/blog' },
+].filter(Boolean)
 
 const SCROLL_THRESHOLD = 12
 const HIDE_AFTER_Y = 140
 
 type NavbarProps = {
-  displayName: string
+  displayName: NonNullable<SiteSettings>['names']['display']
 }
 
 export default function Navbar({ displayName }: NavbarProps) {
