@@ -14,9 +14,7 @@ export default function ContactForm() {
   })
 
   function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -46,7 +44,7 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="name"
-            className="block text-2xs tracking-widest uppercase text-muted mb-2"
+            className="text-2xs text-muted mb-2 block tracking-widest uppercase"
           >
             Name
           </label>
@@ -57,14 +55,14 @@ export default function ContactForm() {
             required
             value={form.name}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-faint rounded-md bg-paper text-sm text-ink focus:outline-none focus:border-accent transition-colors"
+            className="border-faint bg-paper text-ink focus:border-accent w-full rounded-md border px-4 py-3 text-sm transition-colors focus:outline-none"
           />
         </div>
 
         <div>
           <label
             htmlFor="email"
-            className="block text-2xs tracking-widest uppercase text-muted mb-2"
+            className="text-2xs text-muted mb-2 block tracking-widest uppercase"
           >
             Email
           </label>
@@ -75,14 +73,14 @@ export default function ContactForm() {
             required
             value={form.email}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-faint rounded-md bg-paper text-sm text-ink focus:outline-none focus:border-accent transition-colors"
+            className="border-faint bg-paper text-ink focus:border-accent w-full rounded-md border px-4 py-3 text-sm transition-colors focus:outline-none"
           />
         </div>
 
         <div>
           <label
             htmlFor="projectType"
-            className="block text-2xs tracking-widest uppercase text-muted mb-2"
+            className="text-2xs text-muted mb-2 block tracking-widest uppercase"
           >
             Project type
           </label>
@@ -91,7 +89,7 @@ export default function ContactForm() {
             name="projectType"
             value={form.projectType}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-faint rounded-md bg-paper text-sm text-ink focus:outline-none focus:border-accent transition-colors"
+            className="border-faint bg-paper text-ink focus:border-accent w-full rounded-md border px-4 py-3 text-sm transition-colors focus:outline-none"
           >
             <option value="">Select one</option>
             <option value="New website">New website</option>
@@ -105,7 +103,7 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="message"
-            className="block text-2xs tracking-widest uppercase text-muted mb-2"
+            className="text-2xs text-muted mb-2 block tracking-widest uppercase"
           >
             Message
           </label>
@@ -116,7 +114,7 @@ export default function ContactForm() {
             rows={6}
             value={form.message}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-faint rounded-md bg-paper text-sm text-ink focus:outline-none focus:border-accent transition-colors resize-none"
+            className="border-faint bg-paper text-ink focus:border-accent w-full resize-none rounded-md border px-4 py-3 text-sm transition-colors focus:outline-none"
           />
         </div>
 
@@ -129,7 +127,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="text-2xs tracking-widest uppercase px-7 py-3.5 bg-ink text-paper rounded hover:opacity-80 transition-opacity disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          className="text-2xs bg-ink text-paper rounded px-7 py-3.5 tracking-widest uppercase transition-opacity hover:opacity-80 disabled:opacity-50"
         >
           {status === 'submitting' ? 'Sending...' : 'Send message'}
         </button>
@@ -137,9 +135,9 @@ export default function ContactForm() {
     )
   else
     return (
-      <div className="p-8 border border-faint bg-accent-light rounded-lg text-center">
-        <p className="font-serif text-2xl text-ink mb-2">Message sent</p>
-        <p className="text-sm text-muted font-light">
+      <div className="border-faint bg-accent-light rounded-lg border p-8 text-center">
+        <p className="text-ink mb-2 font-serif text-2xl">Message sent</p>
+        <p className="text-muted text-sm font-light">
           Thanks for reaching out — I'll get back to you soon.
         </p>
       </div>

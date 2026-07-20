@@ -5,22 +5,20 @@ const CodePanel = () => {
     */
   const TrafficLights = () => {
     return (
-      <div className="flex gap-1.5 px-4 py-3 border-b border-faint shrink-0">
-        <span className="w-2.5 h-2.5 rounded-full bg-red-400/70" />
-        <span className="w-2.5 h-2.5 rounded-full bg-amber-400/70" />
-        <span className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
-        <span className="ml-auto text-[0.6rem] text-muted tracking-wide">
-          xander.ts
-        </span>
+      <div className="border-faint flex shrink-0 gap-1.5 border-b px-4 py-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+        <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+        <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+        <span className="text-muted ml-auto text-[0.6rem] tracking-wide">xander.ts</span>
       </div>
     )
   }
 
   return (
-    <div className="aspect-4/5 max-h-[480px] rounded-sm overflow-hidden border border-faint bg-[#13121a] font-mono text-[13px] flex flex-col">
+    <div className="border-faint flex aspect-4/5 max-h-[480px] flex-col overflow-hidden rounded-sm border bg-[#13121a] font-mono text-[13px]">
       <TrafficLights />
       {/* Code */}
-      <div className="p-6 leading-[1.95] text-[#ccc8be] overflow-hidden">
+      <div className="overflow-hidden p-6 leading-[1.95] text-[#ccc8be]">
         <div>
           <span className="text-purple-400">export</span>{' '}
           <span className="text-purple-400">async</span>{' '}
@@ -44,13 +42,13 @@ const CodePanel = () => {
           &nbsp;&nbsp;<span className="text-purple-400">return</span> result
         </div>
         <div>{'}'}</div>
-        <div className="mt-6 text-muted text-[0.7rem]">
+        <div className="text-muted mt-6 text-[0.7rem]">
           <span className="text-accent/60">▸</span> currently:{' '}
           <span className="text-accent">
-            {'about.isOpenToWork' ? 'open to work' : 'heads down building'}
+            {'about.isOpenToWork' ? 'available for work' : 'heads down building'}
           </span>
         </div>
-        <div className="mt-8 border-t border-faint pt-6 flex flex-col gap-3">
+        <div className="border-faint mt-8 flex flex-col gap-3 border-t pt-6">
           {[
             {
               label: 'Stack',

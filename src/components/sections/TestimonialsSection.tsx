@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { genImageBuilder } from '@/sanity/lib/image'
-import { TESTIMONIALS_QUERY_RESULT } from '../../../sanity.types'
+import { Testimonials } from '@/sanity/types'
 
-type TestimonialsProps = {
-  testimonials: TESTIMONIALS_QUERY_RESULT
+type Props = {
+  testimonials: Testimonials
 }
 
 function getInitials(name: string | null) {
@@ -18,10 +18,8 @@ function getInitials(name: string | null) {
   )
 }
 
-export default function Testimonials({ testimonials }: TestimonialsProps) {
+export default function TestimonialsSection({ testimonials }: Props) {
   const [activeIndex, setActiveIndex] = useState(0)
-
-  if (testimonials.length === 0) return null
 
   const main = testimonials[activeIndex]
   const others = testimonials.filter((_, i) => i !== activeIndex).slice(0, 3)
@@ -31,41 +29,35 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
   }
 
   return (
-    <section className="relative px-8 md:px-20 py-24 border-t border-faint">
-      <div className="absolute top-0 left-1/4 w-[600px] h-[400px] rounded-full bg-accent/8 blur-[80px] pointer-events-none" />
-      <p className="text-2xs tracking-widest uppercase text-accent mb-2 relative z-10">
+    <section className="border-faint relative border-t px-8 py-24 md:px-20">
+      <div className="bg-accent/8 pointer-events-none absolute top-0 left-1/4 h-[400px] w-[600px] rounded-full blur-[80px]" />
+      <p className="text-2xs text-accent relative z-10 mb-2 tracking-widest uppercase">
         What people say
       </p>
-      <h2 className="font-serif italic text-3xl md:text-4xl mb-12 relative z-10">
+      <h2 className="relative z-10 mb-12 font-serif text-3xl italic md:text-4xl">
         Kind words
       </h2>
 
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-6">
+      <div className="relative z-10 grid grid-cols-1 gap-6 md:grid-cols-[1.3fr_1fr]">
         {/* Featured testimonial */}
-        <div className="relative overflow-hidden bg-warm border border-accent/20 rounded-2xl p-10 flex flex-col">
-          <p className="absolute -top-6 right-6 font-serif italic text-[10rem] text-accent/10 leading-none select-none">
-            &rdquo;
+        <div className="bg-warm border-accent/20 relative flex flex-col overflow-hidden rounded-2xl border p-10">
+          <p className="text-accent/10 absolute -top-6 right-6 font-serif text-[10rem] leading-none italic select-none">
+            ”
           </p>
 
-          <div className="relative z-10 flex gap-1 mb-6 text-accent">
+          <div className="text-accent relative z-10 mb-6 flex gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
-              <svg
-                key={i}
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
+              <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.771l-7.416 3.642 1.48-8.279L0 9.306l8.332-1.151z" />
               </svg>
             ))}
           </div>
 
-          <p className="relative z-10 font-serif text-2xl md:text-3xl font-light leading-snug mb-8">
+          <p className="relative z-10 mb-8 font-serif text-2xl leading-snug font-light md:text-3xl">
             {main.quote}
           </p>
 
-          <div className="relative z-10 flex items-center gap-4 mt-auto mb-8">
+          <div className="relative z-10 mt-auto mb-8 flex items-center gap-4">
             {main.avatar ? (
               <Image
                 src={genImageBuilder(main.avatar)
@@ -77,16 +69,16 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                 alt={main.authorName ?? ''}
                 width={58}
                 height={58}
-                className="rounded-full border border-accent/40"
+                className="border-accent/40 rounded-full border"
               />
             ) : (
-              <div className="w-[58px] h-[58px] rounded-full bg-faint border border-accent/40 flex items-center justify-center font-serif text-accent">
+              <div className="bg-faint border-accent/40 text-accent flex h-[58px] w-[58px] items-center justify-center rounded-full border font-serif">
                 {getInitials(main.authorName)}
               </div>
             )}
             <div>
               <p className="text-base font-semibold">{main.authorName}</p>
-              <p className="text-sm text-muted mt-0.5">
+              <p className="text-muted mt-0.5 text-sm">
                 {main.role}
                 {main.company ? `, ${main.company}` : ''}
               </p>
@@ -98,7 +90,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
             <button
               onClick={() => goTo(activeIndex - 1)}
               aria-label="Previous testimonial"
-              className="w-9 h-9 rounded-full border border-faint flex items-center justify-center text-muted hover:text-ink hover:border-ink transition-colors"
+              className="border-faint text-muted hover:text-ink hover:border-ink flex h-9 w-9 items-center justify-center rounded-full border transition-colors"
             >
               ←
             </button>
@@ -109,7 +101,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                   onClick={() => goTo(i)}
                   aria-label={`Go to testimonial ${i + 1}`}
                   className={`h-1.5 rounded-full transition-all ${
-                    i === activeIndex ? 'w-6 bg-accent' : 'w-1.5 bg-faint'
+                    i === activeIndex ? 'bg-accent w-6' : 'bg-faint w-1.5'
                   }`}
                 />
               ))}
@@ -117,7 +109,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
             <button
               onClick={() => goTo(activeIndex + 1)}
               aria-label="Next testimonial"
-              className="w-9 h-9 rounded-full border border-faint flex items-center justify-center text-muted hover:text-ink hover:border-ink transition-colors"
+              className="border-faint text-muted hover:text-ink hover:border-ink flex h-9 w-9 items-center justify-center rounded-full border transition-colors"
             >
               →
             </button>
@@ -129,10 +121,8 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
           {others.map((t) => (
             <button
               key={t._id}
-              onClick={() =>
-                goTo(testimonials.findIndex((x) => x._id === t._id))
-              }
-              className="text-left bg-warm border border-faint rounded-2xl p-6 flex gap-4 items-start flex-1 hover:border-accent/30 transition-colors"
+              onClick={() => goTo(testimonials.findIndex((x) => x._id === t._id))}
+              className="bg-warm border-faint hover:border-accent/30 flex flex-1 items-start gap-4 rounded-2xl border p-6 text-left transition-colors"
             >
               {t.avatar ? (
                 <Image
@@ -145,19 +135,19 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
                   alt={t.authorName ?? ''}
                   width={48}
                   height={48}
-                  className="rounded-full border border-faint shrink-0"
+                  className="border-faint shrink-0 rounded-full border"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-faint border border-faint flex items-center justify-center font-serif text-sm text-muted shrink-0">
+                <div className="bg-faint border-faint text-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-full border font-serif text-sm">
                   {getInitials(t.authorName)}
                 </div>
               )}
               <div>
-                <p className="text-sm text-muted leading-relaxed font-light mb-2 line-clamp-2">
+                <p className="text-muted mb-2 line-clamp-2 text-sm leading-relaxed font-light">
                   {t.quote}
                 </p>
                 <p className="text-sm font-semibold">{t.authorName}</p>
-                <p className="text-xs text-muted mt-0.5">
+                <p className="text-muted mt-0.5 text-xs">
                   {t.role}
                   {t.company ? `, ${t.company}` : ''}
                 </p>

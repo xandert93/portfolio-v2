@@ -2,39 +2,27 @@
 
 import { genImageBuilder } from '@/sanity/lib/image'
 import Image from 'next/image'
-import {
-  PROJECT_QUERY_RESULT,
-  PROJECTS_QUERY_RESULT,
-} from '../../../sanity.types'
+import { PROJECT_QUERY_RESULT, PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 import { useRouter } from 'next/navigation'
 import { StopPropagationAnchor } from '../links/StopPropagationAnchor'
 import Link from 'next/link'
+import { Project } from '@/sanity/types'
 
-type Props = PROJECTS_QUERY_RESULT[0]
+type Props = { project: Project }
 
-export default function ProjectCard({
-  _id,
-  slug,
-  title,
-  coverImage,
-  summary,
-  techStack,
-  repoUrl,
-  liveUrl,
-}: Props) {
+export default function ProjectCard({ project }: Props) {
+  const { _id, slug, title, coverImage, summary, technologies, repoUrl, liveUrl } =
+    project
+
   const router = useRouter()
 
   const handleClick = () => router.push(`/projects/${slug}`)
 
   return (
-    <div
-      key={_id}
-      onClick={handleClick}
-      className="card p-6 group cursor-pointer"
-    >
+    <div key={_id} onClick={handleClick} className="card group p-6">
       <Link href={`/projects/${slug}`}>
         {coverImage && (
-          <div className="relative aspect-video rounded-sm overflow-hidden mb-5 border border-faint">
+          <div className="border-faint relative mb-5 aspect-video overflow-hidden rounded-sm border">
             <Image
               src={genImageBuilder(coverImage)
                 .width(640)
@@ -48,19 +36,17 @@ export default function ProjectCard({
             />
           </div>
         )}
-        <p className="font-serif text-xl mb-2 group-hover:text-accent transition-colors">
+        <p className="group-hover:text-accent mb-2 font-serif text-xl transition-colors">
           {title}
         </p>
-        <p className="text-sm text-muted leading-relaxed mb-4 font-light">
-          {summary}
-        </p>
+        <p className="text-muted mb-4 text-sm leading-relaxed font-light">{summary}</p>
       </Link>
-      {techStack && techStack.length > 0 && (
-        <div className="flex gap-2 flex-wrap mb-4">
-          {techStack.map(({ _id, name }) => (
+      {technologies && technologies.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {technologies.map(({ _id, name }) => (
             <span
               key={_id}
-              className="text-[0.6rem] tracking-wide uppercase px-2.5 py-1 bg-faint rounded-sm text-muted"
+              className="bg-faint text-muted rounded-sm px-2.5 py-1 text-[0.6rem] tracking-wide uppercase"
             >
               {name}
             </span>
@@ -83,7 +69,7 @@ function ProjectLink(props: ProjectLinkProps) {
     <StopPropagationAnchor
       target="_blank"
       rel="noopener noreferrer"
-      className="text-[0.65rem] tracking-widest uppercase text-muted hover:text-ink transition-colors"
+      className="text-muted hover:text-ink text-[0.65rem] tracking-widest uppercase transition-colors"
       {...props}
     />
   )
