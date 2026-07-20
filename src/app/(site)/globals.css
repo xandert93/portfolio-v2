@@ -1,29 +1,73 @@
 @import 'tailwindcss';
 
-@theme {
-  /* Palette */
-  --color-paper: #0d0c10;
-  --color-paper-2: #131218;
-  --color-ink: #f2f1ed;
-  --color-muted: #7a7670;
-  --color-faint: rgba(255, 255, 255, 0.07);
-  --color-warm: rgba(255, 255, 255, 0.03);
-  --color-accent: #d6b27a;
-  --color-accent-dim: rgba(214, 178, 122, 0.12);
-  --color-accent-light: rgba(214, 178, 122, 0.08);
+/* Custom CSS Variables */
+:root {
+  --navbar-h-mobile: 64px;
+  --navbar-h: 72px;
 
-  /* Type */
-  --font-sans: 'DM Sans', sans-serif;
-  --font-serif: 'Fraunces', Georgia, serif;
+  --button-font-size: 0.85rem;
+}
 
-  /* Spacing scale — use these, nothing else */
-  --space-section: 7rem; /* py-28 — vertical section padding */
-  --space-section-sm: 5rem; /* py-20 on mobile */
+@custom-variant dark (&:is(.dark *));
 
-  /* Layout */
-  --container-px: 1.5rem; /* 24px — mobile gutter */
-  --container-px-md: 5rem; /* 80px — desktop gutter */
-  --content-max: 72rem; /* max-w-[72rem] — consistent content cap */
+/* ────────────────────────────────────────────────────────────
+   Theme tokens
+   Colors are declared as raw CSS variables (--paper, --ink, …)
+   that flip between light & dark, then mapped into Tailwind's
+   utility system via @theme inline (bg-paper, text-ink, …).
+   ──────────────────────────────────────────────────────────── */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-warm: var(--warm);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-light: var(--accent-light);
+  --color-accent-strong: var(--accent-strong);
+
+  /* Alias so the default bg/foreground tokens resolve to the theme */
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
+
+  --content-max: 80rem;
+
+  --radius: 4px;
+}
+
+/* Light — warm off-white paper, deep warm ink, burnished gold */
+:root {
+  color-scheme: light;
+  --paper: #f7f4ed;
+  --paper-2: #fffdf8;
+  --ink: #1b1813;
+  --muted: #6c655a;
+  --faint: rgba(27, 24, 19, 0.1);
+  --warm: rgba(27, 24, 19, 0.025);
+  --accent: #9a6f2e;
+  --accent-strong: #82591f;
+  --accent-dim: rgba(154, 111, 46, 0.1);
+  --accent-light: rgba(154, 111, 46, 0.07);
+}
+
+/* Dark — uniform warm near-black, soft ivory ink, luminous gold */
+.dark {
+  color-scheme: dark;
+  --paper: #0d0c10;
+  --paper-2: #131218;
+  --ink: #f2f1ed;
+  --muted: #857f77;
+  --faint: rgba(255, 255, 255, 0.08);
+  --warm: rgba(255, 255, 255, 0.03);
+  --accent: #d6b27a;
+  --accent-strong: #e2c495;
+  --accent-dim: rgba(214, 178, 122, 0.14);
+  --accent-light: rgba(214, 178, 122, 0.08);
 }
 
 /* ─── Reset ───────────────────────────────────────── */
@@ -33,16 +77,25 @@
   *::after {
     box-sizing: border-box;
   }
+
   * {
-    border-color: var(--color-faint);
+    border-color: var(--faint);
   }
+
   html {
     scroll-behavior: smooth;
   }
+
   body {
-    @apply bg-paper text-ink antialiased;
+    background-color: var(--paper);
+    color: var(--ink);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
   }
+
   h1,
   h2,
   h3,
@@ -51,61 +104,96 @@
   h6 {
     font-family: var(--font-serif);
     font-weight: 400;
-    line-height: 1.1;
+    line-height: 1.08;
+  }
+
+  ::selection {
+    background: var(--accent-dim);
+    color: var(--ink);
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 }
 
-/* ─── Layout primitives ───────────────────────────── */
+/* ─── Layout + editorial primitives ───────────────────────────── */
 @layer components {
   /* Single container used site-wide */
   .container {
     width: 100%;
     max-width: var(--content-max);
     margin-inline: auto;
-    padding-inline: var(--container-px);
+    padding-inline: 1.5rem;
   }
   @media (min-width: 768px) {
     .container {
-      padding-inline: var(--container-px-md);
+      padding-inline: 3rem;
     }
   }
 
-  /* Consistent section vertical rhythm */
+  /* Uniform section shell — every section shares this box model.
+     Padding + max-width + top rule are identical across the page so
+     the sections line up on a common grid. */
   .section {
-    padding-block: var(--space-section-sm);
-    border-top: 1px solid var(--color-faint);
+    position: relative;
+    border-top: 1px solid var(--faint);
+  }
+
+  .section-child {
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-block: 5rem;
+    padding-inline: 1.5rem;
   }
   @media (min-width: 768px) {
-    .section {
-      padding-block: var(--space-section);
+    .section-child {
+      padding-block: 8rem;
+      padding-inline: 3rem;
     }
   }
 
-  /* Section label (eyebrow) — used above every h2 */
-  .label {
-    display: inline-block;
+  /* Section label (eyebrow) — used above every heading */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--accent);
     font-family: var(--font-sans);
     font-size: 0.65rem;
-    letter-spacing: 0.18em;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--color-accent);
-    margin-bottom: 0.75rem;
   }
 
-  /* Section heading */
+  .eyebrow::before {
+    content: '';
+    width: 1.75rem;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.6;
+  }
+
   .section-heading {
     font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-size: clamp(1.9rem, 4vw, 2.9rem);
     font-style: italic;
-    color: var(--color-ink);
+    color: var(--ink);
+    text-wrap: balance;
   }
 
-  /* Editorial gutter rule — the signature element */
-  /* Wrap a section's inner content in .ruled to get the left chrome on desktop */
-  .ruled {
-    position: relative;
-  }
+  /* Editorial vertical rule down the left of each section's content.
+     Desktop only. */
   @media (min-width: 768px) {
+    .ruled {
+      position: relative;
+      padding-inline-start: 2rem;
+    }
+
     .ruled::before {
       content: '';
       position: absolute;
@@ -116,74 +204,134 @@
       background: linear-gradient(
         to bottom,
         transparent,
-        var(--color-accent) 20%,
-        var(--color-accent) 80%,
+        var(--accent) 20%,
+        var(--accent) 80%,
         transparent
       );
       opacity: 0.35;
     }
   }
 
-  /* Button primitives */
-  .btn-primary {
-    display: inline-block;
-    font-size: 0.8125rem;
-    padding: 0.875rem 2rem;
-    background: var(--color-accent);
-    color: var(--color-paper);
-    border-radius: 3px;
-    transition: opacity 0.2s;
-    letter-spacing: 0.01em;
+  /* Oversized index glyph sitting behind each section */
+  .index-glyph {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+    font-family: var(--font-serif);
+    font-style: italic;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.08;
+    font-size: clamp(8rem, 22vw, 18rem);
+    z-index: 0;
   }
+
+  /* Soft inner gold glow blob */
+  .section-glow {
+    position: absolute;
+    pointer-events: none;
+    height: 520px;
+    width: 520px;
+    border-radius: 9999px;
+    background: var(--accent-light);
+    opacity: 0.6;
+    filter: blur(80px);
+    z-index: 0;
+  }
+
+  /* Button primitives */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--button-font-size);
+    font-weight: 500;
+    padding: 0.9rem 2rem;
+    border-radius: 3px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--paper);
+    letter-spacing: 0.01em;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      background 0.25s ease;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  }
+
   .btn-primary:hover {
-    opacity: 0.88;
+    background: var(--accent-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -12px var(--accent);
   }
 
   .btn-ghost {
-    display: inline-block;
-    font-size: 0.8125rem;
-    padding: 0.875rem 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: var(--color-ink);
-    border-radius: 3px;
+    border: 1px solid var(--faint);
+    color: var(--ink);
     transition:
-      background 0.2s,
-      border-color 0.2s;
+      background 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease;
   }
+
   .btn-ghost:hover {
-    background: var(--color-warm);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--warm);
+    border-color: var(--accent);
+    transform: translateY(-2px);
   }
 
   /* Inline text link (underline style) */
   .link-underline {
     display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.65rem;
+    align-items: normal;
+    gap: 0.25rem;
+    font-size: 0.825rem;
+    font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-ink);
-    border-bottom: 1px solid var(--color-ink);
-    padding-bottom: 1px;
+    color: var(--ink);
+  }
+
+  .link-underline span {
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.375rem;
     transition:
       color 0.2s,
       border-color 0.2s;
   }
-  .link-underline:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+
+  .link-underline svg {
+    transition: transform 0.25s ease;
   }
 
-  /* Card base */
+  .link-underline:hover {
+    color: var(--accent);
+  }
+
+  .link-underline:hover span {
+    border-color: var(--accent);
+  }
+
+  .link-underline:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Card */
   .card {
-    background: var(--color-warm);
-    border: 1px solid var(--color-faint);
-    border-radius: 4px;
-    transition: border-color 0.2s;
+    background: var(--warm);
+    border: 1px solid var(--faint);
+    border-radius: var(--radius);
+    transition:
+      border-color 0.3s ease,
+      transform 0.3s ease,
+      background 0.3s ease;
   }
   .card:hover {
-    border-color: rgba(214, 178, 122, 0.25);
+    border-color: var(--accent);
+    background: var(--accent-light);
+    transform: translateY(-3px);
   }
 
   /* Status badge */
@@ -192,22 +340,23 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.65rem;
+    font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-accent);
-    border: 1px solid rgba(214, 178, 122, 0.3);
-    background: var(--color-accent-dim);
-    padding: 0.375rem 1rem;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    background: var(--accent-dim);
+    padding: 0.4rem 1rem;
     border-radius: 999px;
   }
 }
 
-/* ─── Utilities ───────────────────────────────────── */
+/* ─── Animations ──────────────────────────────────── */
 @layer utilities {
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(16px);
     }
     to {
       opacity: 1;
@@ -215,19 +364,39 @@
     }
   }
   .animate-fade-up {
-    animation: fadeUp 0.5s ease-out both;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  @keyframes pulse-dot {
+  @keyframes pulseDot {
     0%,
     100% {
       opacity: 1;
+      transform: scale(1);
     }
     50% {
-      opacity: 0.4;
+      opacity: 0.35;
+      transform: scale(0.85);
     }
   }
   .animate-pulse-dot {
-    animation: pulse-dot 2s ease-in-out infinite;
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+
+  @keyframes testimonial-progress {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
