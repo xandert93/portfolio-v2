@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Code Style & Formatting
 
-## Getting Started
+This project uses Prettier to keep formatting consistent. The configuration lives in `.prettierrc`.
 
-First, run the development server:
+Key formatting rules:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- `singleQuote: true` — uses `'foo'` instead of `"foo"` in JS/TS.
+- `trailingComma: "all"` — adds trailing commas where valid; makes diffs cleaner.
+- `printWidth: 90` — keeps lines readable without being too restrictive.
+- `tabWidth: 2` — uses 2 spaces for indentation.
+- `useTabs: false` — uses spaces instead of tabs.
+- `bracketSpacing: true` — formats objects as `{ foo: bar }`.
+- `bracketSameLine: false` — keeps JSX closing brackets on their own line.
+- `arrowParens: "always"` — uses `(x) => x` instead of `x => x`.
+- `endOfLine: "lf"` — uses Unix-style line endings for consistency across platforms.
+- `proseWrap: "preserve"` — avoids aggressively reflowing Markdown text.
+- `htmlWhitespaceSensitivity: "css"` — uses CSS-aware whitespace handling for HTML-like files.
+- `embeddedLanguageFormatting: "auto"` — formats embedded languages where supported.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Conventions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Icon Strategy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project intentionally uses **two icon libraries**, each with a specific responsibility.
 
-## Learn More
+### Lucide React
 
-To learn more about Next.js, take a look at the following resources:
+Used for **UI and application icons**, including:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Navigation (menu, close, back)
+- Actions (search, settings, edit, delete)
+- Buttons (download, arrow, external link)
+- Contact icons (mail, phone)
+- Theme controls (sun/moon)
+- General interface elements
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Lucide provides a clean, consistent icon style and is lightweight and tree-shakeable, making it well suited for UI components.
 
-## Deploy on Vercel
+### React Icons
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Used **only for brand and technology logos**, such as:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- GitHub
+- LinkedIn
+- WhatsApp
+- React
+- Next.js
+- TypeScript
+- Docker
+- AWS
+- PostgreSQL
+- Tailwind CSS
+- Other company, framework, and technology logos
+
+React Icons aggregates many popular icon packs and provides access to official brand icons that Lucide does not include.
+
+When using React Icons, import individual icons rather than entire icon sets to keep bundle size optimized.
+
+### Why both?
+
+Using both libraries provides the benefits of each approach:
+
+- **Lucide React** keeps UI elements visually consistent.
+- **React Icons** provides access to thousands of official brand and technology logos without needing to source and maintain individual SVG files.
+
+### Guiding Principle
+
+- ✅ **Lucide React** → UI and application icons
+- ✅ **React Icons** → Brand, company, and technology logos
+
+This separation keeps the interface consistent while allowing official branding where appropriate.
