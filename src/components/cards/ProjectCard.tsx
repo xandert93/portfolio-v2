@@ -2,25 +2,33 @@
 
 import { genImageBuilder } from '@/sanity/lib/image'
 import Image from 'next/image'
-import { PROJECT_QUERY_RESULT, PROJECTS_QUERY_RESULT } from '../../../sanity.types'
 import { useRouter } from 'next/navigation'
 import { StopPropagationAnchor } from '../links/StopPropagationAnchor'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 import { Project } from '@/sanity/types'
 
-type Props = { project: Project }
+type Props = {
+  project: Project
+}
 
 export default function ProjectCard({ project }: Props) {
-  const { _id, slug, title, coverImage, summary, technologies, repoUrl, liveUrl } =
-    project
+  const {
+    _id,
+    slug,
+    title,
+    media: { coverImage, screenshots },
+    content: { summary, technologies, features },
+    urls,
+  } = project
 
   const router = useRouter()
 
-  const handleClick = () => router.push(`/projects/${slug}`)
+  const handleClick = () => router.push(`${ROUTES.projects}/${slug}`)
 
   return (
     <div key={_id} onClick={handleClick} className="card group p-6">
-      <Link href={`/projects/${slug}`}>
+      <Link href={`${ROUTES.projects}/${slug}`}>
         {coverImage && (
           <div className="border-faint relative mb-5 aspect-video overflow-hidden rounded-sm border">
             <Image
@@ -55,8 +63,8 @@ export default function ProjectCard({ project }: Props) {
       )}
 
       <div className="flex gap-5">
-        {repoUrl && <ProjectLink href={repoUrl} children="Repository ↗" />}
-        {liveUrl && <ProjectLink href={liveUrl} children="Live site ↗" />}
+        {urls.repo && <ProjectLink href={urls.repo} children="Repository ↗" />}
+        {urls.live && <ProjectLink href={urls.live} children="Live site ↗" />}
       </div>
     </div>
   )

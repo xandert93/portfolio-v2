@@ -7,24 +7,27 @@ import { usePathname } from 'next/navigation'
 import NavLink from './NavLink'
 import ThemeToggleButton from './ThemeToggleButton'
 import clsx from 'clsx'
+
 import { FEATURES } from '@/config/features'
+import { ROUTES } from '@/config/routes'
+
 import { SiteSettings } from '@/sanity/types'
 
 const NAV_LINKS = [
-  FEATURES.projects && { label: 'Work', href: '/projects' },
-  FEATURES.about && { label: 'About', href: '/about' },
-  FEATURES.experience && { label: 'Experience', href: '/experience' },
-  FEATURES.blog && { label: 'Blog', href: '/blog' },
+  FEATURES.projects && { label: 'Work', href: ROUTES.projects },
+  FEATURES.about && { label: 'About', href: ROUTES.about },
+  FEATURES.experience && { label: 'Experience', href: ROUTES.experience },
+  FEATURES.blog && { label: 'Blog', href: ROUTES.blog },
 ].filter(Boolean)
 
 const SCROLL_THRESHOLD = 12
 const HIDE_AFTER_Y = 140
 
 type NavbarProps = {
-  displayName: NonNullable<SiteSettings>['names']['display']
+  names: NonNullable<SiteSettings>['names']
 }
 
-export default function Navbar({ displayName }: NavbarProps) {
+export default function Navbar({ names }: NavbarProps) {
   const pathname = usePathname()
   const drawerId = useId()
   const toggleButtonRef = useRef<HTMLButtonElement>(null)
@@ -94,7 +97,7 @@ export default function Navbar({ displayName }: NavbarProps) {
           )}
         >
           <div className="flex grow justify-between">
-            <WordmarkLink text={displayName} />
+            <WordmarkLink children={names.display || names.full} />
             <div className="hidden items-center gap-8 text-xs font-medium md:flex">
               <NavLinksList />
             </div>
@@ -126,16 +129,16 @@ export default function Navbar({ displayName }: NavbarProps) {
   )
 }
 
-const WordmarkLink = ({ text }) => {
+const WordmarkLink = ({ children }: { children: string }) => {
   return (
     <Link
-      href="/"
+      href={ROUTES.home}
       className="group text-ink flex items-center gap-2 font-serif text-lg italic"
     >
       <span className="text-accent not-italic transition-transform duration-500 group-hover:rotate-90">
         ✦
       </span>{' '}
-      {text}
+      {children}
     </Link>
   )
 }
@@ -143,7 +146,7 @@ const WordmarkLink = ({ text }) => {
 const NavLinksList = () => {
   const pathname = usePathname()
 
-  return NAV_LINKS.map(({ label, href }) => (
+  return NAV_LINKS.map(({ label, href }: any) => (
     <NavLink key={href} href={href} label={label} isActive={pathname === href} />
   ))
 }
@@ -151,7 +154,7 @@ const NavLinksList = () => {
 const ContactLink = () => {
   return (
     <Link
-      href="/contact"
+      href={ROUTES.contact}
       className="border-accent/40 text-accent hover=border-accent hover:bg-accent-dim hidden rounded-full border px-5 py-2 text-xs font-medium tracking-[0.16em] uppercase transition-all duration-300 md:inline-block"
     >
       Contact
@@ -178,12 +181,12 @@ const HamburgerMenuButton = forwardRef<HTMLButtonElement, HamburgerMenuButtonPro
         aria-label="Toggle menu"
         aria-expanded={isOpen}
         aria-controls={drawerId}
-        className="relative z-50 flex h-9 w-9 flex-col items-center justify-center gap-[5px] md:hidden"
+        className="relative z-50 flex h-9 w-9 flex-col items-center justify-center gap-1.25 md:hidden"
       >
         {/* Top line */}
         <span
           className={`bg-ink block h-px w-5 origin-center transition-all duration-300 ${
-            isOpen ? 'translate-y-[6px] rotate-45' : ''
+            isOpen ? 'translate-y-1.5 rotate-45' : ''
           }`}
         />
 
@@ -197,7 +200,7 @@ const HamburgerMenuButton = forwardRef<HTMLButtonElement, HamburgerMenuButtonPro
         {/* Bottom line */}
         <span
           className={`bg-ink block h-px w-5 origin-center transition-all duration-300 ${
-            isOpen ? 'translate-y-[-6px] -rotate-45' : ''
+            isOpen ? '-translate-y-1.5 -rotate-45' : ''
           }`}
         />
       </button>
@@ -205,7 +208,12 @@ const HamburgerMenuButton = forwardRef<HTMLButtonElement, HamburgerMenuButtonPro
   },
 )
 
-const MobileNavOverlay = ({ handleClick, isOpen }) => {
+type MobileNavOverlayProps = {
+  handleClick: () => void
+  isOpen: boolean
+}
+
+const MobileNavOverlay = ({ handleClick, isOpen }: MobileNavOverlayProps) => {
   return (
     <div
       onClick={handleClick}
@@ -217,7 +225,13 @@ const MobileNavOverlay = ({ handleClick, isOpen }) => {
   )
 }
 
-const MobileNavDrawer = ({ id, isOpen, handleLinkClick }) => {
+type MobileNavDrawerProps = {
+  handleLinkClick: () => void
+  isOpen: boolean
+  id: string
+}
+
+const MobileNavDrawer = ({ id, isOpen, handleLinkClick }: MobileNavDrawerProps) => {
   const pathname = usePathname()
 
   return (
@@ -228,7 +242,7 @@ const MobileNavDrawer = ({ id, isOpen, handleLinkClick }) => {
         isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
-      {NAV_LINKS.map(({ label, href }) => (
+      {NAV_LINKS.map(({ label, href }: any) => (
         <NavLink
           key={href}
           href={href}
@@ -240,7 +254,7 @@ const MobileNavDrawer = ({ id, isOpen, handleLinkClick }) => {
       ))}
 
       <Link
-        href="/contact"
+        href={ROUTES.contact}
         onClick={handleLinkClick}
         className="border-accent/40 text-accent hover:bg-accent-dim mt-6 rounded-sm border py-3 text-center text-[0.72rem] tracking-[0.16em] uppercase transition-colors"
       >

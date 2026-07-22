@@ -1,15 +1,18 @@
-import { fetchAbout, fetchSkills, fetchTestimonials } from '@/sanity/lib/fetch'
+import { fetchAbout, fetchCv, fetchSkills, fetchTestimonials } from '@/sanity/lib/fetch'
 import { PortableText } from '@portabletext/react'
 import { genImageBuilder } from '@/sanity/lib/image'
 
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
 
 export default async function AboutPage() {
-  const [about, skills, testimonials] = await Promise.all([
+  const [cv, about, skills, testimonials] = await Promise.all([
+    fetchCv(),
     fetchAbout(),
     fetchSkills(),
     fetchTestimonials(),
   ])
+
+  if (!about) return 'Please fill about on Sanity'
 
   const skillsByCategory = skills.reduce<Record<string, typeof skills>>(
     (groups, skill) => {
@@ -21,6 +24,8 @@ export default async function AboutPage() {
     },
     {},
   )
+
+  const cvUrl = cv?.asset?.url
 
   const hasTestimonials = Boolean(testimonials.length)
 
@@ -53,9 +58,9 @@ export default async function AboutPage() {
 
           <div className="mt-8 flex gap-6">
             {about.location && <p className="text-muted text-xs">{about.location}</p>}
-            {about.resumeUrl && (
+            {cvUrl && (
               <a
-                href={about.resumeUrl}
+                href={cvUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-2xs text-ink border-ink hover:text-accent hover:border-accent border-b pb-0.5 tracking-widest uppercase transition-colors"

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { fetchFeaturedProjects, fetchPaginatedProjects } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
 import Pagination from '@/components/Pagination'
+import { ROUTES } from '@/config/routes'
 
 type PageProps = {
   searchParams: Promise<{ page?: string }>
@@ -96,7 +97,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
                     </span>
 
                     <Link
-                      href={`/projects/${project.slug}`}
+                      href={`${ROUTES.projects}/${project.slug}`}
                       className="text-ink group-hover:text-accent mb-4 font-serif text-3xl leading-tight transition-colors md:text-4xl"
                     >
                       {project.title}
@@ -189,7 +190,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
 
                   <div className="p-6 md:p-8">
                     <Link
-                      href={`/projects/${project.slug}`}
+                      href={`${ROUTES.projects}/${project.slug}`}
                       className="text-ink group-hover:text-accent mb-3 block font-serif text-2xl leading-snug transition-colors"
                     >
                       {project.title}
@@ -244,7 +245,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                basePath="/projects"
+                basePath={ROUTES.projects}
                 hash="all-projects"
               />
             </div>

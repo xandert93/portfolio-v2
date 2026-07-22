@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { fetchProject } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
+import { ROUTES } from '@/config/routes'
 // import ScreenshotGallery from './screenshot-gallery'
 
 type PageProps = {
@@ -104,7 +105,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="section flex flex-col items-center gap-3 text-center">
           <p className="eyebrow">404</p>
           <h1 className="section-heading">This project wandered off.</h1>
-          <Link href="/projects" className="link-underline mt-4">
+          <Link href={ROUTES.projects} className="link-underline mt-4">
             ← Back to all projects
           </Link>
         </div>
@@ -143,7 +144,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <div className="container">
         <div className="pt-10 md:pt-16">
           <Link
-            href="/projects"
+            href={ROUTES.projects}
             className="text-2xs text-muted hover:text-ink animate-fade-up inline-flex items-center gap-2 tracking-widest uppercase transition-colors"
           >
             <span className="transition-transform group-hover:-translate-x-0.5">←</span>{' '}
@@ -349,7 +350,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {/* ── Footer nav ───────────────────────────────────────── */}
       <div className="container">
         <div className="border-faint mt-4 flex justify-center border-t pt-16 md:pt-20">
-          <Link href="/projects" className="link-underline">
+          <Link href={ROUTES.projects} className="link-underline">
             ← Back to all projects
           </Link>
         </div>

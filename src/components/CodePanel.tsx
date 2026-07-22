@@ -1,18 +1,5 @@
 const CodePanel = () => {
-  /*     
-    Mimics close, minimise, maximise controls from macOS code editors/terminals.
-    Purely visual, offering instant recognisability.
-    */
-  const TrafficLights = () => {
-    return (
-      <div className="border-faint flex shrink-0 gap-1.5 border-b px-4 py-3">
-        <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-        <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
-        <span className="text-muted ml-auto text-[0.6rem] tracking-wide">xander.ts</span>
-      </div>
-    )
-  }
+  const isOpenToWork = true
 
   return (
     <div className="border-faint flex aspect-4/5 max-h-[480px] flex-col overflow-hidden rounded-sm border bg-[#13121a] font-mono text-[13px]">
@@ -45,7 +32,7 @@ const CodePanel = () => {
         <div className="text-muted mt-6 text-[0.7rem]">
           <span className="text-accent/60">▸</span> currently:{' '}
           <span className="text-accent">
-            {'about.isOpenToWork' ? 'available for work' : 'heads down building'}
+            {isOpenToWork ? 'available for work' : 'heads down building'}
           </span>
         </div>
         <div className="border-faint mt-8 flex flex-col gap-3 border-t pt-6">
@@ -64,6 +51,21 @@ const CodePanel = () => {
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+/*     
+    Mimics close, minimise, maximise controls from macOS code editors/terminals.
+    Purely visual, offering instant recognisability.
+    */
+const TrafficLights = () => {
+  return (
+    <div className="border-faint flex shrink-0 gap-1.5 border-b px-4 py-3">
+      <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+      <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+      <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+      <span className="text-muted ml-auto text-[0.6rem] tracking-wide">xander.ts</span>
     </div>
   )
 }

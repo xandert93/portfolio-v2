@@ -18,8 +18,9 @@ import { ArrowRight, Mail } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
 import type { About } from '@/sanity/types'
+import { ROUTES } from '@/config/routes'
 
-import Section, { fadeUp, containerVariants } from '@/components/ui/Section'
+import { Section, fadeUp, containerVariants } from '@/components/ui/Section'
 import { SiGithub, SiX } from 'react-icons/si'
 import { BsLinkedin } from 'react-icons/bs'
 
@@ -28,9 +29,9 @@ type Props = {
   isOpenToWork?: boolean
 }
 
-export default function ContactCtaSection({ about, isOpenToWork }: Props) {
+export default function ContactCtaSection({ about }: Props) {
   const email = 'xandert.93@outlook.com'
-  const isAvailable = isOpenToWork ?? about.isOpenToWork ?? true
+  const isAvailable = about.isOpenToWork
 
   const cardRef = useRef<HTMLDivElement | null>(null)
   const { scrollYProgress } = useScroll({
@@ -70,7 +71,7 @@ export default function ContactCtaSection({ about, isOpenToWork }: Props) {
         <>
           Got a project in <span className="text-accent font-serif italic">mind</span>?
           <br />
-          Let&apos;s make it real
+          Let's make it real
         </>
       }
     >
@@ -101,7 +102,7 @@ export default function ContactCtaSection({ about, isOpenToWork }: Props) {
             variants={fadeUp}
             className="flex flex-wrap items-center justify-center gap-4 lg:justify-start"
           >
-            <Link href="/contact" className="btn btn-primary group">
+            <Link href={ROUTES.contact} className="btn btn-primary group">
               Start a project
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
@@ -125,7 +126,7 @@ export default function ContactCtaSection({ about, isOpenToWork }: Props) {
                   aria-label={label}
                   target={href.startsWith('mailto') ? undefined : '_blank'}
                   rel="noopener noreferrer"
-                  className="text-muted hover:text-accent-strong transition-all ease-out hover:-translate-y-0.25"
+                  className="text-muted hover:text-accent-strong transition-all ease-out hover:-translate-y-px"
                 >
                   <div className="flex flex-col items-center gap-3">
                     <Icon className="size-5 sm:size-6" />
@@ -261,7 +262,7 @@ export default function ContactCtaSection({ about, isOpenToWork }: Props) {
           {[...Array(4)].flatMap((_, r) =>
             prompts.map((p, i) => (
               <span key={`${r}-${i}`} className="flex items-center gap-8 text-lg">
-                <span>let&apos;s talk about</span>
+                <span>let's talk about</span>
                 <span className="text-accent">{p}</span>
               </span>
             )),

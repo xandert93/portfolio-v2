@@ -5,7 +5,7 @@ import { genImageBuilder } from '@/sanity/lib/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
-import Section from '@/components/ui/Section'
+import { Section } from '@/components/ui/Section'
 
 type ChapterKey = 'All' | 'Frontend' | 'Backend' | 'Data' | 'Tooling'
 

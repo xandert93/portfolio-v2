@@ -1,7 +1,3 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import { PortableText } from 'next-sanity'
-
 import {
   fetchSiteSettings,
   fetchFeaturedProjects,
@@ -42,7 +38,7 @@ export default async function Home() {
       <TechSkillsSection skills={techSkills} />
       <TestimonialsSection testimonials={testimonials} />
       <AboutSection about={about} />
-      <ContactCtaSection about={about} isOpenToWork={about.isOpenToWork} />
+      <ContactCtaSection about={about} />
     </>
   )
 }

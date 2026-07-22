@@ -30,7 +30,7 @@ export default function TestimonialsSection({ testimonials }: Props) {
 
   return (
     <section className="border-faint relative border-t px-8 py-24 md:px-20">
-      <div className="bg-accent/8 pointer-events-none absolute top-0 left-1/4 h-[400px] w-[600px] rounded-full blur-[80px]" />
+      <div className="bg-accent/8 pointer-events-none absolute top-0 left-1/4 h-100 w-150 rounded-full blur-[80px]" />
       <p className="text-2xs text-accent relative z-10 mb-2 tracking-widest uppercase">
         What people say
       </p>
@@ -58,29 +58,29 @@ export default function TestimonialsSection({ testimonials }: Props) {
           </p>
 
           <div className="relative z-10 mt-auto mb-8 flex items-center gap-4">
-            {main.avatar ? (
+            {main.author.avatar ? (
               <Image
-                src={genImageBuilder(main.avatar)
+                src={genImageBuilder(main.author.avatar)
                   .width(116)
                   .height(116)
                   .fit('crop')
                   .auto('format')
                   .url()}
-                alt={main.authorName ?? ''}
+                alt={main.author.name ?? ''}
                 width={58}
                 height={58}
                 className="border-accent/40 rounded-full border"
               />
             ) : (
-              <div className="bg-faint border-accent/40 text-accent flex h-[58px] w-[58px] items-center justify-center rounded-full border font-serif">
-                {getInitials(main.authorName)}
+              <div className="bg-faint border-accent/40 text-accent flex h-14.5 w-14.5 items-center justify-center rounded-full border font-serif">
+                {getInitials(main.author.name)}
               </div>
             )}
             <div>
-              <p className="text-base font-semibold">{main.authorName}</p>
+              <p className="text-base font-semibold">{main.author.name}</p>
               <p className="text-muted mt-0.5 text-sm">
-                {main.role}
-                {main.company ? `, ${main.company}` : ''}
+                {main.author.role}
+                {main.author.company ? `, ${main.author.company}` : ''}
               </p>
             </div>
           </div>
@@ -124,32 +124,32 @@ export default function TestimonialsSection({ testimonials }: Props) {
               onClick={() => goTo(testimonials.findIndex((x) => x._id === t._id))}
               className="bg-warm border-faint hover:border-accent/30 flex flex-1 items-start gap-4 rounded-2xl border p-6 text-left transition-colors"
             >
-              {t.avatar ? (
+              {t.author.avatar ? (
                 <Image
-                  src={genImageBuilder(t.avatar)
+                  src={genImageBuilder(t.author.avatar)
                     .width(96)
                     .height(96)
                     .fit('crop')
                     .auto('format')
                     .url()}
-                  alt={t.authorName ?? ''}
+                  alt={t.author.name}
                   width={48}
                   height={48}
                   className="border-faint shrink-0 rounded-full border"
                 />
               ) : (
                 <div className="bg-faint border-faint text-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-full border font-serif text-sm">
-                  {getInitials(t.authorName)}
+                  {getInitials(t.author.name)}
                 </div>
               )}
               <div>
                 <p className="text-muted mb-2 line-clamp-2 text-sm leading-relaxed font-light">
                   {t.quote}
                 </p>
-                <p className="text-sm font-semibold">{t.authorName}</p>
+                <p className="text-sm font-semibold">{t.author.name}</p>
                 <p className="text-muted mt-0.5 text-xs">
-                  {t.role}
-                  {t.company ? `, ${t.company}` : ''}
+                  {t.author.role}
+                  {t.author.company ? `, ${t.author.company}` : ''}
                 </p>
               </div>
             </button>

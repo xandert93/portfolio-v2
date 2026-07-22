@@ -55,7 +55,7 @@ type Props = {
   'aria-labelledby'?: string
 }
 
-export default function Section({
+export const Section = ({
   id,
   index,
   glyphSide = 'left',
@@ -71,7 +71,7 @@ export default function Section({
   children,
   className,
   ...rest
-}: Props) {
+}: Props) => {
   const ref = useRef<HTMLElement | null>(null)
 
   const { scrollYProgress } = useScroll({
@@ -199,4 +199,4 @@ const IndexGlyph = ({
   )
 }
 
-const MotionIndexGlyph = motion(IndexGlyph)
+const MotionIndexGlyph = motion.create(IndexGlyph)

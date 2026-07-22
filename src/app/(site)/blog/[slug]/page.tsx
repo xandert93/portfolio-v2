@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import { fetchPost } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
+import { ROUTES } from '@/config/routes'
 import { codeToHtml } from 'shiki'
 
 const estimateReadingTime = (body: any): number => {
@@ -189,7 +190,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           We couldn't find that post
         </h1>
         <Link
-          href="/blog"
+          href={ROUTES.blog}
           className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-accent hover:text-ink transition-colors"
         >
           ← Back to all posts
@@ -227,7 +228,7 @@ export default async function PostDetailPage({ params }: PageProps) {
     <main className="max-w-3xl mx-auto px-5 sm:px-6 py-12 sm:py-20">
       {/* back nav */}
       <Link
-        href="/blog"
+        href={ROUTES.blog}
         className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors mb-8 sm:mb-12"
       >
         ← All posts
@@ -303,7 +304,7 @@ export default async function PostDetailPage({ params }: PageProps) {
       {/* footer nav */}
       <footer className="mt-16 sm:mt-20 pt-8 border-t border-faint">
         <Link
-          href="/blog"
+          href={ROUTES.blog}
           className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"
         >
           ← All posts

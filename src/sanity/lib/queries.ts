@@ -53,6 +53,7 @@ export const USER_NAMES_QUERY = defineQuery(`
 export const ABOUT_QUERY = defineQuery(`
   *[_type == "about"][0] {
     ...,
+    "galleryImages": coalesce(galleryImages, []),
     "cv": *[_type == "siteSettings"][0].cv
   }
 `)

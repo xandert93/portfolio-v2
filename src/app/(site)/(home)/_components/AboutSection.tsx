@@ -2,26 +2,26 @@
 
 import { genImageBuilder } from '@/sanity/lib/image'
 
-import { ArrowRight } from 'lucide-react'
 import { PortableText } from '@portabletext/react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { useRef } from 'react'
-import Section, { fadeUp, containerVariants } from '@/components/ui/Section'
-import ArrowLink from '@/components/links/ArrowLink'
+import { Section, fadeUp, containerVariants } from '@/components/ui/Section'
+import { ArrowLink } from '@/components/links/ArrowLink'
+import { ROUTES } from '@/config/routes'
 import { About } from '@/sanity/types'
 
-export default function AboutSection({
-  about,
-  gallery,
-}: {
+import type { Image as SanityImage } from 'sanity'
+
+type Props = {
   about: NonNullable<About>
-  gallery?: SanityImage[]
-}) {
-  const { headline, avatar, bio } = about
+}
+
+export default function AboutSection({ about }: Props) {
+  const { headline, galleryImages, bio } = about
 
   const galleryRef = useRef<HTMLDivElement | null>(null)
+
   const { scrollYProgress } = useScroll({
     target: galleryRef,
     offset: ['start end', 'end start'],
@@ -45,7 +45,6 @@ export default function AboutSection({
     'Photography',
     'Coffee-Powered',
     'Always Reading',
-    'Studio Ghibli OSTs',
   ]
 
   const facts = {
@@ -54,10 +53,6 @@ export default function AboutSection({
     'Favorite stack': 'Next.js · TypeScript · PostgreSQL',
     'Outside code': 'Planning a 2027 wedding!',
   }
-
-  const galleryImgs = (gallery && gallery.length ? gallery : [avatar, avatar, avatar])
-    .filter(Boolean)
-    .slice(0, 3) as SanityImage[]
 
   return (
     <Section
@@ -76,38 +71,45 @@ export default function AboutSection({
           style={{ y: parallaxY }}
           className="relative mx-auto w-full max-w-md"
         >
-          <div className="relative aspect-[4/5]">
-            {galleryImgs[2] && (
-              <Polaroid
-                img={galleryImgs[2]}
-                caption="off the clock"
-                rotate={-7}
-                offset="left-2 top-6"
-                z={10}
-                variants={imageReveal}
-              />
-            )}
-            {galleryImgs[1] && (
-              <Polaroid
-                img={galleryImgs[1]}
-                caption="workshop"
-                rotate={5}
-                offset="right-2 top-2"
-                z={20}
-                variants={imageReveal}
-              />
-            )}
-            {galleryImgs[0] && (
-              <Polaroid
-                img={galleryImgs[0]}
-                caption="hello."
-                rotate={-1.5}
-                offset="inset-x-6 top-10"
-                z={30}
-                variants={imageReveal}
-                primary
-              />
-            )}
+          <div className="relative aspect-4/5">
+            {galleryImages.length > 0 &&
+              [
+                {
+                  index: 2,
+                  rotate: -7,
+                  offset: 'left-2 top-6',
+                  z: 10,
+                },
+                {
+                  index: 1,
+                  rotate: 5,
+                  offset: 'right-2 top-2',
+                  z: 20,
+                },
+                {
+                  index: 0,
+                  rotate: -1.5,
+                  offset: 'inset-x-6 top-10',
+                  z: 30,
+                  primary: true,
+                },
+              ].map(({ index, rotate, offset, z, primary }) => {
+                const image = galleryImages[index]
+
+                if (!image) return null
+
+                return (
+                  <Polaroid
+                    key={index}
+                    image={image}
+                    rotate={rotate}
+                    offset={offset}
+                    z={z}
+                    variants={imageReveal}
+                    primary={primary}
+                  />
+                )
+              })}
 
             {/* Signature scribble */}
             <motion.svg
@@ -138,7 +140,7 @@ export default function AboutSection({
             className="border-accent text-ink relative border-l pl-5 font-serif italic"
             style={{ fontSize: 'clamp(1.05rem, 1.6vw, 1.25rem)', lineHeight: 1.5 }}
           >
-            I build things on the web that feel considered — the kind you&apos;d want to
+            I build things on the web that feel considered — the kind you'd want to
             revisit, not just click through.
           </motion.blockquote>
 
@@ -163,7 +165,7 @@ export default function AboutSection({
           </motion.dl>
 
           <motion.div variants={fadeUp}>
-            <ArrowLink href="/about" children="Read My Story" />
+            <ArrowLink href={ROUTES.about} children="Read My Story" />
           </motion.div>
         </motion.div>
       </div>
@@ -203,23 +205,21 @@ export default function AboutSection({
 }
 
 function Polaroid({
-  img,
-  caption,
+  image,
   rotate,
   offset,
   z,
   variants,
   primary,
 }: {
-  img: SanityImage
-  caption: string
+  image: NonNullable<About>['galleryImages'][number]
   rotate: number
   offset: string
   z: number
   variants: Variants
   primary?: boolean
 }) {
-  const url = genImageBuilder(img).url()
+  const url = genImageBuilder(image).url()
 
   return (
     <motion.figure
@@ -239,16 +239,17 @@ function Polaroid({
         className="border-faint relative overflow-hidden border bg-white p-2 pb-10 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.35)]"
         style={{ borderRadius: 2 }}
       >
-        <div className="relative aspect-[4/5] overflow-hidden">
+        <div className="relative aspect-4/5 overflow-hidden">
           <Image
             src={url || '/placeholder.svg'}
-            alt={img?.alt || caption}
+            alt={image.alt}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
           />
         </div>
         <figcaption className="text-muted absolute inset-x-0 bottom-2 text-center font-serif text-xs italic">
-          {caption}
+          {image.caption}
         </figcaption>
       </div>
     </motion.figure>

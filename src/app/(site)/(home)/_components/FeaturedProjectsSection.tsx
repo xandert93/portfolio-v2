@@ -6,8 +6,9 @@ import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { FeaturedProjects } from '@/sanity/types'
 import { genImageBuilder } from '@/sanity/lib/image'
-import Section, { fadeUp } from '@/components/ui/Section'
-import ArrowLink from '@/components/links/ArrowLink'
+import { Section, fadeUp } from '@/components/ui/Section'
+import { ArrowLink } from '@/components/links/ArrowLink'
+import { ROUTES } from '@/config/routes'
 
 type Props = {
   projects: FeaturedProjects
@@ -22,7 +23,7 @@ export default function FeaturedProjectsSection({ projects }: Props) {
       glowSide="right"
       glowVertical="top"
       eyebrow="Selected work"
-      aside={<ArrowLink href="/projects" children="All Work" />}
+      aside={<ArrowLink href={ROUTES.projects} children="All Work" />}
       heading="Featured projects"
       lead="A few recent builds where design, performance and clean architecture had to work together."
     >
@@ -49,11 +50,11 @@ function ProjectCardLink({ project }: { project: FeaturedProjects[number] }) {
 
   return (
     <Link
-      href={`/projects/${slug}`}
+      href={`${ROUTES.projects}/${slug}`}
       className="card group grid grid-cols-1 items-center gap-6 overflow-hidden p-4 md:grid-cols-[minmax(0,1fr)_1.1fr] md:gap-10 md:p-5"
     >
       {/* Thumbnail */}
-      <div className="border-faint relative aspect-[16/10] overflow-hidden rounded-sm border">
+      <div className="border-faint relative aspect-16/10 overflow-hidden rounded-sm border">
         <Image
           src={genImageBuilder(coverImage).url() || '/placeholder.svg'}
           alt={title}

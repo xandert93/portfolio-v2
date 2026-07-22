@@ -53,14 +53,14 @@ export default async function Footer({ settings }: Props) {
 
           {/* Social Links */}
           <div className="flex items-center gap-5">
-            {socials.map(({ href, label, icon: Icon }) => (
+            {socials.map(({ href, label, icon: Icon }: any) => (
               <a
                 key={label}
                 href={href}
                 aria-label={label}
                 target={href.startsWith('mailto') ? undefined : '_blank'}
                 rel="noopener noreferrer"
-                className="text-muted hover:text-accent-strong transition-all ease-out hover:-translate-y-0.25"
+                className="text-muted hover:text-accent-strong transition-all ease-out hover:-translate-y-px"
               >
                 <Icon className="size-5 sm:size-6" />
               </a>

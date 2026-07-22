@@ -23,7 +23,14 @@ function toBlocks(paragraphs: string[]) {
   }))
 }
 
-export const PROJECTS: Project[] = [
+type SeedProject = Omit<
+  Project,
+  '_id' | '_type' | '_rev' | '_createdAt' | '_updatedAt' | 'media'
+> & {
+  media: { coverImageFilename: string }
+}
+
+export const PROJECTS: SeedProject[] = [
   {
     title: 'DevFlow',
     slug: {

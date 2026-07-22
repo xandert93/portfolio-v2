@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
 export const about = defineType({
   name: 'about',
@@ -34,6 +34,38 @@ export const about = defineType({
           validation: (Rule) => Rule.required(),
         }),
       ],
+    }),
+    defineField({
+      name: 'galleryImages',
+      title: 'Gallery Images',
+      type: 'array',
+      description:
+        'Upload up to 3 images for a polaroid gallery. The first image is the featured photo displayed on top, the second appears behind it on the right, and the third appears behind it on the left. Each image includes a handwritten-style caption shown beneath it.',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          validation: (Rule) => Rule.required(),
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Alternative text',
+              type: 'string',
+              description: 'Describe the contents of the image for screen readers.',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+              description:
+                'Short handwritten-style caption displayed beneath the polaroid.',
+              validation: (Rule) => Rule.required().max(40),
+            }),
+          ],
+        }),
+      ],
+      validation: (Rule) => Rule.max(3),
     }),
     defineField({
       name: 'location',
@@ -75,7 +107,7 @@ export const about = defineType({
   asset: {
     _type: "reference",
     _ref: "image-abc123-1200x1200-png"
-  }
+  
 }
 
 This approach has several benefits over storing URls:

@@ -1,3 +1,4 @@
 {
-  "typescript.preferences.autoImportFileExcludePatterns": ["**/generated-types.ts"]
+  "typescript.preferences.autoImportFileExcludePatterns": ["**/generated-types.ts"],
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }

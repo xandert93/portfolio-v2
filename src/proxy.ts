@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 import { FEATURES } from '@/config/features'
+import { ROUTES } from '@/config/routes'
 
 const GATED_ROUTES: Record<string, keyof typeof FEATURES> = {
-  '/projects': 'projects',
-  '/about': 'about',
-  '/experience': 'experience',
-  '/blog': 'blog',
+  [ROUTES.projects]: 'projects',
+  [ROUTES.about]: 'about',
+  [ROUTES.experience]: 'experience',
+  [ROUTES.blog]: 'blog',
 }
 
 /* 📚 Request URL terminology:
@@ -33,7 +34,13 @@ export function proxy(request: NextRequest) {
   if (isGateActive) return NextResponse.rewrite(new URL('/whocares', request.url))
 }
 
-// Middleware only runs for paths matched by config.matcher
 export const config = {
   matcher: ['/projects/:path*', '/experience/:path*', '/about/:path*', '/blog/:path*'],
 }
+
+/* 📚 config.matcher
+
+- Middleware only runs for paths matched by config.matcher. 
+- Unfortunately, Next uses it before runtime to decide which requests should invoke the proxy.
+- This means that values need to be unavoidably hardcoded!
+*/

@@ -8,16 +8,14 @@ type Props = ComponentProps<typeof Link> & {
   children: React.ReactNode
 }
 
-const ArrowLink = ({ children, className = '', ...props }: Props) => {
+export const ArrowLink = ({ children, className = '', ...props }: Props) => {
   return (
     <Link
       {...props}
       className={`link-underline group inline-flex items-start gap-0.5 ${className}`}
     >
       <span>{children}</span>
-      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.25" />
+      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-px" />
     </Link>
   )
 }
-
-export default ArrowLink

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { fetchPaginatedPosts, fetchPosts } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
 import Pagination from '@/components/Pagination'
+import { ROUTES } from '@/config/routes'
 
 type PageProps = {
   searchParams: Promise<{ page?: string }>
@@ -75,7 +76,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                   </div>
                 )}
 
-                <Link href={`/blog/${post.slug}`}>
+                <Link href={`${ROUTES.blog}/${post.slug}`}>
                   <h2 className="font-serif text-2xl text-ink group-hover:text-accent transition-colors">
                     {post.title}
                   </h2>
@@ -101,7 +102,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        basePath="/blog"
+        basePath={ROUTES.blog}
         hash="posts"
       />
     </main>

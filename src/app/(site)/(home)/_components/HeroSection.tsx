@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PortableText } from '@portabletext/react'
 import type { About, SiteSettings } from '@/sanity/types'
+import { ROUTES } from '@/config/routes'
 import { motion } from 'framer-motion'
 
 type Props = {
@@ -71,7 +72,7 @@ export default function HeroSection({ settings, about }: Props) {
         fill
         className="object-cover object-[62%_15%]"
         priority
-        sizes="100vw"
+        sizes="(max-width: 768px) 100vw, 50vw"
       />
     )
   }
@@ -127,7 +128,7 @@ export default function HeroSection({ settings, about }: Props) {
 
   function ProjectsLink() {
     return (
-      <Link href="/projects" className="btn btn-primary">
+      <Link href={ROUTES.projects} className="btn btn-primary">
         View my work ↗
       </Link>
     )
@@ -135,7 +136,7 @@ export default function HeroSection({ settings, about }: Props) {
 
   function ContactLink() {
     return (
-      <Link href="/contact" className="btn btn-ghost">
+      <Link href={ROUTES.contact} className="btn btn-ghost">
         Get in touch ➤
       </Link>
     )

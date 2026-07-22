@@ -156,6 +156,16 @@ export type About = {
     alt: string
     _type: 'image'
   }
+  galleryImages?: Array<{
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt: string
+    caption: string
+    _type: 'image'
+    _key: string
+  }>
   location: string
   isOpenToWork: boolean
 }
@@ -644,7 +654,7 @@ export type USER_NAMES_QUERY_RESULT = {
 
 // Source: src/sanity/lib/queries.ts
 // Variable: ABOUT_QUERY
-// Query: *[_type == "about"][0] {    ...,    "cv": *[_type == "siteSettings"][0].cv  }
+// Query: *[_type == "about"][0] {    ...,    "galleryImages": coalesce(galleryImages, []),    "cv": *[_type == "siteSettings"][0].cv  }
 export type ABOUT_QUERY_RESULT = {
   _id: string
   _type: 'about'
@@ -678,6 +688,18 @@ export type ABOUT_QUERY_RESULT = {
     alt: string
     _type: 'image'
   }
+  galleryImages:
+    | Array<{
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt: string
+        caption: string
+        _type: 'image'
+        _key: string
+      }>
+    | Array<never>
   location: string
   isOpenToWork: boolean
   cv: {
@@ -1268,7 +1290,7 @@ declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "siteSettings"][0]{\n    ..., // spreads all existing fields\n    names{\n      ...,\n      "full": first + " " + last\n    },\n    \'ogImage\': *[_type == "about"][0].avatar,\n    favicon{\n      asset->{\n        _id,\n        url\n      }\n    },\n    cv{\n      asset->{\n        _id,\n        url,\n        originalFilename,\n        size\n      }\n    }\n  }\n': SITE_SETTINGS_QUERY_RESULT
     '\n  *[_type == "siteSettings"][0].names{\n      ...,\n      "full": first + " " + last\n    }\n': USER_NAMES_QUERY_RESULT
-    '\n  *[_type == "about"][0] {\n    ...,\n    "cv": *[_type == "siteSettings"][0].cv\n  }\n': ABOUT_QUERY_RESULT
+    '\n  *[_type == "about"][0] {\n    ...,\n    "galleryImages": coalesce(galleryImages, []),\n    "cv": *[_type == "siteSettings"][0].cv\n  }\n': ABOUT_QUERY_RESULT
     '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT
     '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT
     '\n  *[_type == "post" && isFeatured == true] | order(date desc){\n    _id,\n    \'slug\': slug.current,\n    title,\n    category,\n    media{\n      coverImage\n    },\n    content{\n      summary,\n      "technologies": technologies[]->{ _id, name }\n    },\n    date\n  }\n  ': FEATURED_PROJECTS_CARDS_QUERY_RESULT

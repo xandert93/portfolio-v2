@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import type { Testimonial, Testimonials } from '@/sanity/types'
 
-import Section from '@/components/ui/Section'
+import { Section } from '@/components/ui/Section'
 
 type Props = {
   testimonials: Testimonial[]
@@ -114,7 +114,7 @@ const CurrentTestimonial = ({
 }) => {
   return (
     <div
-      className="relative z-10 min-h-[280px] pt-8 md:min-h-[340px] md:pt-14"
+      className="relative z-10 min-h-70 pt-8 md:min-h-85 md:pt-14"
       id={`testimonial-panel-${_id}`}
     >
       <AnimatePresence mode="wait">
