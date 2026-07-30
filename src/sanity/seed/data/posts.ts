@@ -103,11 +103,7 @@ const genCode = (code: string, language = 'bash'): CodeBlock => ({
 // A fragment passed to pWithFormatting is either a plain text string,
 // or an object marking a piece of text that should render with a
 // specific inline mark: code, bold (strong), or italic (em).
-type TextFragment =
-  | string
-  | { code: string }
-  | { bold: string }
-  | { italic: string }
+type TextFragment = string | { code: string } | { bold: string } | { italic: string }
 
 const genFragments = (fragments: TextFragment[]): Span[] =>
   fragments.map((fragment) => {
@@ -514,11 +510,7 @@ export const POSTS = [
         'Two small additions go a long way toward making this production-ready: request logging and basic security headers. Install two popular packages:',
       ),
       pt.code('npm install helmet morgan', 'bash'),
-      pt.pWithFormatting([
-        'Then update the top of ',
-        { code: 'server.js' },
-        ':',
-      ]),
+      pt.pWithFormatting(['Then update the top of ', { code: 'server.js' }, ':']),
       pt.code(
         `const express = require('express');
   const helmet = require('helmet');
@@ -562,7 +554,7 @@ export const POSTS = [
       ),
     ],
 
-    tags: [genTag('nodejs'), genTag('express'), genTag('backend')],
+    tags: [genTag('node'), genTag('express'), genTag('backend')],
   },
 
   {
@@ -614,7 +606,7 @@ export const POSTS = [
       ),
     ],
 
-    tags: [genTag('auth'), genTag('nodejs')],
+    tags: [genTag('auth'), genTag('node')],
   },
 
   {
@@ -678,8 +670,8 @@ shared/`,
 
   {
     title: 'Why I Prefer Node.js for Backend Development',
-    slug: { current: 'why-i-prefer-nodejs-backend' },
-    coverImageFilename: 'prefer-nodejs-backend.jpg',
+    slug: { current: 'why-i-prefer-node-backend' },
+    coverImageFilename: 'prefer-node-backend.jpg',
     excerpt:
       'A personal breakdown of why Node.js remains my go-to backend technology for most projects.',
     publishedAt: '2026-05-20T12:00:00.000Z',
@@ -698,6 +690,6 @@ shared/`,
       ]),
     ],
 
-    tags: [genTag('nodejs'), genTag('backend')],
+    tags: [genTag('node'), genTag('backend')],
   },
 ]
