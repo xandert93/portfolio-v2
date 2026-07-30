@@ -30,7 +30,7 @@ export const EXPERIENCES = [
         'Improved API performance by approximately 25% while delivering multiple production features and steadily increasing automated test coverage.',
     },
 
-    skills: [genSkill('aspnetcore'), genSkill('mssql'), genSkill('vuejs')],
+    skills: [genSkill('nestjs'), genSkill('postgresql'), genSkill('vue')],
 
     slug: {
       _type: 'slug',

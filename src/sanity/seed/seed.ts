@@ -6,6 +6,7 @@ import { clearDatabase } from '../lib/clearDatabase'
 import path from 'path'
 import fs from 'fs'
 import { formatLabel } from './utils'
+import pLimit from 'p-limit'
 
 // // 🚨 Safety guard: never run against production accidentally
 // if (process.env.SANITY_DATASET === 'production') {
@@ -15,6 +16,12 @@ import { formatLabel } from './utils'
 // Declarative config for every collection that needs an image hydrated
 // (filename on disk -> uploaded Sanity asset reference) before creation.
 const DEHYDRATED_COLLECTIONS = [
+  {
+    _type: 'skill',
+    items: SEED.SKILLS,
+    imageKey: 'logoFilename',
+    newImageKey: 'logo',
+  },
   {
     _type: 'project',
     items: SEED.PROJECTS,
@@ -88,7 +95,6 @@ const seedDatabase = async () => {
 
     // // 2. Reseed in dependency order
     await seedCollection('tags', SEED.TAGS)
-    await seedCollection('skills', SEED.SKILLS)
 
     for (const collection of DEHYDRATED_COLLECTIONS) {
       await seedDehydratedCollection(collection)
@@ -115,6 +121,8 @@ async function seedCollection<T>(_type: string, items: T[]): Promise<void> {
   console.log(`✅ Created ${savedItems.length} ${label}`)
 }
 
+const limit = pLimit(25)
+
 async function seedDehydratedCollection({
   _type,
   items,
@@ -132,14 +140,63 @@ async function seedDehydratedCollection({
 
   const savedItems = await Promise.all(
     items.map(async (data) => {
-      const hydrated = await hydrate({ _type, imageKey, data, newImageKey })
-      const saved = await writeClient.create(hydrated)
-      return saved
+      return limit(async () => {
+        const hydrated = await hydrate({ _type, imageKey, data, newImageKey })
+        const saved = await writeClient.create(hydrated)
+        return saved
+      })
     }),
   )
 
   console.log(`✅ Created ${savedItems.length} ${label}`)
 }
+
+/* 📚 Hitting Sanity's Rate Limit (429)
+
+With this code:
+
+```js
+items.map(async item => {
+  await client.assets.upload(...)
+});
+```
+
+If you have 30–50 images, they all upload simultaneously. Sanity only allows about 25 requests per second per IP, so the remaining uploads receive HTTP 429.
+
+Using a `for...of loop`, we can achieve sequential execution instead e.g.:
+  
+```js
+  const savedItems = []
+
+  for (const item of items) {
+    const hydrated = await hydrate({ _type, imageKey, data: item, newImageKey })
+    const saved = await writeClient.create(hydrated)
+    savedItems.push(saved)
+  }
+```
+
+But, this is unnecessarily reallys slow.
+
+The best solution is therefore to limit concurrency using a "concurrency limiter" which gives us the best of both worlds:
+
+npm install p-limit
+
+and then:
+
+```js
+import pLimit from "p-limit";
+
+const limit = pLimit(25);
+
+await Promise.all(
+  items.map(item =>
+    limit(() => hydrate(item))
+  )
+);
+```
+
+Only 25 uploads happen simultaneously.
+*/
 
 async function hydrate({
   _type,

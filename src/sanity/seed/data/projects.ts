@@ -46,7 +46,7 @@ export const PROJECTS: SeedProject[] = [
       description: toBlocks([
         'DevFlow is a modern project management application built for developers. It combines task tracking, team collaboration, and technical documentation into a single workspace.',
       ]),
-      technologies: ['nextjs', 'typescript', 'nodejs', 'postgresql'].map(genSkill),
+      technologies: ['next', 'typescript', 'node', 'postgresql'].map(genSkill),
       features: [
         'Real-time project boards',
         'Team workspaces and permissions',
@@ -125,7 +125,7 @@ export const PROJECTS: SeedProject[] = [
       description: toBlocks([
         'Commerce Engine API provides a robust backend foundation for modern online stores with secure authentication and scalable architecture.',
       ]),
-      technologies: ['nodejs', 'express', 'postgresql', 'docker'].map(genSkill),
+      technologies: ['node', 'express', 'postgresql', 'docker'].map(genSkill),
       features: [
         'JWT authentication',
         'Product and inventory management',
@@ -163,7 +163,7 @@ export const PROJECTS: SeedProject[] = [
       description: toBlocks([
         'A visually focused portfolio platform designed around performance, accessibility, and content management.',
       ]),
-      technologies: ['nextjs', 'sanity', 'tailwindcss'].map(genSkill),
+      technologies: ['next', 'sanity', 'tailwindcss'].map(genSkill),
       features: [
         'Dynamic project management',
         'Responsive design system',
@@ -241,7 +241,7 @@ export const PROJECTS: SeedProject[] = [
       description: toBlocks([
         'A production-ready booking platform focused on usability, reliability, and secure patient workflows.',
       ]),
-      technologies: ['nextjs', 'typescript', 'postgresql', 'redis'].map(genSkill),
+      technologies: ['next', 'typescript', 'postgresql', 'resend'].map(genSkill),
       features: [
         'Appointment scheduling',
         'User authentication',
