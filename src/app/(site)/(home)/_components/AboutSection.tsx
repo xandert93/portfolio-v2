@@ -1,24 +1,26 @@
 'use client'
 
-import { genImageBuilder } from '@/sanity/lib/image'
+import { forwardRef, useRef, useState } from 'react'
+import Image from 'next/image'
 
 import { PortableText } from '@portabletext/react'
-import Image from 'next/image'
+
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
-import { useRef } from 'react'
-import { Section, fadeUp, containerVariants } from '@/components/ui/Section'
+
+import { genImageBuilder } from '@/sanity/lib/image'
+
+import { Section } from '@/components/ui/Section'
 import { ArrowLink } from '@/components/links/ArrowLink'
 import { ROUTES } from '@/config/routes'
 import { About } from '@/sanity/types'
-
-import type { Image as SanityImage } from 'sanity'
+import { containerVariants, fadeUp } from '@/lib/motion'
 
 type Props = {
   about: NonNullable<About>
 }
 
 export default function AboutSection({ about }: Props) {
-  const { headline, galleryImages, bio } = about
+  const { headline, galleryImages, bio, interests, quickFacts } = about
 
   const galleryRef = useRef<HTMLDivElement | null>(null)
 
@@ -38,34 +40,31 @@ export default function AboutSection({ about }: Props) {
     },
   }
 
-  const tags = [
-    'Tennis',
-    'Travel',
-    'Cooking',
-    'Photography',
-    'Coffee-Powered',
-    'Always Reading',
-  ]
-
-  const facts = {
-    Based: 'London, UK',
-    'Building since': '2022',
-    'Favorite stack': 'Next.js · TypeScript · PostgreSQL',
-    'Outside code': 'Planning a 2027 wedding!',
-  }
-
   return (
     <Section
       id="about"
-      index="04"
-      glyphSide="left"
-      glowSide="right"
-      glowVertical="top"
-      eyebrow="About me"
-      heading={headline}
+
+      glyph={{ number: 4, side: 'right' }}
+      glow={{ side: 'left', vertical: 'top' }}
+      header={{
+        eyebrow: 'About me',
+        heading: (
+          <PortableText
+            value={headline}
+            components={{
+              // Render just as plain text:
+              block: ({ children }) => children,
+              // Override styling for anything wrapped in <em>:
+              marks: {
+                em: ({ children }) => <em className="text-accent">{children}</em>,
+              },
+            }}
+          />
+        ),
+      }}
     >
       <div className="grid grid-cols-1 items-start gap-14 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
-        {/* Polaroid stack */}
+        {/* Polaroid Gallery */}
         <motion.div
           ref={galleryRef}
           style={{ y: parallaxY }}
@@ -148,18 +147,18 @@ export default function AboutSection({ about }: Props) {
             variants={fadeUp}
             className="text-muted [&_strong]:text-accent flex flex-col gap-2 text-base leading-loose font-light [&_strong]:font-medium"
           >
-            <PortableText value={bio ?? []} />
+            <PortableText value={bio} />
           </motion.div>
 
-          {/* Facts grid */}
+          {/* Quick Facts grid */}
           <motion.dl
             variants={containerVariants}
             className="border-faint grid grid-cols-2 gap-x-6 gap-y-4 border-t pt-6"
           >
-            {Object.entries(facts).map(([k, v]) => (
-              <motion.div key={k} variants={fadeUp} className="flex flex-col gap-1">
-                <dt className="eyebrow text-[0.6rem]">{k}</dt>
-                <dd className="text-ink font-serif text-sm italic">{v}</dd>
+            {quickFacts.map(({ label, value }) => (
+              <motion.div key={label} variants={fadeUp} className="flex flex-col gap-1">
+                <dt className="eyebrow text-[0.6rem]">{label}</dt>
+                <dd className="text-ink font-serif text-sm italic">{value}</dd>
               </motion.div>
             ))}
           </motion.dl>
@@ -171,40 +170,12 @@ export default function AboutSection({ about }: Props) {
       </div>
 
       {/* Marquee ticker */}
-      <motion.div
-        variants={fadeUp}
-        className="border-faint relative mt-16 overflow-hidden border-y py-4"
-      >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16"
-          style={{ background: 'linear-gradient(to right, var(--paper), transparent)' }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16"
-          style={{ background: 'linear-gradient(to left, var(--paper), transparent)' }}
-        />
-        <motion.div
-          className="flex gap-3 whitespace-nowrap"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{ duration: 40, ease: 'linear', repeat: Infinity }}
-        >
-          {[...tags, ...tags, ...tags, ...tags].map((tag, i) => (
-            <span
-              key={i}
-              className="bg-accent-light border-accent/20 text-accent shrink-0 rounded-sm border px-3.5 py-2 text-[0.65rem] tracking-wide uppercase"
-            >
-              {tag}
-            </span>
-          ))}
-        </motion.div>
-      </motion.div>
+      <Marquee>{interests}</Marquee>
     </Section>
   )
 }
 
-function Polaroid({
+const Polaroid = ({
   image,
   rotate,
   offset,
@@ -218,40 +189,98 @@ function Polaroid({
   z: number
   variants: Variants
   primary?: boolean
-}) {
+}) => {
   const url = genImageBuilder(image).url()
 
   return (
     <motion.figure
       variants={variants}
-      whileHover={{
-        rotate: 0,
-        scale: 1.03,
-        zIndex: 40,
-        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
-      }}
       initial={{ rotate }}
-      animate={{ rotate }}
-      style={{ zIndex: z }}
-      className={`absolute ${offset} ${primary ? 'w-[78%]' : 'w-[60%]'} origin-center`}
+      style={{ zIndex: z, transformPerspective: 1200 }}
+      whileHover={{ y: -18, rotate: rotate * 0.25, scale: 1.045, zIndex: 50 }}
+      whileTap={{
+        y: -10,
+        scale: 0.985,
+        transition: { type: 'spring', stiffness: 400, damping: 28 },
+      }}
+      transition={{ type: 'spring', stiffness: 320, damping: 24, mass: 0.7 }}
+      className={`group absolute ${offset} ${
+        primary ? 'w-[78%]' : 'w-[60%]'
+      } cursor-pointer will-change-transform select-none`}
     >
-      <div
-        className="border-faint relative overflow-hidden border bg-white p-2 pb-10 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.35)]"
-        style={{ borderRadius: 2 }}
-      >
-        <div className="relative aspect-4/5 overflow-hidden">
+      <div className="relative overflow-hidden rounded-[3px] border border-black/5 bg-[#faf9f6] p-2.5 pb-11 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.08)] transition-shadow duration-300 ease-out group-hover:shadow-[0_32px_64px_-20px_rgba(0,0,0,0.28),0_12px_24px_-12px_rgba(0,0,0,0.12)]">
+        {/* subtle paper sheen */}
+        <div className="pointer-events-none absolute inset-0 rounded-[3px] bg-linear-to-b from-white/40 to-transparent" />
+
+        <div className="relative aspect-4/5 overflow-hidden rounded-[1px]">
           <Image
             src={url || '/placeholder.svg'}
             alt={image.alt}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover"
+            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
+            style={{ filter: 'contrast(1.03) saturate(1.05)' }}
           />
+          {/* soft vignette on hover for depth */}
+          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </div>
+
         <figcaption className="text-muted absolute inset-x-0 bottom-2 text-center font-serif text-xs italic">
           {image.caption}
         </figcaption>
       </div>
     </motion.figure>
+  )
+}
+
+const Marquee = ({ children }: { children: string[] }) => {
+  const [isPaused, setIsPaused] = useState(false)
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="border-faint relative mt-16 overflow-hidden border-y py-4"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16"
+        style={{
+          background: 'linear-gradient(to right, var(--paper), transparent)',
+        }}
+      />
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16"
+        style={{
+          background: 'linear-gradient(to left, var(--paper), transparent)',
+        }}
+      />
+
+      <motion.div
+        className="flex w-max gap-3"
+        animate={{ x: isPaused ? '0%' : '-50%' }}
+        transition={{
+          duration: 40,
+          ease: 'linear',
+          repeat: Infinity,
+        }}
+      >
+        {[0, 1].map((copy) => (
+          <div key={copy} className="flex shrink-0 gap-3">
+            {children.map((tag) => (
+              <span
+                key={`${copy}-${tag}`}
+                className="bg-accent-light border-accent/20 text-accent shrink-0 rounded-sm border px-3.5 py-2 text-[0.65rem] tracking-wide uppercase"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        ))}
+      </motion.div>
+    </motion.div>
   )
 }

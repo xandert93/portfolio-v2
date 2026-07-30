@@ -47,7 +47,7 @@ export default async function AboutPage() {
           )}
 
           <h2 className="text-ink mb-6 font-serif text-3xl leading-snug">
-            {about.headline}
+            <PortableText value={about.headline} />
           </h2>
 
           {about.bio && (

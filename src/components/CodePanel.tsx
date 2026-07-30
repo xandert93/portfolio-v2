@@ -2,7 +2,7 @@ const CodePanel = () => {
   const isOpenToWork = true
 
   return (
-    <div className="border-faint flex aspect-4/5 max-h-[480px] flex-col overflow-hidden rounded-sm border bg-[#13121a] font-mono text-[13px]">
+    <div className="border-faint flex aspect-4/5 max-h-120 flex-col overflow-hidden rounded-sm border bg-[#13121a] font-mono text-[13px]">
       <TrafficLights />
       {/* Code */}
       <div className="overflow-hidden p-6 leading-[1.95] text-[#ccc8be]">

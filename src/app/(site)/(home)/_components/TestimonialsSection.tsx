@@ -57,18 +57,24 @@ export default function TestimonialsSection({ testimonials, autoPlayMs = 7000 }:
     <Section
       id="testimonials"
       aria-labelledby="testimonials-heading"
-      index="03"
-      glyphSide="left"
-      glowSide="center"
-      glowVertical="top"
-      eyebrow="Kind words"
-      heading={
-        <>
-          What people say after <span className="text-accent">working together</span>
-        </>
-      }
-      headingId="testimonials-heading"
-      lead="A short reel of feedback from founders, designers, students and teams I've built with."
+
+      glyph={{
+        number: 3,
+        side: 'left',
+      }}
+      glow={{
+        side: 'center',
+        vertical: 'top',
+      }}
+      header={{
+        eyebrow: 'Kind words',
+        heading: (
+          <>
+            What people say after <span className="text-accent">working together</span>
+          </>
+        ),
+        lead: "A short reel of feedback from founders, designers, students and teams I've built with.",
+      }}
     >
       <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,20rem)]">
         <div className="relative">

@@ -1,53 +1,33 @@
 'use client'
-
-import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { useRef, type ReactNode } from 'react'
 
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+
 import clsx from 'clsx'
-
-/* -------------------------------------------------------------------------- */
-/*  Shared motion variants — reused by every section for a uniform reveal      */
-/* -------------------------------------------------------------------------- */
-
-export const containerVariants: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-}
-
-export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-  },
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Section — the single source of truth for every section's box model         */
-/*                                                                            */
-/*  Owns: padding + max-width + top rule (via .section), the oversized index   */
-/*  glyph, the soft gold glow, the editorial left rule (.ruled), and a         */
-/*  uniform eyebrow / heading / lead header. Every section on the page uses    */
-/*  it so their box models line up exactly.                                    */
-/* -------------------------------------------------------------------------- */
+import { containerVariants, fadeUp, fadeUpReduced } from '@/lib/motion'
 
 type Props = {
   id?: string
-  /** Two-digit index shown as the oversized background glyph. Omit on hero. */
-  index?: string
-  glyphSide?: 'left' | 'right'
-  glowSide?: 'left' | 'right' | 'center'
-  glowVertical?: 'top' | 'bottom'
-  /** Set false to drop the glow (e.g. hero). */
-  glow?: boolean
-  eyebrow: string
-  /** Small italic note shown on the opposite side of the eyebrow. */
-  aside?: ReactNode
-  heading: ReactNode
-  headingId?: string
-  /** Optional intro paragraph under the heading. */
-  lead?: ReactNode
+
+  glyph: {
+    number?: number
+    side?: 'left' | 'right'
+  }
+
+  glow: {
+    side?: 'center' | 'left' | 'right'
+    vertical?: 'top' | 'bottom'
+  }
+
+  header: {
+    eyebrow: string
+    heading: ReactNode
+    /** Optional intro paragraph under the heading. */
+    lead?: ReactNode
+    /** Small italic note shown on the opposite side of the eyebrow. */
+    aside?: ReactNode
+  }
+
   /** Trailing accent full-stop after the heading. */
   dot?: boolean
   children: ReactNode
@@ -57,29 +37,34 @@ type Props = {
 
 export const Section = ({
   id,
-  index,
-  glyphSide = 'left',
-  glowSide = 'right',
-  glowVertical = 'top',
-  glow = true,
-  eyebrow,
-  aside,
-  heading,
-  headingId,
-  lead,
+
+  glyph,
+  glow,
+  header,
+
   dot = true,
+
   children,
   className,
   ...rest
 }: Props) => {
   const ref = useRef<HTMLElement | null>(null)
+  const shouldReduceMotion = useReducedMotion()
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
   })
 
-  const numberY = useTransform(scrollYProgress, [0, 1], ['4%', '-4%'])
+  // Freeze the parallax range to a static value when reduced motion is requested,
+  // instead of interpolating off scroll progress.
+  const numberY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    shouldReduceMotion ? ['0%', '0%'] : ['4%', '-4%'],
+  )
+
+  const itemVariants = shouldReduceMotion ? fadeUpReduced : fadeUp
 
   return (
     <section
@@ -89,31 +74,29 @@ export const Section = ({
       {...rest}
     >
       <div className="section-child">
-        {/* soft inner gold glow */}
         {glow && (
           <div
             aria-hidden
             className={clsx(
               'section-glow',
-              glowVertical === 'top' ? 'top-0' : 'bottom-0',
-              glowSide === 'left' && '-left-40',
-              glowSide === 'right' && '-right-40',
-              glowSide === 'center' && 'left-1/2 -translate-x-1/2',
+              glow.side === 'left' && '-left-40',
+              glow.side === 'right' && '-right-40',
+              glow.side === 'center' && 'left-1/2 -translate-x-1/2',
+              glow.vertical === 'top' ? 'top-0' : 'bottom-0',
             )}
           />
         )}
 
-        {/* oversized index glyph */}
-        {index && (
-          <MotionIndexGlyph
+        {glyph.number && (
+          <MotionNumberGlyph
             aria-hidden
             style={{ y: numberY }}
             className={clsx(
               'number-glyph',
-              glowVertical === 'top' ? 'top-4 md:top-10' : 'bottom-4 md:bottom-10',
-              glyphSide === 'left' ? 'left-4 md:left-20' : 'right-4 md:right-20',
+              glow.vertical === 'top' ? 'top-4 md:top-10' : 'bottom-4 md:bottom-10',
+              glyph.side === 'left' ? 'left-4 md:left-20' : 'right-4 md:right-20',
             )}
-            children={index}
+            children={String(glyph.number).padStart(2, '0')}
           />
         )}
 
@@ -124,40 +107,36 @@ export const Section = ({
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
         >
-          {/* Uniform header */}
-          <header className="mb-10 md:mb-15">
+          <header className="mb-10 flex flex-col gap-6 md:mb-15 md:gap-8">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <motion.span variants={fadeUp} className="eyebrow">
-                {eyebrow}
+              <motion.span variants={itemVariants} className="eyebrow">
+                {header.eyebrow}
               </motion.span>
-              {aside && (
+              {header.aside && (
                 <motion.span
-                  variants={fadeUp}
+                  variants={itemVariants}
                   className="text-muted font-serif text-xs italic"
                 >
-                  {aside}
+                  {header.aside}
                 </motion.span>
               )}
             </div>
 
-            <motion.h2 variants={fadeUp} id={headingId} className="section-heading mt-4">
-              {heading}
+            <motion.h2 variants={itemVariants} className="section-heading">
+              {header.heading}
               {dot && (
-                <span
-                  aria-hidden
-                  className="text-accent ml-1 inline-block font-serif italic"
-                >
+                <span aria-hidden className="text-accent ml-0.5">
                   .
                 </span>
               )}
             </motion.h2>
 
-            {lead && (
+            {header.lead && (
               <motion.p
-                variants={fadeUp}
-                className="text-muted mt-5 max-w-2xl leading-relaxed"
+                variants={itemVariants}
+                className="text-muted max-w-2xl leading-relaxed"
               >
-                {lead}
+                {header.lead}
               </motion.p>
             )}
           </header>
@@ -169,7 +148,7 @@ export const Section = ({
   )
 }
 
-type IndexGlyphProps = {
+type NumberGlyphProps = {
   index: string | number
   glowVertical?: 'top' | 'bottom'
   glyphSide?: 'left' | 'right'
@@ -177,13 +156,13 @@ type IndexGlyphProps = {
   style?: React.CSSProperties
 }
 
-const IndexGlyph = ({
+const NumberGlyph = ({
   glowVertical,
   glyphSide,
   className = '',
   style,
   ...props
-}: IndexGlyphProps) => {
+}: NumberGlyphProps) => {
   return (
     <span
       aria-hidden
@@ -199,4 +178,4 @@ const IndexGlyph = ({
   )
 }
 
-const MotionIndexGlyph = motion.create(IndexGlyph)
+const MotionNumberGlyph = motion.create(NumberGlyph)
