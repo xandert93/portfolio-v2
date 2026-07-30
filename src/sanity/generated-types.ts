@@ -129,7 +129,20 @@ export type About = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  headline: string
+  headline: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal'
+    listItem?: never
+    markDefs?: null
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
   bio: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -168,6 +181,12 @@ export type About = {
   }>
   location: string
   isOpenToWork: boolean
+  interests?: Array<string>
+  quickFacts?: Array<{
+    label: string
+    value: string
+    _key: string
+  }>
 }
 
 export type Tag = {
@@ -186,7 +205,24 @@ export type Skill = {
   _updatedAt: string
   _rev: string
   name: string
-  category?: 'Language' | 'Framework' | 'Tool' | 'Platform' | 'Other'
+  logo: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  category:
+    | 'Language'
+    | 'Framework'
+    | 'Library'
+    | 'Database'
+    | 'Tool'
+    | 'Platform'
+    | 'Runtime'
+    | 'Service'
+    | 'Other'
+  group: 'Frontend' | 'Backend' | 'Data' | 'Tooling'
   proficiency?: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
 }
 
@@ -654,14 +690,27 @@ export type USER_NAMES_QUERY_RESULT = {
 
 // Source: src/sanity/lib/queries.ts
 // Variable: ABOUT_QUERY
-// Query: *[_type == "about"][0] {    ...,    "galleryImages": coalesce(galleryImages, []),    "cv": *[_type == "siteSettings"][0].cv  }
+// Query: *[_type == "about"][0] {    ...,    "galleryImages": coalesce(galleryImages, []),    "cv": *[_type == "siteSettings"][0].cv,    "interests": coalesce(interests, []),    "quickFacts": coalesce(quickFacts, [])  }
 export type ABOUT_QUERY_RESULT = {
   _id: string
   _type: 'about'
   _createdAt: string
   _updatedAt: string
   _rev: string
-  headline: string
+  headline: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal'
+    listItem?: never
+    markDefs?: null
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
   bio: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -702,6 +751,14 @@ export type ABOUT_QUERY_RESULT = {
     | Array<never>
   location: string
   isOpenToWork: boolean
+  interests: Array<string> | Array<never>
+  quickFacts:
+    | Array<{
+        label: string
+        value: string
+        _key: string
+      }>
+    | Array<never>
   cv: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -792,7 +849,7 @@ export type PROJECTS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/lib/queries.ts
 // Variable: FEATURED_PROJECTS_QUERY
-// Query: *[_type == "project" && isFeatured == true] | order(date desc){    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      description,      "technologies": coalesce(technologies[]->{ _id, name }, []),      features,      challenges    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    date  }
+// Query: *[_type == "project" && isFeatured == true] | order(date desc){    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      description,      "technologies": coalesce(technologies[]->{ _id, name }, []),      features,      challenges    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
 export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
   _id: string
   title: string
@@ -867,6 +924,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
         }>
       | Array<never>
   }
+  isFeatured: true
   date: string
 }>
 
@@ -1241,7 +1299,24 @@ export type SKILLS_QUERY_RESULT = Array<{
   _updatedAt: string
   _rev: string
   name: string
-  category?: 'Framework' | 'Language' | 'Other' | 'Platform' | 'Tool'
+  logo: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  category:
+    | 'Database'
+    | 'Framework'
+    | 'Language'
+    | 'Library'
+    | 'Other'
+    | 'Platform'
+    | 'Runtime'
+    | 'Service'
+    | 'Tool'
+  group: 'Backend' | 'Data' | 'Frontend' | 'Tooling'
   proficiency?: 'Advanced' | 'Beginner' | 'Expert' | 'Intermediate'
 }>
 
@@ -1255,7 +1330,24 @@ export type TECH_SKILLS_QUERY_RESULT = Array<{
   _updatedAt: string
   _rev: string
   name: string
-  category?: 'Framework' | 'Language' | 'Other' | 'Platform' | 'Tool'
+  logo: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  category:
+    | 'Database'
+    | 'Framework'
+    | 'Language'
+    | 'Library'
+    | 'Other'
+    | 'Platform'
+    | 'Runtime'
+    | 'Service'
+    | 'Tool'
+  group: 'Backend' | 'Data' | 'Frontend' | 'Tooling'
   proficiency?: 'Advanced' | 'Beginner' | 'Expert' | 'Intermediate'
 }>
 
@@ -1290,9 +1382,9 @@ declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "siteSettings"][0]{\n    ..., // spreads all existing fields\n    names{\n      ...,\n      "full": first + " " + last\n    },\n    \'ogImage\': *[_type == "about"][0].avatar,\n    favicon{\n      asset->{\n        _id,\n        url\n      }\n    },\n    cv{\n      asset->{\n        _id,\n        url,\n        originalFilename,\n        size\n      }\n    }\n  }\n': SITE_SETTINGS_QUERY_RESULT
     '\n  *[_type == "siteSettings"][0].names{\n      ...,\n      "full": first + " " + last\n    }\n': USER_NAMES_QUERY_RESULT
-    '\n  *[_type == "about"][0] {\n    ...,\n    "galleryImages": coalesce(galleryImages, []),\n    "cv": *[_type == "siteSettings"][0].cv\n  }\n': ABOUT_QUERY_RESULT
+    '\n  *[_type == "about"][0] {\n    ...,\n    "galleryImages": coalesce(galleryImages, []),\n    "cv": *[_type == "siteSettings"][0].cv,\n    "interests": coalesce(interests, []),\n    "quickFacts": coalesce(quickFacts, [])\n  }\n': ABOUT_QUERY_RESULT
     '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT
-    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT
+    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT
     '\n  *[_type == "post" && isFeatured == true] | order(date desc){\n    _id,\n    \'slug\': slug.current,\n    title,\n    category,\n    media{\n      coverImage\n    },\n    content{\n      summary,\n      "technologies": technologies[]->{ _id, name }\n    },\n    date\n  }\n  ': FEATURED_PROJECTS_CARDS_QUERY_RESULT
     '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    date\n  }\n': PROJECT_QUERY_RESULT
     '\n  *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PAGINATED_PROJECTS_QUERY_RESULT

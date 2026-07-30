@@ -69,4 +69,20 @@ export const testimonial = defineType({
       initialValue: false,
     }),
   ],
+
+  preview: {
+    select: {
+      name: 'author.name',
+      company: 'author.company',
+      media: 'author.avatar',
+      isFeatured: 'isFeatured',
+    },
+    prepare({ name, company, media, isFeatured }) {
+      return {
+        title: name,
+        subtitle: [company, isFeatured ? '★ Featured' : null].filter(Boolean).join(' · '),
+        media,
+      }
+    },
+  },
 })

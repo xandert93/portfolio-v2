@@ -8,8 +8,23 @@ export const about = defineType({
     defineField({
       name: 'headline',
       title: 'Headline',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Bold', value: 'strong' },
+              { title: 'Italic', value: 'em' },
+            ],
+            annotations: [],
+          },
+        },
+      ],
+      validation: (Rule) =>
+        Rule.required().max(1).error('Headline should be a single paragraph.'),
     }),
     defineField({
       name: 'bio',
@@ -80,19 +95,64 @@ export const about = defineType({
       initialValue: false,
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: 'interests',
+      title: 'Interests',
+      type: 'array',
+      of: [{ type: 'string' }],
+      validation: (Rule) => Rule.max(10),
+    }),
+
+    defineField({
+      name: 'quickFacts',
+      title: 'Quick Facts',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'value',
+              title: 'Value',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'label',
+              subtitle: 'value',
+            },
+          },
+        }),
+      ],
+    }),
   ],
 
   preview: {
     select: {
-      title: 'headline',
+      headline: 'headline',
       location: 'location',
       isOpenToWork: 'isOpenToWork',
       media: 'avatar',
     },
-    prepare({ title, location, isOpenToWork, media }) {
+    prepare({ headline, location, isOpenToWork, media }) {
+      const title =
+        headline
+          ?.map((block: any) => block.children?.map((child: any) => child.text).join(''))
+          .join(' ') || 'Untitled'
+
       return {
         title,
-        subtitle: `${location || 'No location'}${isOpenToWork ? ' • Available for Work' : ''}`,
+        subtitle: `${location || 'No location'}${
+          isOpenToWork ? ' • Available for Work' : ''
+        }`,
         media,
       }
     },

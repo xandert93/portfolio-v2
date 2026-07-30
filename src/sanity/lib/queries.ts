@@ -54,7 +54,9 @@ export const ABOUT_QUERY = defineQuery(`
   *[_type == "about"][0] {
     ...,
     "galleryImages": coalesce(galleryImages, []),
-    "cv": *[_type == "siteSettings"][0].cv
+    "cv": *[_type == "siteSettings"][0].cv,
+    "interests": coalesce(interests, []),
+    "quickFacts": coalesce(quickFacts, [])
   }
 `)
 
@@ -108,6 +110,7 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(`
       coverImage,
       "screenshots": coalesce(screenshots, []),
     },
+    isFeatured,
     date
   }
 `)
