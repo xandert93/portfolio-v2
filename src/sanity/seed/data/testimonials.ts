@@ -33,10 +33,10 @@ export const TESTIMONIALS: SeedTestimonial[] = [
   },
   {
     author: {
-      name: 'Sofia Patel',
+      name: 'Richard Hepburn',
       role: 'Founder',
-      company: 'Indie Startup',
-      avatarFilename: 'sofia-patel.jpg',
+      company: 'Rainflow',
+      avatarFilename: 'richard-hepburn.jpg',
     },
     quote: 'Helped us go from idea to MVP quickly with excellent attention to detail.',
     isFeatured: false,
@@ -53,24 +53,24 @@ export const TESTIMONIALS: SeedTestimonial[] = [
   },
   {
     author: {
-      name: 'Richard Robinson',
-      role: 'Senior Frontend Engineer',
-      company: 'Vercel',
-      avatarFilename: 'richard-robinson.jpg',
+      name: 'James Prendergast',
+      role: 'Lead Developer',
+      company: 'Ravenware',
+      avatarFilename: 'james-prendergast.jpg',
     },
     quote:
-      'Xander delivered a clean, scalable implementation and communicated clearly throughout the project.',
+      "The day Xander joined my team, I went home and told my wife that he's going to completely change the way I code.",
     isFeatured: true,
   },
   {
     author: {
-      name: 'Vanessa Vieira',
-      role: 'Software Engineer',
-      company: 'Shopify',
-      avatarFilename: 'vanessa-vieira.jpg',
+      name: 'Moysser Aziz',
+      role: 'Junior Frontend Developer',
+      company: 'Mindbridge',
+      avatarFilename: 'moysser-aziz.jpg',
     },
     quote:
-      'Xander quickly adapted to our codebase and delivered robust, maintainable features with minimal guidance.',
+      'Xander taught me much of what I know about web development. I wouldn’t be where I am today without his guidance.',
     isFeatured: false,
   },
 ] satisfies SeedTestimonial[]
