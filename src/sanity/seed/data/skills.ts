@@ -1,68 +1,117 @@
 const toSkillId = (name: string) => {
+  return 'skill-' + name.toLowerCase().replace(/\s+/g, '').replace(/[^\w]/g, '') // e.g. 'Node.js' => 'skill-nodejs'
+}
+
+/* Why this file naming works?
+
+📚 This convention is widely used across icon packs and GitHub repositories, so it's easy to work with and predictable. 
+
+The only special cases are things like #, +, &, and . which are handled automatically, meaning you shouldn't need a lookup table for your current list:
+
+*/
+const toLogoFilename = (name: string) => {
   return (
-    "skill-" + name.toLowerCase().replace(/\s+/g, "").replace(/[^\w]/g, "")
-  ); // e.g. 'Node.js' => 'skill-nodejs'
-};
+    name
+      .trim()
+      .replace(/#/g, ' Sharp')
+      .replace(/\+/g, ' Plus')
+      .replace(/&/g, '')
+      .replace(/\./g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/[^a-zA-Z0-9-]/g, '')
+      .toLowerCase() + '.png'
+  )
+}
 
 export const SKILLS = [
   // Languages
-  { name: "HTML5", category: "Language", proficiency: "Advanced" },
-  { name: "CSS3", category: "Language", proficiency: "Advanced" },
-  { name: "JavaScript", category: "Language", proficiency: "Expert" },
-  { name: "TypeScript", category: "Language", proficiency: "Advanced" },
-  { name: "C#", category: "Language", proficiency: "Intermediate" },
-  { name: "SQL", category: "Language", proficiency: "Intermediate" },
+  { name: 'HTML5', category: 'Languages' },
+  { name: 'CSS3', category: 'Languages' },
+  { name: 'JavaScript', category: 'Languages' },
+  { name: 'TypeScript', category: 'Languages' },
+  // { name: 'C#', category: 'Languages' },
+  { name: 'SQL', category: 'Languages' },
 
-  // Frameworks
-  { name: "React", category: "Framework", proficiency: "Expert" },
-  { name: "Next.js", category: "Framework", proficiency: "Advanced" },
-  { name: "Express", category: "Framework", proficiency: "Advanced" },
-  { name: "Vue.js", category: "Framework", proficiency: "Intermediate" },
-  { name: "ASP.NET Core", category: "Framework", proficiency: "Intermediate" },
+  // Frontend
+  { name: 'React', category: 'Frontend' },
+  { name: 'Next', category: 'Frontend' },
+  { name: 'Vue', category: 'Frontend' },
+  { name: 'Nuxt', category: 'Frontend' },
+  // { name: 'Astro', category: 'Frontend' },
+  // { name: 'Remix', category: 'Frontend' },
+  // { name: 'Solid', category: 'Frontend' },
+  { name: 'Tailwind CSS', category: 'Frontend' },
+  // { name: 'Post CSS', category: 'Frontend' },
+  { name: 'Sass', category: 'Frontend' },
+  { name: 'Styled Components', category: 'Frontend' },
+  { name: 'Material UI', category: 'Frontend' },
+  { name: 'Storybook', category: 'Frontend' },
+  { name: 'Motion', category: 'Frontend' },
+  { name: 'Redux', category: 'Frontend' },
+  { name: 'Zustand', category: 'Frontend' },
+  { name: 'TanStack Query', category: 'Frontend' },
+  // { name: 'Apollo', category: 'Frontend' },
+  { name: 'React Router', category: 'Frontend' },
+  { name: 'Vite', category: 'Frontend' },
 
-  // Platforms (incl. databases, for consistency)
-  { name: "Node.js", category: "Platform", proficiency: "Advanced" },
-  { name: "Supabase", category: "Platform", proficiency: "Intermediate" },
-  { name: "MongoDB", category: "Platform", proficiency: "Intermediate" },
-  { name: "MSSQL", category: "Platform", proficiency: "Intermediate" },
-  { name: "PostgreSQL", category: "Platform", proficiency: "Intermediate" },
-  { name: "Redis", category: "Platform", proficiency: "Intermediate" },
-  { name: "Sanity", category: "Platform", proficiency: "Intermediate" },
-  { name: "Docker", category: "Platform", proficiency: "Intermediate" },
-  { name: "OpenAI", category: "Platform", proficiency: "Intermediate" },
+  // Backend
+  { name: 'Node', category: 'Backend' },
+  { name: 'Express', category: 'Backend' },
+  { name: 'NestJS', category: 'Backend' },
+  // { name: 'ASP.NET Core', category: 'Backend' },
+  { name: 'REST APIs', category: 'Backend' },
+  { name: 'GraphQL', category: 'Backend' },
+  { name: 'JWT', category: 'Backend' },
+  // { name: 'Passport', category: 'Backend' },
+  // { name: 'Auth', category: 'Backend' },
+  { name: 'Socket.io', category: 'Backend' },
+  { name: 'Swagger', category: 'Backend' },
 
-  // Tools
-  { name: "Redux", category: "Tool", proficiency: "Advanced" },
-  { name: "TanStack Query", category: "Tool", proficiency: "Advanced" },
-  { name: "React Router", category: "Tool", proficiency: "Advanced" },
-  { name: "Tailwind CSS", category: "Tool", proficiency: "Advanced" },
-  { name: "Sass", category: "Tool", proficiency: "Intermediate" },
-  { name: "Vite", category: "Tool", proficiency: "Intermediate" },
-  { name: "Zustand", category: "Tool", proficiency: "Intermediate" },
-  { name: "Material UI", category: "Tool", proficiency: "Intermediate" },
-  { name: "Prisma", category: "Tool", proficiency: "Intermediate" },
-  { name: "Swagger & OpenAPI", category: "Tool", proficiency: "Intermediate" },
-  { name: "Socket.io", category: "Tool", proficiency: "Intermediate" },
-  { name: "Jest", category: "Tool", proficiency: "Intermediate" },
-  { name: "Vitest", category: "Tool", proficiency: "Intermediate" },
-  {
-    name: "React Testing Library",
-    category: "Tool",
-    proficiency: "Intermediate",
-  },
-  { name: "Playwright", category: "Tool", proficiency: "Beginner" },
+  // Databases & ORM
+  { name: 'PostgreSQL', category: 'Databases' },
+  { name: 'MongoDB', category: 'Databases' },
+  // { name: 'Mongoose', category: 'Databases' },
+  // { name: 'MSSQL', category: 'Databases' },
+  // { name: 'Redis', category: 'Databases' },
+  { name: 'Prisma', category: 'Databases' },
+  { name: 'Knex', category: 'Databases' },
+  { name: 'Drizzle', category: 'Databases' },
+
+  // DevOps & Cloud
+  { name: 'Docker', category: 'DevOps' },
+  { name: 'Git', category: 'DevOps' },
+
+  // Testing
+  { name: 'Jest', category: 'Testing' },
+  { name: 'Vitest', category: 'Testing' },
+  { name: 'React Testing Library', category: 'Testing' },
+  { name: 'Cypress', category: 'Testing' },
+  // { name: 'Playwright', category: 'Testing' },
+
+  // CMS & SaaS
+  { name: 'Sanity', category: 'CMS & SaaS' },
+  // { name: 'Contentful', category: 'CMS & SaaS' },
+  { name: 'Firebase', category: 'CMS & SaaS' },
+  { name: 'Supabase', category: 'CMS & SaaS' },
+  { name: 'Stripe', category: 'CMS & SaaS' },
+  { name: 'Resend', category: 'CMS & SaaS' },
+  // { name: 'Cloudinary', category: 'CMS & SaaS' },
+
+  // AI
+  { name: 'OpenAI', category: 'AI' },
+
+  /*   
 
   // Other / Architecture
-  { name: "REST APIs", category: "Other", proficiency: "Advanced" },
-  { name: "Authentication", category: "Other", proficiency: "Advanced" },
+  { name: 'Authentication', category: 'Other'},
   {
-    name: "System Architecture",
-    category: "Other",
-    proficiency: "Intermediate",
+    name: 'System Architecture',
+    category: 'Other',
   },
-  { name: "Microservices", category: "Other", proficiency: "Intermediate" },
+  { name: 'Microservices', category: 'Other' }, */
 ].map((skill) => ({
-  _type: "skill",
   _id: toSkillId(skill.name),
+  logoFilename: toLogoFilename(skill.name),
   ...skill,
-}));
+}))
