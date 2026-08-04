@@ -8,6 +8,7 @@ import type {
   SITE_SETTINGS_QUERY_RESULT,
   SKILLS_QUERY_RESULT,
   TESTIMONIALS_QUERY_RESULT,
+  FAQ_QUERY_RESULT,
 } from '@/sanity/generated-types'
 
 export type Posts = POSTS_QUERY_RESULT
@@ -31,3 +32,4 @@ export type Skill = Skills[number]
 
 export type About = ABOUT_QUERY_RESULT
 export type SiteSettings = SITE_SETTINGS_QUERY_RESULT
+export type Faq = FAQ_QUERY_RESULT

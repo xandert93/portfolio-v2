@@ -3,104 +3,236 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
 import { writeClient } from '@/sanity/lib/writeClient'
+import { BUDGETS, PROJECT_TYPES, REFERRALS, TIMELINES } from '@/lib/contact-options'
+
+const genProjectTypeLabels = Object.fromEntries(
+  PROJECT_TYPES.map(({ value, label }) => [value, label]),
+)
+
+const genBudgetLabels = Object.fromEntries(
+  BUDGETS.map(({ value, label }) => [value, label]),
+)
+
+const genTimelineLabels = Object.fromEntries(
+  TIMELINES.map(({ value, label }) => [value, label]),
+)
+
+const genReferralLabels = Object.fromEntries(
+  REFERRALS.map(({ value, label }) => [value, label]),
+)
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, projectType, message } = await request.json()
+    const {
+      name,
+      email,
+      phone,
+      organisation,
+      website,
+      projectType,
+      timeline,
+      budget,
+      referral,
+      message,
+      consent,
+      company,
+    } = await request.json()
 
-    if (!name || !email || !message)
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 },
-      )
+    if (!name || !email || !projectType || !message) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
 
-    // 📚 Saving email to enquiries collection/table. Best practice so that we have a permanent record, can mark leads as followed up and we're never dependent on email deliverability alone
+    // Honeypot — silently accept bot submissions
+    if (company) return NextResponse.json({ success: true })
+
+    // 📚 Saving enquiry to Sanity gives us a permanent record,
+    // allows lead tracking, and avoids relying solely on email delivery.
     await writeClient.create({
       _type: 'enquiry',
       name,
       email,
+      phone,
+      organisation,
+      website,
       projectType,
+      timeline,
+      budget,
+      referral,
       message,
+      consent,
       status: 'New',
       submittedAt: new Date().toISOString(),
     })
 
+    const projectTypeLabel = projectType
+      ? (genProjectTypeLabels[projectType] ?? projectType)
+      : 'N/A'
+
+    const budgetLabel = budget ? (genBudgetLabels[budget] ?? budget) : 'N/A'
+
+    const timelineLabel = timeline ? (genTimelineLabels[timeline] ?? timeline) : 'N/A'
+
+    const referralLabel = referral ? (genReferralLabels[referral] ?? referral) : 'N/A'
+
     // Build the email notification to my email + send it
     await resend.emails.send({
-      from: 'onboarding@resend.dev', // eventually my verified domain i.e. 'Portfolio Contact <contact@yourdomain.com>'
-      to: process.env.CONTACT_EMAIL!, // my inbox email
-      replyTo: email, // client's email that goes in `replyTo` header that reaches my inbox
-      subject: `${projectType ? projectType : 'General Enquiry'}`,
+      from: 'onboarding@resend.dev', // eventually: 'Portfolio Contact <contact@yourdomain.com>'
+      to: process.env.CONTACT_EMAIL!,
+      replyTo: email,
+
+      subject: `${projectType ? projectTypeLabel : 'General enquiry'} — ${name}`,
+
       // fallback in case client can't render HTML
       text: `
-      New Contact Form Submission
-      
-      Name: ${name}
-      Email: ${email}
-      Project Type: ${projectType ?? 'Not specified'}
-      
-      Message:
-      ${message}
-      `,
+New Contact Form Submission
+
+Sender:
+Name: ${name}
+Email: ${email}
+${organisation ? `Company: ${organisation}` : ''}
+${phone ? `Phone: ${phone}` : ''}
+${website ? `Current Website: ${website}` : ''}
+
+Project Details:
+Project Type: ${projectTypeLabel}
+Timeline: ${timelineLabel}
+Budget: ${budgetLabel}
+How they found you: ${referralLabel}
+
+Message:
+${message}
+
+Consent:
+${consent === 'yes' ? 'Yes' : 'Not provided'}
+  `.trim(),
+
       html: `
-      <div style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;padding:12px;">
+<div style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:12px;">
 
-          <!-- Card -->
-          <div style="background:#ffffff;border:1px solid #e8eaf0;border-radius:4px;overflow:hidden;">
-            <!-- Body -->
-            <div style="padding:20px;color:#111827;line-height:1.5;font-size:14px;">
+    <div style="background:#ffffff;border:1px solid #e8eaf0;border-radius:4px;overflow:hidden;">
 
-              <!-- Message -->
-              <div style="margin-bottom:16px;">
-                <div style="margin-top:6px;white-space:pre-wrap;font-size:14px;color:#111827;">
-                  ${message}
-                </div>
-              </div>
+      <div style="padding:20px;color:#111827;line-height:1.5;font-size:14px;">
 
-              <hr style="border:none;border-top:1px solid #eef0f4;margin:16px 0;" />
-
-              <!-- Contact Info -->
-              <div style="margin-bottom:10px;">
-                <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;">
-                  Sender Details
-                </div>
-
-                <div style="margin-top:8px;">
-                  <div style="margin-bottom:6px;">
-                    <span style="color:#6b7280;">Name:</span>
-                    <span style="font-weight:600;">${name}</span>
-                  </div>
-                  <div>
-                    <span style="color:#6b7280;">Email:</span>
-                    <a href="mailto:${email}" style="color:#2563eb;text-decoration:none;font-weight:600;">
-                      ${email}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Footer -->
-            <div style="background:#f9fafb;padding:14px 20px;border-top:1px solid #eef0f4;">
-              <p style="margin:0;font-size:12px;color:#6b7280;">
-                Reply directly to this email to respond to the sender.
-              </p>
-            </div>
-
+        <!-- Message -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;">
+            Message
           </div>
 
-          <!-- Spacer note -->
-          <div style="text-align:center;font-size:11px;color:#9ca3af;margin-top:10px;">
-            Portfolio Contact System
+          <div style="margin-top:8px;white-space:pre-wrap;font-size:14px;color:#111827;">
+            ${message}
           </div>
-
         </div>
+
+        <hr style="border:none;border-top:1px solid #eef0f4;margin:20px 0;" />
+
+        <!-- Sender -->
+        <div style="margin-bottom:18px;">
+          <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;">
+            Sender Details
+          </div>
+
+          <div style="margin-top:10px;">
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Name:</span>
+              <strong>${name}</strong>
+            </div>
+
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Email:</span>
+              <a href="mailto:${email}" style="color:#2563eb;text-decoration:none;font-weight:600;">
+                ${email}
+              </a>
+            </div>
+
+            ${
+              phone
+                ? `
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Phone:</span>
+              ${phone}
+            </div>`
+                : ''
+            }
+
+            ${
+              organisation
+                ? `
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Company:</span>
+              ${organisation}
+            </div>`
+                : ''
+            }
+
+            ${
+              website
+                ? `
+            <div>
+              <span style="color:#6b7280;">Website:</span>
+              <a href="${website}" style="color:#2563eb;text-decoration:none;">
+                ${website}
+              </a>
+            </div>`
+                : ''
+            }
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #eef0f4;margin:20px 0;" />
+
+        <!-- Project -->
+        <div>
+          <div style="font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;">
+            Project Details
+          </div>
+
+          <div style="margin-top:10px;">
+
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Type:</span>
+              ${projectTypeLabel ?? 'N/A'}
+            </div>
+
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Timeline:</span>
+              ${timelineLabel ?? 'N/A'}
+            </div>
+
+            <div style="margin-bottom:6px;">
+              <span style="color:#6b7280;">Budget:</span>
+              ${budgetLabel ?? 'N/A'}
+            </div>
+
+            <div>
+              <span style="color:#6b7280;">Referral:</span>
+              ${referralLabel ?? 'N/A'}
+            </div>
+
+          </div>
+        </div>
+
       </div>
-      `,
+
+      <!-- Footer -->
+      <div style="background:#f9fafb;padding:14px 20px;border-top:1px solid #eef0f4;">
+        <p style="margin:0;font-size:12px;color:#6b7280;">
+          Reply directly to this email to respond to ${name}.
+        </p>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:#9ca3af;margin-top:10px;">
+      Portfolio Contact System
+    </div>
+
+  </div>
+</div>
+`,
     })
 
     return NextResponse.json({ success: true })

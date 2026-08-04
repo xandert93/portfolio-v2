@@ -18,11 +18,13 @@ import {
   USER_NAMES_QUERY,
   CV_QUERY,
   TECH_SKILLS_QUERY,
+  FAQ_QUERY,
 } from './queries'
 
 export const fetchSiteSettings = () => client.fetch(SITE_SETTINGS_QUERY)
 export const fetchUserNames = () => client.fetch(USER_NAMES_QUERY)
 export const fetchAbout = () => client.fetch(ABOUT_QUERY)
+export const fetchFaq = () => client.fetch(FAQ_QUERY)
 
 export const fetchProjects = () => client.fetch(PROJECTS_QUERY)
 export const fetchProject = (slug: string) => client.fetch(PROJECT_QUERY, { slug })

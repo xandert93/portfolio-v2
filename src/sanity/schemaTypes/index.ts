@@ -9,6 +9,7 @@ import { tag } from './documents/tag'
 import { about } from './documents/about'
 import { siteSettings } from './documents/siteSettings'
 import { enquiry } from './documents/enquiry'
+import { faq } from './documents/faq'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -22,5 +23,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     about,
     siteSettings,
     enquiry,
+    faq,
   ],
 }

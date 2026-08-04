@@ -15,6 +15,22 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: src/sanity/schema.json
+export type Faq = {
+  _id: string
+  _type: 'faq'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  introduction?: string
+  items?: Array<{
+    question: string
+    answer: string
+    isFeatured?: boolean
+    _key: string
+  }>
+}
+
 export type Enquiry = {
   _id: string
   _type: 'enquiry'
@@ -23,14 +39,11 @@ export type Enquiry = {
   _rev: string
   name: string
   email: string
-  projectType?:
-    | 'New website'
-    | 'Existing site update'
-    | 'Freelance enquiry'
-    | 'Job opportunity'
-    | 'Other'
+  phone?: string
+  projectType?: 'new-website' | 'site-update' | 'freelance' | 'job' | 'other'
+  budget?: 'under-2k' | '2k-5k' | '5k-10k' | '10k-plus' | 'not-sure'
   message: string
-  status?: 'New' | 'Replied' | 'Archived'
+  status?: 'New' | 'Replied' | 'Archived' | 'Spam'
   submittedAt?: string
 }
 
@@ -91,7 +104,7 @@ export type SiteSettings = {
     title: string
     description: string
   }
-  email?: string
+  email: string
   phone?: string
   hasWhatsApp?: boolean
   socialUrls?: {
@@ -578,6 +591,7 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
+  | Faq
   | Enquiry
   | SanityImageAssetReference
   | SanityFileAssetReference
@@ -651,7 +665,7 @@ export type SITE_SETTINGS_QUERY_RESULT = {
     title: string
     description: string
   }
-  email?: string
+  email: string
   phone?: string
   hasWhatsApp?: boolean
   socialUrls?: {
@@ -1376,6 +1390,25 @@ export type TESTIMONIALS_QUERY_RESULT = Array<{
   isFeatured?: boolean
 }>
 
+// Source: src/sanity/lib/queries.ts
+// Variable: FAQ_QUERY
+// Query: *[_type == "faq"][0]
+export type FAQ_QUERY_RESULT = {
+  _id: string
+  _type: 'faq'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  introduction?: string
+  items?: Array<{
+    question: string
+    answer: string
+    isFeatured?: boolean
+    _key: string
+  }>
+} | null
+
 // Query TypeMap
 import '@sanity/client'
 declare module '@sanity/client' {
@@ -1399,5 +1432,6 @@ declare module '@sanity/client' {
     '\n  *[_type == "skill"] | order(category asc, name asc)\n': SKILLS_QUERY_RESULT
     '\n  *[_type == "skill" && category != "Other"] | order(category asc, name asc)\n': TECH_SKILLS_QUERY_RESULT
     '\n  *[_type == "testimonial"] | order(date desc)\n': TESTIMONIALS_QUERY_RESULT
+    '\n  *[_type == "faq"][0]\n': FAQ_QUERY_RESULT
   }
 }

@@ -270,7 +270,7 @@ export default function HeroSection({ settings, about }: Props) {
     return (
       <div className="flex max-w-xl flex-col items-start gap-8">
         <motion.div {...fade(BADGE_DELAY, BADGE_DURATION)}>
-          <OpenToWorkBadge isAvailable={about.isOpenToWork} />
+          <OpenToWorkBadge isOpenToWork={about.isOpenToWork} />
         </motion.div>
         <Tagline />
         <Heading />
@@ -286,7 +286,7 @@ export default function HeroSection({ settings, about }: Props) {
     return (
       <div className="flex flex-col items-center gap-8 text-center md:hidden">
         <motion.div {...fade(BADGE_DELAY, BADGE_DURATION)}>
-          <OpenToWorkBadge isAvailable={about.isOpenToWork} />
+          <OpenToWorkBadge isOpenToWork={about.isOpenToWork} />
         </motion.div>
         <Tagline />
         <Heading />

@@ -101,6 +101,7 @@ export default async function SiteLayout({ children }: Props) {
       lang="en"
       suppressHydrationWarning
       className={`${dmSans.variable} ${fraunces.variable} bg-background`}
+      data-scroll-behavior="smooth"
     >
       <body className="antialiased">
         <ThemeProvider

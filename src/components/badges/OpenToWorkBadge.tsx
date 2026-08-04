@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion'
 
 type Props = {
-  isAvailable: boolean
+  isOpenToWork: boolean
 }
 
-export default function OpenToWorkBadge({ isAvailable }: Props) {
+export default function OpenToWorkBadge({ isOpenToWork }: Props) {
   return (
     <div className="text-accent border-accent/40 bg-accent-light relative inline-flex items-center gap-2 overflow-hidden rounded-full border px-4 py-1.5 text-[0.65rem] tracking-widest uppercase">
       <AvailabilityDot />
-      {isAvailable ? 'Available for work' : 'Booking select projects'}
+      {isOpenToWork ? 'Available for work' : 'Booking select projects'}
       <Shimmer />
     </div>
   )

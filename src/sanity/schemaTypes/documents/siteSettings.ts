@@ -109,7 +109,12 @@ export const siteSettings = defineType({
     }),
 
     // 4. Contact (grouped: email, phone, whatsapp depends on phone)
-    defineField({ name: 'email', title: 'Email', type: 'string' }),
+    defineField({
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+      validation: (r) => r.required(),
+    }),
 
     defineField({
       name: 'phone',

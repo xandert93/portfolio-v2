@@ -303,3 +303,8 @@ export const TECH_SKILLS_QUERY = defineQuery(`
 export const TESTIMONIALS_QUERY = defineQuery(`
   *[_type == "testimonial"] | order(date desc)
 `)
+
+// Testimonials
+export const FAQ_QUERY = defineQuery(`
+  *[_type == "faq"][0]
+`)

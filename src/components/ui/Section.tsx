@@ -9,7 +9,7 @@ import { containerVariants, fadeUp, fadeUpReduced } from '@/lib/motion'
 type Props = {
   id?: string
 
-  glyph: {
+  glyph?: {
     number?: number
     side?: 'left' | 'right'
   }
@@ -87,7 +87,7 @@ export const Section = ({
           />
         )}
 
-        {glyph.number && (
+        {glyph && (
           <MotionNumberGlyph
             aria-hidden
             style={{ y: numberY }}

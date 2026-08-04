@@ -12,22 +12,14 @@ import {
   type Variants,
 } from 'framer-motion'
 
-import type { About } from '@/sanity/types'
+import type { About, SiteSettings } from '@/sanity/types'
 import { ROUTES } from '@/config/routes'
 
 import { Section } from '@/components/ui/Section'
-import { SiGithub, SiX } from 'react-icons/si'
-import { BsLinkedin } from 'react-icons/bs'
 import { containerVariants, fadeUp } from '@/lib/motion'
 import OpenToWorkBadge from '@/components/badges/OpenToWorkBadge'
-
-type Props = {
-  about: NonNullable<About>
-  isOpenToWork?: boolean
-}
-
-// Static content — lives outside the component so it isn't recreated on every render.
-const EMAIL = 'xandert.93@outlook.com'
+import SocialLinks from '@/components/SocialLinks'
+import Eyebrow from '@/components/typography/Eyebrow'
 
 const PROMPTS = [
   'a new website',
@@ -40,12 +32,6 @@ const PROMPTS = [
   'a performance audit',
   'a technical consultation',
   'a side project',
-]
-
-const SOCIALS = [
-  { label: 'GitHub', href: 'https://github.com', icon: SiGithub },
-  { label: 'LinkedIn', href: 'https://linkedin.com', icon: BsLinkedin },
-  { label: 'Twitter', href: 'https://x.com', icon: SiX },
 ]
 
 const VIEWPORT_ONCE = { once: true, amount: 0.7 } as const
@@ -77,9 +63,12 @@ const stampVariants: Variants = {
   },
 }
 
-export default function ContactCtaSection({ about }: Props) {
-  const isAvailable = about.isOpenToWork
+type Props = {
+  about: NonNullable<About>
+  settings: NonNullable<SiteSettings>
+}
 
+export default function ContactCtaSection({ about, settings }: Props) {
   const cardRef = useRef<HTMLDivElement | null>(null)
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -110,7 +99,7 @@ export default function ContactCtaSection({ about }: Props) {
       }}
     >
       <div className="grid grid-cols-1 items-start gap-14 md:grid-cols-[1.1fr_0.9fr] md:gap-16">
-        <Copy email={EMAIL} isAvailable={isAvailable} />
+        <Content about={about} settings={settings} />
         <Postcard cardRef={cardRef} parallaxY={parallaxFast} />
       </div>
 
@@ -119,7 +108,10 @@ export default function ContactCtaSection({ about }: Props) {
   )
 }
 
-const Copy = ({ email, isAvailable }: { email: string; isAvailable: boolean }) => {
+const Content = ({ about, settings }: Props) => {
+  const { isOpenToWork } = about
+  const { email, socialUrls } = settings
+
   return (
     <motion.div
       variants={containerVariants}
@@ -129,7 +121,7 @@ const Copy = ({ email, isAvailable }: { email: string; isAvailable: boolean }) =
       className="flex flex-col items-center gap-8"
     >
       <motion.div variants={fadeUp}>
-        <OpenToWorkBadge isAvailable={isAvailable} />
+        <OpenToWorkBadge isOpenToWork={isOpenToWork} />
       </motion.div>
 
       <motion.blockquote
@@ -141,13 +133,21 @@ const Copy = ({ email, isAvailable }: { email: string; isAvailable: boolean }) =
         a “what if” - and I promise to get back to you.
       </motion.blockquote>
 
-      <ContactActions email={email} />
-      <SocialLinks socials={SOCIALS} />
+      <ActionButtons email={email} />
+      {socialUrls && (
+        <motion.div
+          variants={fadeUp}
+          className="flex flex-wrap items-center justify-center gap-8 pt-2 text-[0.6rem]"
+        >
+          <Eyebrow className="basis-full justify-center" children="Elsewhere" />
+          <SocialLinks urls={socialUrls} />
+        </motion.div>
+      )}
     </motion.div>
   )
 }
 
-function ContactActions({ email }: { email: string }) {
+function ActionButtons({ email }: { email: string }) {
   return (
     <motion.div
       variants={fadeUp}
@@ -161,42 +161,6 @@ function ContactActions({ email }: { email: string }) {
         Or just say hi
         <Mail className="h-4 w-4" />
       </a>
-    </motion.div>
-  )
-}
-
-type Social = {
-  label: string
-  href: string
-  icon: React.ElementType
-}
-
-const SocialLinks = ({ socials }: { socials: Social[] }) => {
-  return (
-    <motion.div
-      variants={fadeUp}
-      className="flex flex-wrap items-center justify-center gap-6 pt-2 text-[0.6rem]"
-    >
-      <span className="eyebrow">Elsewhere</span>
-      <div className="flex items-center gap-8">
-        {socials.map(({ label, href, icon: Icon }) => (
-          <a
-            key={label}
-            href={href}
-            aria-label={label}
-            target={href.startsWith('mailto') ? undefined : '_blank'}
-            rel="noopener noreferrer"
-            className="text-muted hover:text-accent-strong transition-all ease-out hover:-translate-y-px"
-          >
-            <div className="flex flex-col items-center gap-3">
-              <Icon className="size-5 sm:size-6" />
-              <span className="text-[0.7rem] font-medium tracking-[0.14em] uppercase">
-                {label}
-              </span>
-            </div>
-          </a>
-        ))}
-      </div>
     </motion.div>
   )
 }

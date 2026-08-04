@@ -119,6 +119,21 @@
   button:disabled {
     cursor: not-allowed;
   }
+
+  /* Consistent keyboard focus across the new form controls */
+  :where(input, select, textarea, button, a):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Autofill shouldn't punch a white box through the warm paper */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill {
+    -webkit-text-fill-color: var(--ink);
+    box-shadow: 0 0 0 1000px var(--paper) inset;
+    transition: background-color 9999s ease-out;
+  }
 }
 
 /* ─── Layout + editorial primitives ───────────────────────────── */
@@ -328,13 +343,17 @@
     border-radius: var(--radius);
     transition:
       border-color 0.3s ease,
-      transform 0.3s ease,
-      background 0.3s ease;
+      background 0.3s ease,
+      transform 0.3s ease;
   }
   .card:hover {
     border-color: var(--accent);
     background: var(--accent-light);
     transform: translateY(-3px);
+  }
+
+  .card.no-hover-transform:hover {
+    transform: none;
   }
 
   /* Status badge */
@@ -351,6 +370,24 @@
     background: var(--accent-dim);
     padding: 0.4rem 1rem;
     border-radius: 999px;
+  }
+
+  .dropdown-panel {
+    scrollbar-width: thin;
+    scrollbar-color: var(--faint, var(--border)) transparent;
+  }
+
+  .dropdown-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dropdown-panel::-webkit-scrollbar-thumb {
+    background-color: var(--faint, var(--border));
+    border-radius: 9999px;
+  }
+
+  .dropdown-panel::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 

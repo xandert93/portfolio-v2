@@ -44,7 +44,7 @@ export default async function Home() {
       {techSkills.length > 0 && <TechSkillsSection skills={techSkills} />}
       {/* {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />} */}
       <AboutSection about={about} />
-      <ContactCtaSection about={about} />
+      <ContactCtaSection about={about} settings={settings} />
     </>
   )
 }
