@@ -66,15 +66,14 @@ Copy the example file and fill in your own values:
 cp .env.example .env.local
 ```
 
-| Variable                         | Description                                              |
-| -------------------------------- | -------------------------------------------------------- |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID`  | Your Sanity project ID                                   |
-| `NEXT_PUBLIC_SANITY_DATASET`     | Sanity dataset name (e.g. `production`)                  |
-| `NEXT_PUBLIC_SANITY_API_VERSION` | Sanity API version (e.g. `2026-06-02`)                   |
-| `SANITY_WRITE_TOKEN`             | Sanity token with write access (used for seeding/writes) |
-| `SITE_URL`                       | Base URL of the deployed site (used for metadata)        |
-| `RESEND_API_KEY`                 | API key from Resend, for sending contact form emails     |
-| `CONTACT_EMAIL`                  | Inbox address that receives contact form submissions     |
+| Variable | Description |
+| -------------------------------- | -------------------------------------------------------- | |
+| `NEXT_PUBLIC_SANITY_DATASET` | Sanity dataset name (e.g. `production`) |
+| `NEXT_PUBLIC_SANITY_API_VERSION` | Sanity API version (e.g. `2026-06-02`) |
+| `SANITY_WRITE_TOKEN` | Sanity token with write access (used for seeding/writes) |
+| `SITE_URL` | Base URL of the deployed site (used for metadata) |
+| `RESEND_API_KEY` | API key from Resend, for sending contact form emails |
+| `CONTACT_EMAIL` | Inbox address that receives contact form submissions |
 
 ### 3. (Optional) Seed sample content
 

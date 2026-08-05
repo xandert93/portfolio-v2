@@ -1,17 +1,7 @@
-export const apiVersion =
-  process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2026-06-02'
+export const apiVersion = '2026-06-02'
 
-export const dataset = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_DATASET,
-  'Missing environment variable: NEXT_PUBLIC_SANITY_DATASET',
-)
+export const dataset =
+  process.env.SANITY_STUDIO_DATASET! || // injected only when deploying Sanity Studio
+  process.env.NEXT_PUBLIC_SANITY_DATASET! // injected by Next.js (works for the embedded /studio route)
 
-export const projectId = assertValue(
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  'Missing environment variable: NEXT_PUBLIC_SANITY_PROJECT_ID',
-)
-
-function assertValue<T>(v: T | undefined, errorMessage: string): T {
-  if (v === undefined) throw new Error(errorMessage)
-  return v
-}
+export const projectId = 'n791u6ea'

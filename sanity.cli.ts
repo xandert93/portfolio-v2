@@ -3,9 +3,7 @@
  * Go to https://www.sanity.io/docs/cli to learn more.
  **/
 import { defineCliConfig } from 'sanity/cli'
-
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
+import { projectId, dataset } from '@/sanity/env'
 
 export default defineCliConfig({
   api: { projectId, dataset },
@@ -14,5 +12,8 @@ export default defineCliConfig({
     path: './src/**/*.{ts,tsx}',
     schema: './src/sanity/schema.json',
     generates: './src/sanity/generated-types.ts',
+  },
+  deployment: {
+    appId: 'kd4mocbddc5mznlaacgovtpj',
   },
 })
