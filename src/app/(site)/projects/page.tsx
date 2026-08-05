@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { fetchFeaturedProjects, fetchPaginatedProjects } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
-import Pagination from '@/components/Pagination'
+import Pagination from '@/components/ui/Pagination'
 import { ROUTES } from '@/config/routes'
 
 type PageProps = {

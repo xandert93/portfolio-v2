@@ -4,7 +4,7 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { SendHorizontal } from 'lucide-react'
 
-import { Dropdown, type DropdownOption } from '@/components/Dropdown'
+import { Dropdown, type DropdownOption } from '@/components/ui/Dropdown'
 import { BUDGETS, PROJECT_TYPES, REFERRALS, TIMELINES } from '@/lib/contact-options'
 
 const MESSAGE_MAX = 2000

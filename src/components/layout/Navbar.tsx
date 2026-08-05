@@ -4,8 +4,8 @@ import { forwardRef, useCallback, useEffect, useId, useRef, useState } from 'rea
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import NavLink from './NavLink'
-import ThemeToggleButton from './ThemeToggleButton'
+import NavLink from '../layout/NavLink'
+import ThemeToggleButton from '../ui/ThemeToggleButton'
 import clsx from 'clsx'
 
 import { FEATURES } from '@/config/features'

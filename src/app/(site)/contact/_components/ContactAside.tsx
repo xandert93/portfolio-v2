@@ -8,9 +8,10 @@ import { Mail, Phone } from 'lucide-react'
 import { containerVariants, fadeUp, fadeUpReduced } from '@/lib/motion'
 import { genImageBuilder } from '@/sanity/lib/image'
 import type { About } from '@/sanity/generated-types'
-import Eyebrow from '../typography/Eyebrow'
-import SocialLinks from '../SocialLinks'
-import OpenToWorkBadge from '../badges/OpenToWorkBadge'
+
+import Eyebrow from '../../../../components/typography/Eyebrow'
+import OpenToWorkBadge from '../../../../components/site/OpenToWorkBadge'
+import SocialLinks from '@/components/site/SocialLinks'
 
 const processSteps = [
   {

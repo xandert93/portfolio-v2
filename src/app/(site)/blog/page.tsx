@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { fetchPaginatedPosts, fetchPosts } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
-import Pagination from '@/components/Pagination'
+import Pagination from '@/components/ui/Pagination'
 import { ROUTES } from '@/config/routes'
 
 type PageProps = {
@@ -15,16 +15,16 @@ export default async function BlogPage({ searchParams }: PageProps) {
   const { posts, totalPages } = await fetchPaginatedPosts(currentPage)
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-16">
+    <main className="mx-auto max-w-3xl px-6 py-16">
       <div className="mb-16">
-        <p className="text-2xs tracking-widest uppercase text-muted mb-4">Blog</p>
-        <h1 className="font-serif text-5xl text-ink mb-4">Writing</h1>
-        <p className="text-sm text-muted font-light leading-relaxed">
+        <p className="text-2xs text-muted mb-4 tracking-widest uppercase">Blog</p>
+        <h1 className="text-ink mb-4 font-serif text-5xl">Writing</h1>
+        <p className="text-muted text-sm leading-relaxed font-light">
           Thoughts on development, process and things I've figured out the hard way.
         </p>
       </div>
 
-      <div id="posts" className="divide-y divide-faint">
+      <div id="posts" className="divide-faint divide-y">
         {posts.map((post) => {
           const formattedDate = post.publishedAt
             ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
@@ -37,7 +37,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           return (
             <article
               key={post._id}
-              className="py-10 group grid grid-cols-[200px_1fr] gap-6 items-start"
+              className="group grid grid-cols-[200px_1fr] items-start gap-6 py-10"
             >
               {post.coverImage ? (
                 <img
@@ -48,15 +48,15 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     .auto('format')
                     .url()}
                   alt={post.title ?? ''}
-                  className="w-full rounded-md block border border-faint"
+                  className="border-faint block w-full rounded-md border"
                   style={{ aspectRatio: '16/10', objectFit: 'cover' }}
                 />
               ) : (
                 <div
-                  className="w-full rounded-md border border-faint bg-warm flex items-center justify-center"
+                  className="border-faint bg-warm flex w-full items-center justify-center rounded-md border"
                   style={{ aspectRatio: '16/10' }}
                 >
-                  <span className="text-2xs tracking-widest uppercase text-muted">
+                  <span className="text-2xs text-muted tracking-widest uppercase">
                     No image
                   </span>
                 </div>
@@ -64,11 +64,11 @@ export default async function BlogPage({ searchParams }: PageProps) {
 
               <div className="flex flex-col gap-2">
                 {post.tags && post.tags.length > 0 && (
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
                       <span
                         key={tag._id}
-                        className="text-2xs tracking-widest uppercase px-2.5 py-1 bg-accent-light border border-faint rounded-full text-accent"
+                        className="text-2xs bg-accent-light border-faint text-accent rounded-full border px-2.5 py-1 tracking-widest uppercase"
                       >
                         {tag.name}
                       </span>
@@ -77,13 +77,13 @@ export default async function BlogPage({ searchParams }: PageProps) {
                 )}
 
                 <Link href={`${ROUTES.blog}/${post.slug}`}>
-                  <h2 className="font-serif text-2xl text-ink group-hover:text-accent transition-colors">
+                  <h2 className="text-ink group-hover:text-accent font-serif text-2xl transition-colors">
                     {post.title}
                   </h2>
                 </Link>
 
                 {post.excerpt && (
-                  <p className="text-sm text-muted leading-relaxed font-light">
+                  <p className="text-muted text-sm leading-relaxed font-light">
                     {post.excerpt}
                   </p>
                 )}

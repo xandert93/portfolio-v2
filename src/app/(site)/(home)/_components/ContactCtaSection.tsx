@@ -17,9 +17,10 @@ import { ROUTES } from '@/config/routes'
 
 import { Section } from '@/components/ui/Section'
 import { containerVariants, fadeUp } from '@/lib/motion'
-import OpenToWorkBadge from '@/components/badges/OpenToWorkBadge'
-import SocialLinks from '@/components/SocialLinks'
+import OpenToWorkBadge from '@/components/site/OpenToWorkBadge'
+
 import Eyebrow from '@/components/typography/Eyebrow'
+import SocialLinks from '@/components/site/SocialLinks'
 
 const PROMPTS = [
   'a new website',

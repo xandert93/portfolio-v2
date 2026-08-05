@@ -1,7 +1,3 @@
-import { motion } from 'framer-motion'
-import Eyebrow from './typography/Eyebrow'
-import { fadeUp } from '@/lib/motion'
-
 import { SiteSettings } from '@/sanity/types'
 import { IconType } from 'react-icons'
 

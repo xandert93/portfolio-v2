@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 
 import { fetchSiteSettings, fetchAbout, fetchFaq } from '@/sanity/lib/fetch'
 
-import ContactForm from '@/components/contact/ContactForm'
-import ContactAside from '@/components/contact/ContactAside'
-import ContactFaq from '@/components/contact/ContactFaq'
+import ContactForm from '@/app/(site)/contact/_components/ContactForm'
+import ContactAside from '@/app/(site)/contact/_components/ContactAside'
+import ContactFaq from '@/app/(site)/contact/_components/ContactFaq'
 
 import { Section } from '@/components/ui/Section'
-import AnimatedCard from '@/components/AnimatedCard'
+import AnimatedCard from '@/components/ui/AnimatedCard'
 
 import { ROUTES } from '@/config/routes'
 
