@@ -22,6 +22,10 @@ variable is explicitly set to "false".
 
 export const FEATURES = {
   projects: process.env.NEXT_PUBLIC_FEATURE_PROJECTS === 'true',
+<<<<<<< Updated upstream
+=======
+  testimonials: process.env.NEXT_PUBLIC_FEATURE_TESTIMONIALS === 'true',
+>>>>>>> Stashed changes
   about: process.env.NEXT_PUBLIC_FEATURE_ABOUT === 'true',
   experience: process.env.NEXT_PUBLIC_FEATURE_EXPERIENCE === 'true',
   blog: process.env.NEXT_PUBLIC_FEATURE_BLOG === 'true',
