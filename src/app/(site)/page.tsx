@@ -14,6 +14,7 @@ import {
   AboutSection,
   ContactCtaSection,
 } from './(home)/_components'
+import { FEATURES } from '@/config/features'
 
 export default async function Home() {
   // Parallel fetch is best for a a page composed from one CMS payload + if same data is needed in several components e.g. about
@@ -36,7 +37,9 @@ export default async function Home() {
       <HeroSection settings={settings} about={about} />
       {projects.length > 0 && <FeaturedProjectsSection projects={projects} />}
       {techSkills.length > 0 && <TechSkillsSection skills={techSkills} />}
-      {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />}
+      {FEATURES.testimonials && testimonials.length > 0 && (
+        <TestimonialsSection testimonials={testimonials} />
+      )}
       <AboutSection about={about} />
       <ContactCtaSection about={about} settings={settings} />
     </>
