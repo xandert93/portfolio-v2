@@ -2,15 +2,17 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PortableText } from '@portabletext/react'
+import { ArrowLeft, ArrowUpRight, GitBranch } from 'lucide-react'
+import clsx from 'clsx'
 
 import { fetchProject } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
-import { Section } from '@/components/ui/Section'
 import AnimatedCard from '@/components/ui/AnimatedCard'
+import Badge from '@/components/ui/Badge'
 import { ROUTES } from '@/config/routes'
 import { articleComponents, compactComponents } from './_components/portable-text'
 import ScreenshotGallery, { type Shot } from './_components/ScreenshotGallery'
-import Badge from '@/components/ui/Badge'
+import ProjectContentsRail, { type RailItem } from './_components/ProjectContentsRail'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -23,6 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!project) return { title: 'Project not found' }
 
   const description = project.content.summary ?? undefined
+
   const ogImage = project.media.coverImage
     ? genImageBuilder(project.media.coverImage)
         .width(1200)
@@ -65,53 +68,92 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     : null
 
   const coverUrl = coverImage
-    ? genImageBuilder(coverImage).width(1600).height(900).fit('crop').auto('format').url()
+    ? genImageBuilder(coverImage)
+        .width(2000)
+        .height(1000)
+        .fit('crop')
+        .auto('format')
+        .url()
     : null
 
-  const shots: Shot[] = (screenshots ?? []).map((shot) => ({
+  const shots: Shot[] = screenshots.map((shot) => ({
     key: shot._key,
     url: genImageBuilder(shot).width(1200).height(750).fit('crop').auto('format').url(),
     full: genImageBuilder(shot).width(2000).auto('format').url(),
   }))
 
-  /* Section index numerals are assigned in render order so the glyphs
-     stay sequential no matter which optional blocks a project has. */
-  let sectionIndex = 0
-  const nextGlyph = () => ({ number: ++sectionIndex, side: 'right' as const })
+  // The rail only lists blocks this project actually has, in the order
+  // they appear — a real reading sequence, not decoration.
+  const railItems: RailItem[] = [
+    problem && { id: 'problem', label: 'The problem' },
+    description && description.length > 0 && { id: 'build', label: 'The build' },
+    features && features.length > 0 && { id: 'features', label: 'Key features' },
+    challenges &&
+      challenges.length > 0 && { id: 'challenges', label: 'Technical challenges' },
+    shots.length > 0 && { id: 'screens', label: 'Screens' },
+  ].filter(Boolean) as RailItem[]
 
   return (
     <>
       {/* ── Masthead ─────────────────────────────────────────── */}
-      <Section
-        glow={{ side: 'left', vertical: 'top' }}
-        dot={false}
-        header={{
-          eyebrow: category,
-          heading: title,
-          lead: summary,
-          aside: formattedDate ?? undefined,
-        }}
-      >
-        <AnimatedCard className="flex flex-col gap-8">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-            <Link
-              href={ROUTES.projects}
-              className="text-muted hover:text-accent text-[0.65rem] tracking-widest uppercase transition-colors"
-            >
-              ← All projects
-            </Link>
+      <header className="relative">
+        {coverUrl && (
+          <div className="relative aspect-21/9 w-full overflow-hidden md:aspect-32/9">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverUrl}
+              alt={title ?? ''}
+              className="h-full w-full object-cover"
+            />
+            <div className="from-paper via-paper/40 absolute inset-0 bg-gradient-to-t to-transparent" />
+          </div>
+        )}
 
-            {urls.live && (
-              <Badge>
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
-                  <span className="bg-accent relative inline-flex h-1.5 w-1.5 rounded-full" />
+        <div className="container">
+          <AnimatedCard
+            className={clsx(
+              'relative z-10 flex flex-col gap-6',
+              coverUrl ? 'pt-8 md:-mt-20 md:pt-0' : 'pt-16 md:pt-24',
+            )}
+          >
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link
+                href={ROUTES.projects}
+                className="text-muted hover:text-accent inline-flex items-center gap-1.5 text-[0.65rem] tracking-widest uppercase transition-colors"
+              >
+                <ArrowLeft className="size-3" />
+                All projects
+              </Link>
+              <span className="text-accent-strong text-[0.65rem] tracking-[0.16em] uppercase">
+                {category}
+              </span>
+              {formattedDate && (
+                <span className="text-muted text-[0.65rem] tracking-[0.16em] uppercase">
+                  {formattedDate}
                 </span>
-                Live
-              </Badge>
+              )}
+              {urls.live && (
+                <Badge>
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
+                    <span className="bg-accent relative inline-flex h-1.5 w-1.5 rounded-full" />
+                  </span>
+                  Live
+                </Badge>
+              )}
+            </div>
+
+            <h1 className="max-w-3xl font-serif text-4xl leading-[1.05] italic md:text-6xl">
+              {title}
+            </h1>
+
+            {summary && (
+              <p className="text-muted max-w-xl text-base leading-relaxed font-light md:text-lg">
+                {summary}
+              </p>
             )}
 
-            <div className="flex gap-3 sm:ml-auto">
+            <div className="flex flex-wrap gap-3 pt-2">
               {urls.repo && (
                 <a
                   href={urls.repo}
@@ -119,9 +161,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className="btn btn-ghost text-[0.65rem] tracking-widest uppercase"
                 >
-                  <svg viewBox="0 0 16 16" className="size-3.5 fill-current" aria-hidden>
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-                  </svg>
+                  <GitBranch className="size-3.5" />
                   Code
                 </a>
               )}
@@ -132,150 +172,128 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className="btn btn-primary text-[0.65rem] tracking-widest uppercase"
                 >
-                  Visit site <span aria-hidden>↗</span>
+                  Visit site <ArrowUpRight className="size-3.5" />
                 </a>
               )}
             </div>
-          </div>
+          </AnimatedCard>
+        </div>
+      </header>
 
-          {coverUrl && (
-            <div className="border-faint relative overflow-hidden rounded-sm border">
-              <img
-                src={coverUrl}
-                alt={title ?? ''}
-                className="block aspect-video w-full object-cover"
-              />
-            </div>
+      {/* ── Body: sticky contents + flowing sections ──────────── */}
+      <div className="border-faint container border-t">
+        <div
+          className={clsx(
+            'grid grid-cols-1 gap-x-12 gap-y-16 py-16 md:py-24',
+            railItems.length > 0 && 'lg:grid-cols-[180px_1fr]',
           )}
-        </AnimatedCard>
-      </Section>
-
-      {/* ── The problem ──────────────────────────────────────── */}
-      {problem && (
-        <Section
-          glow={{ side: 'right', vertical: 'top' }}
-          glyph={nextGlyph()}
-          header={{ eyebrow: 'The problem', heading: 'What needed solving' }}
         >
-          <AnimatedCard>
-            <p className="text-ink max-w-2xl font-serif text-2xl leading-snug italic md:text-[1.75rem]">
-              {problem}
-            </p>
-          </AnimatedCard>
-        </Section>
-      )}
+          {railItems.length > 0 && <ProjectContentsRail items={railItems} />}
 
-      {/* ── Description ──────────────────────────────────────── */}
-      {description && description.length > 0 && (
-        <Section
-          glow={{ side: 'left', vertical: 'bottom' }}
-          glyph={nextGlyph()}
-          header={{ eyebrow: 'About this project', heading: 'The build' }}
-        >
-          <AnimatedCard className="max-w-2xl">
-            <PortableText value={description} components={articleComponents} />
-          </AnimatedCard>
-        </Section>
-      )}
+          <div className="flex flex-col gap-20 md:gap-28">
+            {problem && (
+              <div id="problem" className="scroll-mt-32">
+                <AnimatedCard>
+                  <p className="text-ink max-w-2xl font-serif text-2xl leading-snug italic md:text-[1.85rem]">
+                    “{problem}”
+                  </p>
+                </AnimatedCard>
+              </div>
+            )}
 
-      {/* ── Key features ─────────────────────────────────────── */}
-      {features && features.length > 0 && (
-        <Section
-          glow={{ side: 'right', vertical: 'top' }}
-          glyph={nextGlyph()}
-          header={{
-            eyebrow: 'Key features',
-            heading: 'What it does',
-            aside: `${features.length} highlights`,
-          }}
-        >
-          <AnimatedCard>
-            <ul className="grid grid-cols-1 gap-x-10 gap-y-4 md:grid-cols-2">
-              {features.map((feature, i) => (
-                <li
-                  key={`${feature}-${i}`}
-                  className="border-faint text-ink/80 flex gap-4 border-b pb-4 text-[0.9375rem] leading-[1.7]"
-                >
-                  <span className="text-accent font-serif text-xs italic">
-                    {String(i + 1).padStart(2, '0')}
+            {description && description.length > 0 && (
+              <div id="build" className="scroll-mt-32">
+                <AnimatedCard className="max-w-2xl">
+                  <div
+                    className={clsx(
+                      '[&>*:first-child]:first-letter:text-accent',
+                      '[&>*:first-child]:first-letter:mr-2',
+                      '[&>*:first-child]:first-letter:float-left',
+                      '[&>*:first-child]:first-letter:font-serif',
+                      '[&>*:first-child]:first-letter:text-6xl',
+                      '[&>*:first-child]:first-letter:leading-[0.8]',
+                      '[&>*:first-child]:first-letter:italic',
+                    )}
+                  >
+                    <PortableText value={description} components={articleComponents} />
+                  </div>
+                </AnimatedCard>
+              </div>
+            )}
+
+            {features && features.length > 0 && (
+              <div id="features" className="scroll-mt-32">
+                <AnimatedCard>
+                  <ul className="grid grid-cols-1 gap-x-10 gap-y-4 md:grid-cols-2">
+                    {features.map((feature, i) => (
+                      <li
+                        key={`${feature}-${i}`}
+                        className="border-faint text-ink/80 flex gap-3 border-b pb-4 text-[0.9375rem] leading-[1.7]"
+                      >
+                        <span className="bg-accent mt-2.5 size-1.5 shrink-0 rounded-full" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </AnimatedCard>
+              </div>
+            )}
+
+            {challenges && challenges.length > 0 && (
+              <div id="challenges" className="scroll-mt-32">
+                <AnimatedCard>
+                  <div className="card no-hover-transform max-w-2xl p-6 md:p-10">
+                    <PortableText value={challenges} components={compactComponents} />
+                  </div>
+                </AnimatedCard>
+              </div>
+            )}
+
+            {shots.length > 0 && (
+              <div id="screens" className="scroll-mt-32">
+                <p className="text-muted mb-6 text-sm">
+                  Click any screen to view it full size.
+                </p>
+                <ScreenshotGallery shots={shots} title={title ?? ''} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Stack + next ───────────────────────────────────────── */}
+      <div className="bg-warm border-faint border-t">
+        <div className="container py-16 md:py-24">
+          <AnimatedCard className="flex flex-col gap-10">
+            {technologies.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {technologies.map(({ _id, name }) => (
+                  <span
+                    key={_id}
+                    className="border-faint text-accent-strong rounded-sm border px-3 py-1.5 text-[0.65rem] tracking-widest uppercase"
+                  >
+                    {name}
                   </span>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </AnimatedCard>
-        </Section>
-      )}
+                ))}
+              </div>
+            )}
 
-      {/* ── Technical challenges ─────────────────────────────── */}
-      {challenges && challenges.length > 0 && (
-        <Section
-          glow={{ side: 'left', vertical: 'bottom' }}
-          glyph={nextGlyph()}
-          header={{
-            eyebrow: 'Technical challenges',
-            heading: 'The tricky parts',
-          }}
-        >
-          <AnimatedCard className="card no-hover-transform max-w-2xl p-6 md:p-10">
-            <PortableText value={challenges} components={compactComponents} />
-          </AnimatedCard>
-        </Section>
-      )}
-
-      {/* ── Screenshots ──────────────────────────────────────── */}
-      {shots.length > 0 && (
-        <Section
-          glow={{ side: 'right', vertical: 'top' }}
-          glyph={nextGlyph()}
-          header={{
-            eyebrow: 'Screens',
-            heading: 'A look inside',
-            lead: 'Click any screen to view it full size.',
-          }}
-        >
-          <ScreenshotGallery shots={shots} title={title ?? ''} />
-        </Section>
-      )}
-
-      {/* ── Stack + next ─────────────────────────────────────── */}
-      <Section
-        glow={{ side: 'center', vertical: 'bottom' }}
-        glyph={nextGlyph()}
-        header={{
-          eyebrow: 'Built with',
-          heading: 'The stack',
-        }}
-      >
-        <AnimatedCard className="flex flex-col gap-10">
-          {technologies.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {technologies.map(({ _id, name }) => (
-                <span
-                  key={_id}
-                  className="border-faint text-accent-strong rounded-sm border px-3 py-1.5 text-[0.65rem] tracking-widest uppercase"
-                >
-                  {name}
-                </span>
-              ))}
+            <div className="border-faint flex flex-wrap items-center justify-between gap-6 border-t pt-8">
+              <p className="text-muted max-w-sm font-serif text-xl italic">
+                Like what you see? There&apos;s more where this came from.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link href={ROUTES.projects} className="btn btn-ghost">
+                  All projects
+                </Link>
+                <Link href={ROUTES.contact} className="btn btn-primary">
+                  Start a conversation <span aria-hidden>↗</span>
+                </Link>
+              </div>
             </div>
-          )}
-
-          <div className="border-faint flex flex-wrap items-center justify-between gap-6 border-t pt-8">
-            <p className="text-muted max-w-sm font-serif text-xl italic">
-              Like what you see? There&apos;s more where this came from.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link href={ROUTES.projects} className="btn btn-ghost">
-                All projects
-              </Link>
-              <Link href={ROUTES.contact} className="btn btn-primary">
-                Start a conversation <span aria-hidden>↗</span>
-              </Link>
-            </div>
-          </div>
-        </AnimatedCard>
-      </Section>
+          </AnimatedCard>
+        </div>
+      </div>
     </>
   )
 }
