@@ -346,10 +346,12 @@
       background 0.3s ease,
       transform 0.3s ease;
   }
+
   .card:hover {
     border-color: var(--accent);
     background: var(--accent-light);
     transform: translateY(-3px);
+    cursor: pointer;
   }
 
   .card.no-hover-transform:hover {
@@ -357,7 +359,7 @@
   }
 
   /* Status badge */
-  .badge-open {
+  .badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;

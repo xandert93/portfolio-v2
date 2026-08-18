@@ -8,7 +8,7 @@ import {
 
 import {
   HeroSection,
-  FeaturedProjectsSection,
+  ProjectsSection,
   TechSkillsSection,
   TestimonialsSection,
   AboutSection,
@@ -34,14 +34,14 @@ export default async function Home() {
 
   return (
     <>
-      <HeroSection settings={settings} about={about} />
-      {projects.length > 0 && <FeaturedProjectsSection projects={projects} />}
-      {techSkills.length > 0 && <TechSkillsSection skills={techSkills} />}
+      {/* <HeroSection settings={settings} about={about} /> */}
+      {projects.length > 0 && <ProjectsSection projects={projects} />}
+      {/* {techSkills.length > 0 && <TechSkillsSection skills={techSkills} />}
       {FEATURES.testimonials && testimonials.length > 0 && (
         <TestimonialsSection testimonials={testimonials} />
       )}
       <AboutSection about={about} />
-      <ContactCtaSection about={about} settings={settings} />
+      <ContactCtaSection about={about} settings={settings} /> */}
     </>
   )
 }

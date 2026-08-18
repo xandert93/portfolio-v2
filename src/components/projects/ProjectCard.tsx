@@ -36,39 +36,43 @@ export default function ProjectCard({ project, index }: Props) {
   const hiddenCount = technologies.length - visibleTech.length
 
   return (
-    <motion.article
-      variants={shouldReduceMotion ? fadeUpReduced : fadeUp}
-      className="card group relative flex h-full flex-col overflow-hidden"
-    >
-      <div className="relative aspect-16/10 overflow-hidden">
-        {coverImage ? (
-          <Image
-            src={genImageBuilder(coverImage)
-              .width(880)
-              .height(550)
-              .fit('crop')
-              .auto('format')
-              .url()}
-            alt={title ?? ''}
-            fill
-            sizes="(min-width: 768px) 45vw, 100vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          />
-        ) : (
-          <div className="bg-warm flex h-full w-full items-center justify-center">
-            <span className="text-muted text-[0.65rem] tracking-widest uppercase">
-              No image
+    <motion.div variants={shouldReduceMotion ? fadeUpReduced : fadeUp}>
+      <article className="card group relative flex h-full flex-col overflow-hidden">
+        <div className="relative aspect-16/10 overflow-hidden">
+          {coverImage ? (
+            <Image
+              src={genImageBuilder(coverImage)
+                .width(880)
+                .height(550)
+                .fit('crop')
+                .auto('format')
+                .url()}
+              alt={title ?? ''}
+              fill
+              sizes="(min-width: 768px) 45vw, 100vw"
+              className="object-cover"
+            />
+          ) : (
+            <div className="bg-warm flex h-full w-full items-center justify-center">
+              <span className="text-muted text-[0.65rem] tracking-widest uppercase">
+                No image
+              </span>
+            </div>
+          )}
+
+          {typeof index === 'number' && (
+            <span className="bg-paper/70 text-ink absolute top-3 left-3 rounded-sm px-2.5 py-1 font-serif text-[0.7rem] italic backdrop-blur">
+              {String(index).padStart(2, '0')}
             </span>
-          </div>
-        )}
+          )}
+        </div>
+        <CardContent />
+      </article>
+    </motion.div>
+  )
 
-        {typeof index === 'number' && (
-          <span className="bg-paper/70 text-ink absolute top-3 left-3 rounded-sm px-2.5 py-1 font-serif text-[0.7rem] italic backdrop-blur">
-            {String(index).padStart(2, '0')}
-          </span>
-        )}
-      </div>
-
+  function CardContent() {
+    return (
       <div className="flex flex-1 flex-col gap-4 p-6 md:p-7">
         <div className="text-muted flex items-center gap-3 text-[0.65rem] tracking-[0.16em] uppercase">
           {date && <span>{date.slice(0, 4)}</span>}
@@ -118,8 +122,8 @@ export default function ProjectCard({ project, index }: Props) {
           </div>
         )}
       </div>
-    </motion.article>
-  )
+    )
+  }
 }
 
 type CardLinkProps = { href: string; children: React.ReactNode }

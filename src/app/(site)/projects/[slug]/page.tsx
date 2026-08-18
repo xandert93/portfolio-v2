@@ -101,7 +101,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </Link>
 
             {urls.live && (
-              <span className="badge-open">
+              <span className="badge">
                 <span className="bg-accent size-1.5 rounded-full" />
                 Live
               </span>

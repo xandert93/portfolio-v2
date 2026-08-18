@@ -3,9 +3,10 @@ import type { Metadata } from 'next'
 import { fetchFeaturedProjects, fetchPaginatedProjects } from '@/sanity/lib/fetch'
 import { Section } from '@/components/ui/Section'
 import Pagination from '@/components/ui/Pagination'
-import ProjectCard from '@/components/cards/ProjectCard'
-import FeaturedProjectCard from './_components/FeaturedProjectCard'
+import ProjectCard from '@/components/projects/ProjectCard'
+
 import { ROUTES } from '@/config/routes'
+import FeaturedProjectsSection from './_components/FeaturedProjectsSection'
 
 export const metadata: Metadata = {
   title: 'Work',
@@ -38,26 +39,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
   return (
     <>
       {featuredProjects.length > 0 ? (
-        <Section
-          glow={{ side: 'left', vertical: 'top' }}
-          glyph={{ number: 1, side: 'right' }}
-          header={{
-            eyebrow: 'Portfolio',
-            heading: 'Selected work',
-            lead: "Projects I've designed and built end to end — the problem, the architecture and the decisions that made each one ship.",
-            aside: `${featuredProjects.length} featured`,
-          }}
-        >
-          <div className="flex flex-col gap-6 md:gap-8">
-            {featuredProjects.map((project, i) => (
-              <FeaturedProjectCard
-                key={project._id}
-                project={project}
-                flipped={i % 2 === 1}
-              />
-            ))}
-          </div>
-        </Section>
+        <FeaturedProjectsSection projects={featuredProjects} />
       ) : (
         !isEmpty && (
           <Section
@@ -95,7 +77,6 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
             eyebrow: 'The archive',
             heading: 'Everything else',
             lead: 'Smaller builds, experiments and client work — each with its own write-up.',
-            aside: totalPages > 1 ? `Page ${currentPage} of ${totalPages}` : undefined,
           }}
         >
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
@@ -104,12 +85,14 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
             ))}
           </div>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            basePath={ROUTES.projects}
-            hash="all-projects"
-          />
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              basePath={ROUTES.projects}
+              hash="all-projects"
+            />
+          )}
         </Section>
       )}
     </>
