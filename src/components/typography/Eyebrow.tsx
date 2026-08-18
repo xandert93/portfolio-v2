@@ -6,7 +6,7 @@ interface Props {
   className?: string
 }
 
-export default function Eyebrow({ children, className = '' }: Props) {
+export default function Eyebrow({ children, className }: Props) {
   return (
     <span
       className={clsx(

@@ -10,6 +10,7 @@ import AnimatedCard from '@/components/ui/AnimatedCard'
 import { ROUTES } from '@/config/routes'
 import { articleComponents, compactComponents } from './_components/portable-text'
 import ScreenshotGallery, { type Shot } from './_components/ScreenshotGallery'
+import Badge from '@/components/ui/Badge'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -101,10 +102,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </Link>
 
             {urls.live && (
-              <span className="badge">
-                <span className="bg-accent size-1.5 rounded-full" />
+              <Badge>
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
+                  <span className="bg-accent relative inline-flex h-1.5 w-1.5 rounded-full" />
+                </span>
                 Live
-              </span>
+              </Badge>
             )}
 
             <div className="flex gap-3 sm:ml-auto">

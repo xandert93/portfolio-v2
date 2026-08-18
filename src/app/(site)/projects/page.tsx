@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
 
+import { motion } from 'framer-motion'
+
 import { fetchFeaturedProjects, fetchPaginatedProjects } from '@/sanity/lib/fetch'
 import { Section } from '@/components/ui/Section'
 import Pagination from '@/components/ui/Pagination'
-import ProjectCard from '@/components/projects/ProjectCard'
+import OtherProjectCard from '@/components/projects/OtherProjectCard'
 
 import { ROUTES } from '@/config/routes'
 import FeaturedProjectsSection from './_components/FeaturedProjectsSection'
+import { fadeUp } from '@/lib/motion'
+import OtherProjectsSection from './_components/OtherProjectsSection'
 
 export const metadata: Metadata = {
   title: 'Work',
@@ -68,33 +72,7 @@ export default async function ProjectsPage({ searchParams }: PageProps) {
         </Section>
       )}
 
-      {otherProjects.length > 0 && (
-        <Section
-          id="all-projects"
-          glow={{ side: 'right', vertical: 'bottom' }}
-          glyph={{ number: 2, side: 'left' }}
-          header={{
-            eyebrow: 'The archive',
-            heading: 'Everything else',
-            lead: 'Smaller builds, experiments and client work — each with its own write-up.',
-          }}
-        >
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
-            {otherProjects.map((project, i) => (
-              <ProjectCard key={project._id} project={project} index={i + 1} />
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              basePath={ROUTES.projects}
-              hash="all-projects"
-            />
-          )}
-        </Section>
-      )}
+      {otherProjects.length > 0 && <OtherProjectsSection projects={otherProjects} />}
     </>
   )
 }

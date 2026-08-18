@@ -8,6 +8,7 @@ import type { About, SiteSettings } from '@/sanity/types'
 import { ROUTES } from '@/config/routes'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import OpenToWorkBadge from '@/components/site/OpenToWorkBadge'
+import Badge from '@/components/ui/Badge'
 
 type Props = {
   settings: NonNullable<SiteSettings>
