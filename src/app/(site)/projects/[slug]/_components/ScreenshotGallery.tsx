@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
-import { X } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { fadeUp, fadeUpReduced } from '@/lib/motion'
 
@@ -19,15 +19,22 @@ export default function ScreenshotGallery({ shots, title }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   const close = useCallback(() => setOpenIndex(null), [])
+  const next = useCallback(
+    () => setOpenIndex((i) => (i === null ? 0 : (i + 1) % shots.length)),
+    [shots.length],
+  )
+  const previous = useCallback(
+    () => setOpenIndex((i) => (i === null ? shots.length - 1 : (i - 1 + shots.length) % shots.length)),
+    [shots.length],
+  )
 
   useEffect(() => {
     if (openIndex === null) return
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close()
-      if (e.key === 'ArrowRight') setOpenIndex((i) => ((i ?? 0) + 1) % shots.length)
-      if (e.key === 'ArrowLeft')
-        setOpenIndex((i) => ((i ?? 0) - 1 + shots.length) % shots.length)
+      if (e.key === 'ArrowRight') next()
+      if (e.key === 'ArrowLeft') previous()
     }
 
     document.addEventListener('keydown', onKey)
@@ -37,7 +44,11 @@ export default function ScreenshotGallery({ shots, title }: Props) {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
-  }, [openIndex, shots.length, close])
+  }, [openIndex, close, next, previous])
+
+  const transition = shouldReduceMotion
+    ? { duration: 0.15 }
+    : { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }
 
   return (
     <>
@@ -66,41 +77,70 @@ export default function ScreenshotGallery({ shots, title }: Props) {
         ))}
       </div>
 
-      {openIndex !== null && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${title} screenshots`}
-          onClick={close}
-          className="bg-paper/95 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm md:p-10"
-        >
-          <button
-            type="button"
+      <AnimatePresence>
+        {openIndex !== null && (
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${title} screenshots`}
             onClick={close}
-            aria-label="Close"
-            className="btn-ghost absolute top-5 right-5 rounded-sm p-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={transition}
+            className="bg-paper/95 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm md:p-10"
           >
-            <X className="size-4" />
-          </button>
+            <button
+              type="button"
+              onClick={close}
+              aria-label="Close screenshots"
+              className="btn-ghost absolute top-5 right-5 z-10 rounded-sm p-2"
+            >
+              <X className="size-4" />
+            </button>
 
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="border-faint relative aspect-16/10 w-full max-w-5xl overflow-hidden rounded-sm border"
-          >
-            <Image
-              src={shots[openIndex].full}
-              alt={`${title} — screenshot ${openIndex + 1}`}
-              fill
-              sizes="90vw"
-              className="object-contain"
-            />
-          </div>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); previous() }}
+              aria-label="Previous screenshot"
+              className="btn-ghost absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-sm p-2 md:left-8"
+            >
+              <ChevronLeft className="size-5" />
+            </button>
 
-          <p className="text-muted absolute bottom-6 text-[0.65rem] tracking-widest uppercase">
-            {openIndex + 1} / {shots.length}
-          </p>
-        </div>
-      )}
+            <motion.div
+              key={shots[openIndex].key}
+              initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.96, x: shouldReduceMotion ? 0 : 12 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.96 }}
+              transition={transition}
+              onClick={(e) => e.stopPropagation()}
+              className="border-faint relative aspect-16/10 w-full max-w-5xl overflow-hidden rounded-sm border"
+            >
+              <Image
+                src={shots[openIndex].full}
+                alt={`${title} — screenshot ${openIndex + 1}`}
+                fill
+                sizes="90vw"
+                className="object-contain"
+              />
+            </motion.div>
+
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); next() }}
+              aria-label="Next screenshot"
+              className="btn-ghost absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-sm p-2 md:right-8"
+            >
+              <ChevronRight className="size-5" />
+            </button>
+
+            <p className="text-muted absolute bottom-6 text-[0.65rem] tracking-widest uppercase">
+              {openIndex + 1} / {shots.length}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

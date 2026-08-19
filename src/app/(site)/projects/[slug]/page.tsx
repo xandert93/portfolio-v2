@@ -8,7 +8,6 @@ import clsx from 'clsx'
 import { fetchProject } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
 import AnimatedCard from '@/components/ui/AnimatedCard'
-import Badge from '@/components/ui/Badge'
 import { ROUTES } from '@/config/routes'
 import { articleComponents, compactComponents } from './_components/portable-text'
 import ScreenshotGallery, { type Shot } from './_components/ScreenshotGallery'
@@ -98,17 +97,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   const indexOf = (id: string) => railItems.findIndex((item) => item.id === id) + 1
 
-  // Editorial spec strip — real, load-bearing facts, not decoration.
-  const specs = [
-    { label: 'Category', value: category },
-    year && { label: 'Year', value: String(year) },
-    technologies.length > 0 && {
-      label: 'Stack',
-      value: `${technologies.length} ${technologies.length === 1 ? 'tool' : 'tools'}`,
-    },
-    { label: 'Status', value: urls.live ? 'Live' : 'Case study' },
-  ].filter(Boolean) as { label: string; value: string }[]
-
   return (
     <>
       {/* ── Masthead ─────────────────────────────────────────── */}
@@ -129,7 +117,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="container">
           <AnimatedCard
             className={clsx(
-              'relative z-10 flex flex-col gap-7',
+              'relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-7',
               coverUrl ? 'pt-8 md:-mt-28 md:pt-0' : 'pt-16 md:pt-28',
             )}
           >
@@ -141,15 +129,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
                 All projects
               </Link>
-              {urls.live && (
-                <Badge>
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
-                    <span className="bg-accent relative inline-flex h-1.5 w-1.5 rounded-full" />
-                  </span>
-                  Live
-                </Badge>
-              )}
             </div>
 
             <h1 className="max-w-4xl font-serif text-4xl leading-[1.03] italic md:text-6xl lg:text-7xl">
@@ -170,6 +149,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className="btn btn-primary text-[0.65rem] tracking-widest uppercase"
                 >
+                  {urls.live && (
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
+                      <span className="bg-accent relative inline-flex h-1.5 w-1.5 rounded-full" />
+                    </span>
+                  )}
                   Visit site <ArrowUpRight className="size-3.5" />
                 </a>
               )}
@@ -186,23 +171,33 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               )}
             </div>
 
-            {/* Spec strip */}
-            <dl className="border-faint mt-3 flex flex-wrap gap-x-12 gap-y-6 border-t pt-7">
-              {specs.map(({ label, value }) => (
-                <div key={label} className="flex flex-col gap-1.5">
-                  <dt className="text-muted text-[0.6rem] tracking-[0.18em] uppercase">
-                    {label}
-                  </dt>
-                  <dd className="text-ink font-serif text-lg italic">{value}</dd>
-                </div>
-              ))}
-            </dl>
+            <div className="border-faint mt-3 flex flex-wrap items-center gap-x-5 gap-y-3 border-t pt-5">
+              <span className="text-muted text-[0.65rem] tracking-[0.16em] uppercase">
+                {category}
+              </span>
+              {year && <span aria-hidden className="bg-faint h-3 w-px" />}
+              {year && (
+                <span className="text-muted font-serif text-sm italic">{year}</span>
+              )}
+              {technologies.length > 0 && (
+                <>
+                  <span aria-hidden className="bg-faint hidden h-3 w-px sm:block" />
+                  <div className="flex flex-wrap gap-2">
+                    {technologies.map(({ _id, name }) => (
+                      <span key={_id} className="text-accent-strong text-[0.6rem] tracking-[0.12em] uppercase">
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </AnimatedCard>
         </div>
       </header>
 
       {/* ── Body: sticky contents + flowing sections ──────────── */}
-      <div className="border-faint container mt-16 border-t md:mt-24">
+      <div className="border-faint container mx-auto mt-14 max-w-6xl border-t md:mt-20">
         <div
           className={clsx(
             'grid grid-cols-1 gap-x-14 gap-y-16 py-16 md:py-24',
@@ -253,19 +248,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 index={indexOf('features')}
                 eyebrow="Key features"
               >
-                <ol className="grid grid-cols-1 gap-x-12 sm:grid-cols-2">
+                <ul className="grid grid-cols-1 gap-x-12 gap-y-4 sm:grid-cols-2">
                   {features.map((feature, i) => (
                     <li
                       key={`${feature}-${i}`}
-                      className="border-faint text-ink/80 flex gap-4 border-b py-4 text-[0.9375rem] leading-[1.7]"
+                      className="text-ink/80 flex gap-3 text-[0.9375rem] leading-[1.7]"
                     >
-                      <span className="text-accent shrink-0 pt-0.5 font-serif text-sm leading-none italic">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
+                      <span aria-hidden className="text-accent mt-[0.65em] size-1.5 shrink-0 rounded-full" />
                       <span>{feature}</span>
                     </li>
                   ))}
-                </ol>
+                </ul>
               </ProjectSection>
             )}
 
@@ -297,24 +290,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <div className="bg-warm border-faint border-t">
         <div className="container py-16 md:py-24">
           <AnimatedCard className="flex flex-col gap-10">
-            {technologies.length > 0 && (
-              <div className="flex flex-col gap-5">
-                <span className="text-muted text-[0.65rem] font-medium tracking-[0.2em] uppercase">
-                  Built with
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {technologies.map(({ _id, name }) => (
-                    <span
-                      key={_id}
-                      className="border-faint text-accent-strong hover:border-accent/50 rounded-sm border px-3 py-1.5 text-[0.65rem] tracking-widest uppercase transition-colors"
-                    >
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="border-faint flex flex-wrap items-center justify-between gap-6 border-t pt-10">
               <p className="text-ink max-w-md font-serif text-2xl leading-snug italic text-balance">
                 Like what you see? There&apos;s more where this came from.
