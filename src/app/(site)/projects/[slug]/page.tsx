@@ -13,6 +13,7 @@ import { ROUTES } from '@/config/routes'
 import { articleComponents, compactComponents } from './_components/portable-text'
 import ScreenshotGallery, { type Shot } from './_components/ScreenshotGallery'
 import ProjectContentsRail, { type RailItem } from './_components/ProjectContentsRail'
+import ProjectSection from './_components/ProjectSection'
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -66,6 +67,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
     : null
+  const year = date ? new Date(date).getFullYear() : null
 
   const coverUrl = coverImage
     ? genImageBuilder(coverImage)
@@ -83,7 +85,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   }))
 
   // The rail only lists blocks this project actually has, in the order
-  // they appear — a real reading sequence, not decoration.
+  // they appear — a real reading sequence, not decoration. Section indices
+  // are derived from this list so the headers and the rail stay in sync.
   const railItems: RailItem[] = [
     problem && { id: 'problem', label: 'The problem' },
     description && description.length > 0 && { id: 'build', label: 'The build' },
@@ -92,6 +95,19 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       challenges.length > 0 && { id: 'challenges', label: 'Technical challenges' },
     shots.length > 0 && { id: 'screens', label: 'Screens' },
   ].filter(Boolean) as RailItem[]
+
+  const indexOf = (id: string) => railItems.findIndex((item) => item.id === id) + 1
+
+  // Editorial spec strip — real, load-bearing facts, not decoration.
+  const specs = [
+    { label: 'Category', value: category },
+    year && { label: 'Year', value: String(year) },
+    technologies.length > 0 && {
+      label: 'Stack',
+      value: `${technologies.length} ${technologies.length === 1 ? 'tool' : 'tools'}`,
+    },
+    { label: 'Status', value: urls.live ? 'Live' : 'Case study' },
+  ].filter(Boolean) as { label: string; value: string }[]
 
   return (
     <>
@@ -105,33 +121,26 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               alt={title ?? ''}
               className="h-full w-full object-cover"
             />
-            <div className="from-paper via-paper/40 absolute inset-0 bg-gradient-to-t to-transparent" />
+            <div className="from-paper via-paper/50 absolute inset-0 bg-gradient-to-t to-transparent" />
+            <div className="from-paper/60 absolute inset-0 bg-gradient-to-r to-transparent" />
           </div>
         )}
 
         <div className="container">
           <AnimatedCard
             className={clsx(
-              'relative z-10 flex flex-col gap-6',
-              coverUrl ? 'pt-8 md:-mt-20 md:pt-0' : 'pt-16 md:pt-24',
+              'relative z-10 flex flex-col gap-7',
+              coverUrl ? 'pt-8 md:-mt-28 md:pt-0' : 'pt-16 md:pt-28',
             )}
           >
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               <Link
                 href={ROUTES.projects}
-                className="text-muted hover:text-accent inline-flex items-center gap-1.5 text-[0.65rem] tracking-widest uppercase transition-colors"
+                className="text-muted hover:text-accent group inline-flex items-center gap-1.5 text-[0.65rem] tracking-[0.2em] uppercase transition-colors"
               >
-                <ArrowLeft className="size-3" />
+                <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
                 All projects
               </Link>
-              <span className="text-accent-strong text-[0.65rem] tracking-[0.16em] uppercase">
-                {category}
-              </span>
-              {formattedDate && (
-                <span className="text-muted text-[0.65rem] tracking-[0.16em] uppercase">
-                  {formattedDate}
-                </span>
-              )}
               {urls.live && (
                 <Badge>
                   <span className="relative flex h-1.5 w-1.5">
@@ -143,28 +152,17 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               )}
             </div>
 
-            <h1 className="max-w-3xl font-serif text-4xl leading-[1.05] italic md:text-6xl">
+            <h1 className="max-w-4xl font-serif text-4xl leading-[1.03] italic md:text-6xl lg:text-7xl">
               {title}
             </h1>
 
             {summary && (
-              <p className="text-muted max-w-xl text-base leading-relaxed font-light md:text-lg">
+              <p className="text-muted max-w-2xl text-lg leading-relaxed font-light text-pretty md:text-xl">
                 {summary}
               </p>
             )}
 
-            <div className="flex flex-wrap gap-3 pt-2">
-              {urls.repo && (
-                <a
-                  href={urls.repo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-ghost text-[0.65rem] tracking-widest uppercase"
-                >
-                  <GitBranch className="size-3.5" />
-                  Code
-                </a>
-              )}
+            <div className="flex flex-wrap gap-3 pt-1">
               {urls.live && (
                 <a
                   href={urls.live}
@@ -175,87 +173,121 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   Visit site <ArrowUpRight className="size-3.5" />
                 </a>
               )}
+              {urls.repo && (
+                <a
+                  href={urls.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-ghost text-[0.65rem] tracking-widest uppercase"
+                >
+                  <GitBranch className="size-3.5" />
+                  View code
+                </a>
+              )}
             </div>
+
+            {/* Spec strip */}
+            <dl className="border-faint mt-3 flex flex-wrap gap-x-12 gap-y-6 border-t pt-7">
+              {specs.map(({ label, value }) => (
+                <div key={label} className="flex flex-col gap-1.5">
+                  <dt className="text-muted text-[0.6rem] tracking-[0.18em] uppercase">
+                    {label}
+                  </dt>
+                  <dd className="text-ink font-serif text-lg italic">{value}</dd>
+                </div>
+              ))}
+            </dl>
           </AnimatedCard>
         </div>
       </header>
 
       {/* ── Body: sticky contents + flowing sections ──────────── */}
-      <div className="border-faint container border-t">
+      <div className="border-faint container mt-16 border-t md:mt-24">
         <div
           className={clsx(
-            'grid grid-cols-1 gap-x-12 gap-y-16 py-16 md:py-24',
-            railItems.length > 0 && 'lg:grid-cols-[180px_1fr]',
+            'grid grid-cols-1 gap-x-14 gap-y-16 py-16 md:py-24',
+            railItems.length > 0 && 'lg:grid-cols-[190px_1fr]',
           )}
         >
           {railItems.length > 0 && <ProjectContentsRail items={railItems} />}
 
-          <div className="flex flex-col gap-20 md:gap-28">
+          <div className="flex min-w-0 flex-col gap-24 md:gap-32">
             {problem && (
-              <div id="problem" className="scroll-mt-32">
-                <AnimatedCard>
-                  <p className="text-ink max-w-2xl font-serif text-2xl leading-snug italic md:text-[1.85rem]">
-                    “{problem}”
-                  </p>
-                </AnimatedCard>
-              </div>
+              <ProjectSection id="problem" index={indexOf('problem')} eyebrow="The problem">
+                <figure className="max-w-3xl">
+                  <span
+                    aria-hidden
+                    className="text-accent/25 block font-serif text-6xl leading-none italic md:text-7xl"
+                  >
+                    &ldquo;
+                  </span>
+                  <blockquote className="text-ink -mt-4 font-serif text-2xl leading-snug italic md:text-[2rem]">
+                    {problem}
+                  </blockquote>
+                </figure>
+              </ProjectSection>
             )}
 
             {description && description.length > 0 && (
-              <div id="build" className="scroll-mt-32">
-                <AnimatedCard className="max-w-2xl">
-                  <div
-                    className={clsx(
-                      '[&>*:first-child]:first-letter:text-accent',
-                      '[&>*:first-child]:first-letter:mr-2',
-                      '[&>*:first-child]:first-letter:float-left',
-                      '[&>*:first-child]:first-letter:font-serif',
-                      '[&>*:first-child]:first-letter:text-6xl',
-                      '[&>*:first-child]:first-letter:leading-[0.8]',
-                      '[&>*:first-child]:first-letter:italic',
-                    )}
-                  >
-                    <PortableText value={description} components={articleComponents} />
-                  </div>
-                </AnimatedCard>
-              </div>
+              <ProjectSection id="build" index={indexOf('build')} eyebrow="The build">
+                <div
+                  className={clsx(
+                    'max-w-2xl',
+                    '[&>*:first-child]:first-letter:text-accent',
+                    '[&>*:first-child]:first-letter:mr-2',
+                    '[&>*:first-child]:first-letter:float-left',
+                    '[&>*:first-child]:first-letter:font-serif',
+                    '[&>*:first-child]:first-letter:text-6xl',
+                    '[&>*:first-child]:first-letter:leading-[0.8]',
+                    '[&>*:first-child]:first-letter:italic',
+                  )}
+                >
+                  <PortableText value={description} components={articleComponents} />
+                </div>
+              </ProjectSection>
             )}
 
             {features && features.length > 0 && (
-              <div id="features" className="scroll-mt-32">
-                <AnimatedCard>
-                  <ul className="grid grid-cols-1 gap-x-10 gap-y-4 md:grid-cols-2">
-                    {features.map((feature, i) => (
-                      <li
-                        key={`${feature}-${i}`}
-                        className="border-faint text-ink/80 flex gap-3 border-b pb-4 text-[0.9375rem] leading-[1.7]"
-                      >
-                        <span className="bg-accent mt-2.5 size-1.5 shrink-0 rounded-full" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </AnimatedCard>
-              </div>
+              <ProjectSection
+                id="features"
+                index={indexOf('features')}
+                eyebrow="Key features"
+              >
+                <ol className="grid grid-cols-1 gap-x-12 sm:grid-cols-2">
+                  {features.map((feature, i) => (
+                    <li
+                      key={`${feature}-${i}`}
+                      className="border-faint text-ink/80 flex gap-4 border-b py-4 text-[0.9375rem] leading-[1.7]"
+                    >
+                      <span className="text-accent shrink-0 pt-0.5 font-serif text-sm leading-none italic">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ol>
+              </ProjectSection>
             )}
 
             {challenges && challenges.length > 0 && (
-              <div id="challenges" className="scroll-mt-32">
-                <AnimatedCard>
-                  <div className="card no-hover-transform max-w-2xl p-6 md:p-10">
-                    <PortableText value={challenges} components={compactComponents} />
-                  </div>
-                </AnimatedCard>
-              </div>
+              <ProjectSection
+                id="challenges"
+                index={indexOf('challenges')}
+                eyebrow="Technical challenges"
+              >
+                <div className="card no-hover-transform max-w-2xl p-6 md:p-10">
+                  <PortableText value={challenges} components={compactComponents} />
+                </div>
+              </ProjectSection>
             )}
 
             {shots.length > 0 && (
-              <div id="screens" className="scroll-mt-32">
-                <p className="text-muted mb-6 text-sm">
-                  Click any screen to view it full size.
+              <ProjectSection id="screens" index={indexOf('screens')} eyebrow="Screens">
+                <p className="text-muted mb-7 max-w-md text-sm leading-relaxed">
+                  A closer look at the interface. Click any screen to view it full size.
                 </p>
                 <ScreenshotGallery shots={shots} title={title ?? ''} />
-              </div>
+              </ProjectSection>
             )}
           </div>
         </div>
@@ -266,20 +298,25 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         <div className="container py-16 md:py-24">
           <AnimatedCard className="flex flex-col gap-10">
             {technologies.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {technologies.map(({ _id, name }) => (
-                  <span
-                    key={_id}
-                    className="border-faint text-accent-strong rounded-sm border px-3 py-1.5 text-[0.65rem] tracking-widest uppercase"
-                  >
-                    {name}
-                  </span>
-                ))}
+              <div className="flex flex-col gap-5">
+                <span className="text-muted text-[0.65rem] font-medium tracking-[0.2em] uppercase">
+                  Built with
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {technologies.map(({ _id, name }) => (
+                    <span
+                      key={_id}
+                      className="border-faint text-accent-strong hover:border-accent/50 rounded-sm border px-3 py-1.5 text-[0.65rem] tracking-widest uppercase transition-colors"
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
 
-            <div className="border-faint flex flex-wrap items-center justify-between gap-6 border-t pt-8">
-              <p className="text-muted max-w-sm font-serif text-xl italic">
+            <div className="border-faint flex flex-wrap items-center justify-between gap-6 border-t pt-10">
+              <p className="text-ink max-w-md font-serif text-2xl leading-snug italic text-balance">
                 Like what you see? There&apos;s more where this came from.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -287,7 +324,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   All projects
                 </Link>
                 <Link href={ROUTES.contact} className="btn btn-primary">
-                  Start a conversation <span aria-hidden>↗</span>
+                  Start a conversation <ArrowUpRight className="size-3.5" />
                 </Link>
               </div>
             </div>

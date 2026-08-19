@@ -45,6 +45,9 @@ export default function ProjectContentsRail({ items }: Props) {
       aria-label="Sections on this page"
       className="sticky top-[calc(var(--navbar-h)+2.5rem)] hidden self-start lg:block"
     >
+      <span className="text-muted mb-4 block pl-3 text-[0.6rem] tracking-[0.2em] uppercase">
+        Contents
+      </span>
       <ol className="flex flex-col gap-1">
         {items.map(({ id, label }, i) => {
           const isActive = activeId === id
