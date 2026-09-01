@@ -3,6 +3,7 @@ import { PortableText } from '@portabletext/react'
 import { genImageBuilder } from '@/sanity/lib/image'
 
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
+import ExternalLink from '@/components/links/ExternalLink'
 
 export default async function AboutPage() {
   const [cv, about, skills, testimonials] = await Promise.all([
@@ -59,14 +60,12 @@ export default async function AboutPage() {
           <div className="mt-8 flex gap-6">
             {about.location && <p className="text-muted text-xs">{about.location}</p>}
             {cvUrl && (
-              <a
-                href={cvUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <ExternalLink
                 className="text-2xs text-ink border-ink hover:text-accent hover:border-accent border-b pb-0.5 tracking-widest uppercase transition-colors"
+                href={cvUrl}
               >
                 Download résumé ↗
-              </a>
+              </ExternalLink>
             )}
           </div>
         </div>

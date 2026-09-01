@@ -192,7 +192,7 @@ const DirectContactCardLink = ({
         {icon}
       </span>
       <span className="min-w-0">
-        <span className="text-muted block text-[0.65rem] font-medium tracking-[0.16em] uppercase">
+        <span className="text-muted text-2xs block font-medium tracking-[0.16em] uppercase">
           {label}
         </span>
         <span className="text-ink group-hover:text-accent block truncate text-sm font-medium transition-colors">

@@ -47,7 +47,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     .fit('crop')
                     .auto('format')
                     .url()}
-                  alt={post.title ?? ''}
+                  alt={post.title}
                   className="border-faint block w-full rounded-md border"
                   style={{ aspectRatio: '16/10', objectFit: 'cover' }}
                 />

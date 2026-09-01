@@ -56,7 +56,7 @@ regeneration.
 
 ### Option B — On-demand (webhook-triggered) — **what we used**
 
-Instead of guessing a time window, we get Sanity to contact our Next server and tell it the _exact moment_ something changed, and only regenerate then.
+Instead of guessing a time window, we get Sanity to contact our Next server and tell it the _exact moment_ something changed and only regenerate then.
 
 - Content shows up within seconds of publishing, not "eventually."
 - No wasted regeneration when nothing changed.
@@ -92,7 +92,7 @@ This does **two** things at once, not one:
 
 1. **Wipes every Data Cache entry tagged `'project'`.** Not just one fetch —
    _every_ fetch anywhere in the app carrying that tag. So `fetchProjects()`,
-   `fetchFeaturedProjects()`, and `fetchProject(slug)` would _all_ get
+   `fetchFeaturedProjects()` and `fetchProject(slug)` would _all_ get
    invalidated by one call, even though they're three different functions.
 
 2. **Wipes the Full Route Cache for every page that touched that tag while
@@ -110,7 +110,7 @@ can clear both raw data _and_ whole rendered pages that used it**, in one call.
 
 Nothing regenerates immediately. Invalidating just marks things stale. The
 _next_ request to an affected route is what triggers Next.js to actually re-run
-the Server Component, hit Sanity for real, and cache the new result under the
+the Server Component, hit Sanity for real and cache the new result under the
 same tags — ready to serve to everyone after that, until invalidated again.
 
 ---
@@ -145,7 +145,7 @@ nothing was ever cached under that (wrong) name — a silent, hard-to-spot bug.
   ```
 - **Secret**: a shared string, known to both Sanity and our app
   (`SANITY_REVALIDATE_SECRET`). This is how our endpoint proves a request
-  really came from Sanity, and not from a random POST off the internet.
+  really came from Sanity and not from a random POST off the internet.
 
 ### The route: `app/api/revalidate/route.ts`
 
@@ -161,7 +161,7 @@ export async function POST(req: NextRequest) {
       process.env.SANITY_REVALIDATE_SECRET,
       // Next's server and Sanity both know this secret. Sanity signs its
       // request with it; parseBody checks the signature matches. This
-      // confirms the request genuinely came from our Sanity webhook, and
+      // confirms the request genuinely came from our Sanity webhook and
       // not from someone else hitting this public endpoint directly.
     )
 
@@ -235,7 +235,7 @@ personal project — the webhook is only ever pointed at the **production** URL,
 and testing happens there directly.
 
 **Also**: preview deployments (e.g. a feature branch's own Vercel URL) are
-protected by Vercel's SSO wall by default, and have their own _separate_
+protected by Vercel's SSO wall by default and have their own _separate_
 cache from production anyway. The webhook only ever targets the stable
 production URL — checking a preview URL will never reflect what the webhook
 is doing.
@@ -243,7 +243,7 @@ is doing.
 ### How to check whether it's actually working
 
 Go to **Sanity's manage console → your project → API → Webhooks → click the
-webhook**, and look at its delivery log. Each entry shows:
+webhook** and look at its delivery log. Each entry shows:
 
 - The HTTP status code our route returned (`200` = success).
 - The response body — should show `{"revalidated":true, "now": <timestamp>}`.

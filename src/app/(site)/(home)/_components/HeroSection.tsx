@@ -8,6 +8,8 @@ import type { About, SiteSettings } from '@/sanity/types'
 import { ROUTES } from '@/config/routes'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import OpenToWorkBadge from '@/components/site/OpenToWorkBadge'
+import Badge from '@/components/ui/Badge'
+import Button from '@/components/ui/Button'
 
 type Props = {
   settings: NonNullable<SiteSettings>
@@ -102,7 +104,7 @@ export default function HeroSection({ settings, about }: Props) {
       {/* Content container */}
       <div className="relative z-10 w-full px-8 py-16 md:px-20">
         <div className="mx-auto hidden max-w-6xl md:block">
-          <HeroContent />
+          <DesktopHeroContent />
         </div>
         <MobileHeroContent />
       </div>
@@ -250,23 +252,7 @@ export default function HeroSection({ settings, about }: Props) {
     )
   }
 
-  function ProjectsLink() {
-    return (
-      <Link href={ROUTES.projects} className="btn btn-primary">
-        View my work ↗
-      </Link>
-    )
-  }
-
-  function ContactLink() {
-    return (
-      <Link href={ROUTES.contact} className="btn btn-ghost">
-        Get in touch ➤
-      </Link>
-    )
-  }
-
-  function HeroContent() {
+  function DesktopHeroContent() {
     return (
       <div className="flex max-w-xl flex-col items-start gap-8">
         <motion.div {...fade(BADGE_DELAY, BADGE_DURATION)}>
@@ -300,4 +286,20 @@ export default function HeroSection({ settings, about }: Props) {
       </div>
     )
   }
+}
+
+function ProjectsLink() {
+  return (
+    <Button variant="primary" as={Link} href={ROUTES.projects}>
+      View my work ↗
+    </Button>
+  )
+}
+
+function ContactLink() {
+  return (
+    <Button variant="ghost" as={Link} href={ROUTES.contact}>
+      Get in touch ➤
+    </Button>
+  )
 }

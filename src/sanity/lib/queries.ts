@@ -59,7 +59,6 @@ export const ABOUT_QUERY = defineQuery(`
     "quickFacts": coalesce(quickFacts, [])
   }
 `)
-
 // Projects
 export const PROJECTS_QUERY = defineQuery(`
   *[_type == "project"] | order(date desc){
@@ -70,10 +69,17 @@ export const PROJECTS_QUERY = defineQuery(`
     content{
       summary,
       problem,
-      description,
+      solution,
+      role,
       "technologies": coalesce(technologies[]->{ _id, name }, []),
-      features,
-      challenges
+      "features": coalesce(features, []),
+      technicalDecisions,
+      "challenges": coalesce(challenges, []),
+      outcome{
+        summary,
+        "metrics": coalesce(metrics, []),
+        learnings
+      }
     },
     urls{
       repo,
@@ -97,10 +103,17 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(`
     content{
       summary,
       problem,
-      description,
+      solution,
+      role,
       "technologies": coalesce(technologies[]->{ _id, name }, []),
-      features,
-      challenges
+      "features": coalesce(features, []),
+      technicalDecisions,
+      "challenges": coalesce(challenges, []),
+      outcome{
+        summary,
+        "metrics": coalesce(metrics, []),
+        learnings
+      }
     },
     urls{
       repo,
@@ -116,7 +129,7 @@ export const FEATURED_PROJECTS_QUERY = defineQuery(`
 `)
 
 export const FEATURED_PROJECTS_CARDS_QUERY = defineQuery(`
-  *[_type == "post" && isFeatured == true] | order(date desc){
+  *[_type == "project" && isFeatured == true] | order(date desc){
     _id,
     'slug': slug.current,
     title,
@@ -141,10 +154,17 @@ export const PROJECT_QUERY = defineQuery(`
     content{
       summary,
       problem,
-      description,
+      solution,
+      role,
       "technologies": coalesce(technologies[]->{ _id, name }, []),
-      features,
-      challenges
+      "features": coalesce(features, []),
+      technicalDecisions,
+      "challenges": coalesce(challenges, []),
+      outcome{
+        summary,
+        "metrics": coalesce(metrics, []),
+        learnings
+      }
     },
     urls{
       repo,
@@ -167,10 +187,17 @@ export const PAGINATED_PROJECTS_QUERY = defineQuery(`
     content{
       summary,
       problem,
-      description,
+      solution,
+      role,
       "technologies": coalesce(technologies[]->{ _id, name }, []),
-      features,
-      challenges
+      "features": coalesce(features, []),
+      technicalDecisions,
+      "challenges": coalesce(challenges, []),
+      outcome{
+        summary,
+        "metrics": coalesce(metrics, []),
+        learnings
+      }
     },
     urls{
       repo,

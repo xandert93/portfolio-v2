@@ -75,5 +75,5 @@ sanity dataset list
 ## Notes
 
 - This process copies documents and referenced assets.
-- Dataset settings, API tokens, CORS configuration, webhooks, and project configuration are **not** copied.
+- Dataset settings, API tokens, CORS configuration, webhooks and project configuration are **not** copied.
 - Always back up production before running an import with `--replace`.

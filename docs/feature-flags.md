@@ -2,7 +2,7 @@
 
 **Problem:** `main` is your only branch and it's always deployed to production. Some sections
 of the site are half-built and shouldn't be visible in production yet — but you still want to
-work on them normally, see them locally, and check them on Vercel preview deployments.
+work on them normally, see them locally and check them on Vercel preview deployments.
 
 **Solution:** one config file + a central route guard (middleware) + different env var values
 per Vercel environment. No branches, no commenting code out before deploying.
@@ -114,7 +114,7 @@ export function middleware(request: NextRequest) {
 
 **Guard-clause structure matters here, not just style:** `reqPrefix` is `string | undefined`.
 Looking it up in `GATED_ROUTES`/`FEATURES` _before_ checking it exists won't compile under
-strict TypeScript, and even where it does run, you'd be doing the lookup for every single
+strict TypeScript and even where it does run, you'd be doing the lookup for every single
 non-gated request instead of bailing out immediately. Return early when there's no match, then
 compute the gate — don't compute the gate and rely on an `if` at the end to ignore a bad result.
 

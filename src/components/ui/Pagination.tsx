@@ -13,8 +13,6 @@ export default function Pagination({
   basePath,
   hash,
 }: PaginationProps) {
-  if (totalPages <= 1) return null
-
   const buildHref = (page: number) => {
     return `${basePath}?page=${page}${hash ? `#${hash}` : ''}`
   }
@@ -22,11 +20,11 @@ export default function Pagination({
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
 
   return (
-    <nav className="flex items-center justify-center gap-2 mt-16">
+    <nav className="mt-16 flex items-center justify-center gap-2">
       {currentPage > 1 && (
         <Link
           href={buildHref(currentPage - 1)}
-          className="text-2xs tracking-widest uppercase px-4 py-2 border border-faint rounded text-ink hover:bg-warm transition-colors"
+          className="text-2xs border-faint text-ink hover:bg-warm rounded border px-4 py-2 tracking-widest uppercase transition-colors"
         >
           ← Prev
         </Link>
@@ -36,10 +34,10 @@ export default function Pagination({
         <Link
           key={page}
           href={buildHref(page)}
-          className={`text-xs w-9 h-9 flex items-center justify-center rounded transition-colors ${
+          className={`flex h-9 w-9 items-center justify-center rounded text-xs transition-colors ${
             page === currentPage
               ? 'bg-ink text-paper'
-              : 'border border-faint text-ink hover:bg-warm'
+              : 'border-faint text-ink hover:bg-warm border'
           }`}
         >
           {page}
@@ -49,7 +47,7 @@ export default function Pagination({
       {currentPage < totalPages && (
         <Link
           href={buildHref(currentPage + 1)}
-          className="text-2xs tracking-widest uppercase px-4 py-2 border border-faint rounded text-ink hover:bg-warm transition-colors"
+          className="text-2xs border-faint text-ink hover:bg-warm rounded border px-4 py-2 tracking-widest uppercase transition-colors"
         >
           Next →
         </Link>

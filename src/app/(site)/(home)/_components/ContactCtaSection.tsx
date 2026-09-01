@@ -21,6 +21,7 @@ import OpenToWorkBadge from '@/components/site/OpenToWorkBadge'
 
 import Eyebrow from '@/components/typography/Eyebrow'
 import SocialLinks from '@/components/site/SocialLinks'
+import Button from '@/components/ui/Button'
 
 const PROMPTS = [
   'a new website',
@@ -154,14 +155,14 @@ function ActionButtons({ email }: { email: string }) {
       variants={fadeUp}
       className="flex flex-wrap items-center justify-center gap-4 lg:justify-start"
     >
-      <Link href={ROUTES.contact} className="btn btn-primary group">
+      <Button as={Link} href={ROUTES.contact}>
         Start a project
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-      </Link>
-      <a href={`mailto:${email}`} className="btn btn-ghost">
+      </Button>
+      <Button variant="ghost" as="a" href={`mailto:${email}`}>
         Or just say hi
         <Mail className="h-4 w-4" />
-      </a>
+      </Button>
     </motion.div>
   )
 }

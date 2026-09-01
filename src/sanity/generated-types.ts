@@ -40,8 +40,12 @@ export type Enquiry = {
   name: string
   email: string
   phone?: string
-  projectType?: 'new-website' | 'site-update' | 'freelance' | 'job' | 'other'
+  organisation?: string
+  website?: string
+  projectType: 'new-website' | 'site-update' | 'freelance' | 'job' | 'other'
+  timeline?: 'asap' | '1-3-months' | '3-plus-months' | 'exploring'
   budget?: 'under-2k' | '2k-5k' | '5k-10k' | '10k-plus' | 'not-sure'
+  referral?: 'search' | 'linkedin' | 'github' | 'referral' | 'other'
   message: string
   status?: 'New' | 'Replied' | 'Archived' | 'Spam'
   submittedAt?: string
@@ -416,8 +420,7 @@ export type Project = {
     'Full Stack' | 'Frontend' | 'Backend' | 'UI/UX' | 'Open Source' | 'Client Work'
   content: {
     summary: string
-    problem?: string
-    description: Array<{
+    problem: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -435,30 +438,147 @@ export type Project = {
       _type: 'block'
       _key: string
     }>
+    solution: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }>
+    role?: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }>
+    features: Array<{
+      title: string
+      description?: string
+      image?: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      _key: string
+    }>
+    technicalDecisions?: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+          listItem?: 'bullet' | 'number'
+          markDefs?: Array<{
+            href?: string
+            _type: 'link'
+            _key: string
+          }>
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | ({
+          _key: string
+        } & Code)
+    >
+    challenges?: Array<{
+      problem: string
+      solution: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }>
+      _key: string
+    }>
+    outcome: {
+      summary?: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }>
+      metrics?: Array<{
+        label?: string
+        value?: string
+        _key: string
+      }>
+      learnings?: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }>
+    }
     technologies: Array<
       {
         _key: string
       } & SkillReference
     >
-    features: Array<string>
-    challenges?: Array<{
-      children?: Array<{
-        marks?: Array<string>
-        text?: string
-        _type: 'span'
-        _key: string
-      }>
-      style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
-      listItem?: 'bullet' | 'number'
-      markDefs?: Array<{
-        href?: string
-        _type: 'link'
-        _key: string
-      }>
-      level?: number
-      _type: 'block'
-      _key: string
-    }>
   }
   urls: {
     repo?: string
@@ -473,11 +593,15 @@ export type Project = {
       _type: 'image'
     }
     screenshots?: Array<{
-      asset?: SanityImageAssetReference
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      _type: 'image'
+      image: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      title: string
+      description: string
       _key: string
     }>
   }
@@ -782,7 +906,7 @@ export type ABOUT_QUERY_RESULT = {
 
 // Source: src/sanity/lib/queries.ts
 // Variable: PROJECTS_QUERY
-// Query: *[_type == "project"] | order(date desc){    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      description,      "technologies": coalesce(technologies[]->{ _id, name }, []),      features,      challenges    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
+// Query: *[_type == "project"] | order(date desc){    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      solution,      role,      "technologies": coalesce(technologies[]->{ _id, name }, []),      "features": coalesce(features, []),      technicalDecisions,      "challenges": coalesce(challenges, []),      outcome{        summary,        "metrics": coalesce(metrics, []),        learnings      }    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
 export type PROJECTS_QUERY_RESULT = Array<{
   _id: string
   title: string
@@ -791,8 +915,7 @@ export type PROJECTS_QUERY_RESULT = Array<{
     'Backend' | 'Client Work' | 'Frontend' | 'Full Stack' | 'Open Source' | 'UI/UX'
   content: {
     summary: string
-    problem: string | null
-    description: Array<{
+    problem: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -810,12 +933,25 @@ export type PROJECTS_QUERY_RESULT = Array<{
       _type: 'block'
       _key: string
     }>
-    technologies: Array<{
-      _id: string
-      name: string
+    solution: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
     }>
-    features: Array<string>
-    challenges: Array<{
+    role: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -833,6 +969,114 @@ export type PROJECTS_QUERY_RESULT = Array<{
       _type: 'block'
       _key: string
     }> | null
+    technologies: Array<{
+      _id: string
+      name: string
+    }>
+    features: Array<{
+      title: string
+      description?: string
+      image?: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      _key: string
+    }>
+    technicalDecisions: Array<
+      | ({
+          _key: string
+        } & Code)
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs?: Array<{
+            href?: string
+            _type: 'link'
+            _key: string
+          }>
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+    > | null
+    challenges:
+      | Array<{
+          problem: string
+          solution: Array<{
+            children?: Array<{
+              marks?: Array<string>
+              text?: string
+              _type: 'span'
+              _key: string
+            }>
+            style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+            listItem?: 'bullet' | 'number'
+            markDefs?: Array<{
+              href?: string
+              _type: 'link'
+              _key: string
+            }>
+            level?: number
+            _type: 'block'
+            _key: string
+          }>
+          _key: string
+        }>
+      | Array<never>
+    outcome: {
+      summary: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+      metrics:
+        | Array<{
+            label?: string
+            value?: string
+            _key: string
+          }>
+        | Array<never>
+      learnings: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+    }
   }
   urls: {
     repo: string | null
@@ -848,11 +1092,15 @@ export type PROJECTS_QUERY_RESULT = Array<{
     }
     screenshots:
       | Array<{
-          asset?: SanityImageAssetReference
-          media?: unknown
-          hotspot?: SanityImageHotspot
-          crop?: SanityImageCrop
-          _type: 'image'
+          image: {
+            asset?: SanityImageAssetReference
+            media?: unknown
+            hotspot?: SanityImageHotspot
+            crop?: SanityImageCrop
+            _type: 'image'
+          }
+          title: string
+          description: string
           _key: string
         }>
       | Array<never>
@@ -863,7 +1111,7 @@ export type PROJECTS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/lib/queries.ts
 // Variable: FEATURED_PROJECTS_QUERY
-// Query: *[_type == "project" && isFeatured == true] | order(date desc){    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      description,      "technologies": coalesce(technologies[]->{ _id, name }, []),      features,      challenges    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
+// Query: *[_type == "project" && isFeatured == true] | order(date desc){    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      solution,      role,      "technologies": coalesce(technologies[]->{ _id, name }, []),      "features": coalesce(features, []),      technicalDecisions,      "challenges": coalesce(challenges, []),      outcome{        summary,        "metrics": coalesce(metrics, []),        learnings      }    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
 export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
   _id: string
   title: string
@@ -872,8 +1120,7 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
     'Backend' | 'Client Work' | 'Frontend' | 'Full Stack' | 'Open Source' | 'UI/UX'
   content: {
     summary: string
-    problem: string | null
-    description: Array<{
+    problem: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -891,12 +1138,25 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
       _type: 'block'
       _key: string
     }>
-    technologies: Array<{
-      _id: string
-      name: string
+    solution: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
     }>
-    features: Array<string>
-    challenges: Array<{
+    role: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -914,6 +1174,114 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
       _type: 'block'
       _key: string
     }> | null
+    technologies: Array<{
+      _id: string
+      name: string
+    }>
+    features: Array<{
+      title: string
+      description?: string
+      image?: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      _key: string
+    }>
+    technicalDecisions: Array<
+      | ({
+          _key: string
+        } & Code)
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs?: Array<{
+            href?: string
+            _type: 'link'
+            _key: string
+          }>
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+    > | null
+    challenges:
+      | Array<{
+          problem: string
+          solution: Array<{
+            children?: Array<{
+              marks?: Array<string>
+              text?: string
+              _type: 'span'
+              _key: string
+            }>
+            style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+            listItem?: 'bullet' | 'number'
+            markDefs?: Array<{
+              href?: string
+              _type: 'link'
+              _key: string
+            }>
+            level?: number
+            _type: 'block'
+            _key: string
+          }>
+          _key: string
+        }>
+      | Array<never>
+    outcome: {
+      summary: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+      metrics:
+        | Array<{
+            label?: string
+            value?: string
+            _key: string
+          }>
+        | Array<never>
+      learnings: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+    }
   }
   urls: {
     repo: string | null
@@ -929,11 +1297,15 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
     }
     screenshots:
       | Array<{
-          asset?: SanityImageAssetReference
-          media?: unknown
-          hotspot?: SanityImageHotspot
-          crop?: SanityImageCrop
-          _type: 'image'
+          image: {
+            asset?: SanityImageAssetReference
+            media?: unknown
+            hotspot?: SanityImageHotspot
+            crop?: SanityImageCrop
+            _type: 'image'
+          }
+          title: string
+          description: string
           _key: string
         }>
       | Array<never>
@@ -944,12 +1316,35 @@ export type FEATURED_PROJECTS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/lib/queries.ts
 // Variable: FEATURED_PROJECTS_CARDS_QUERY
-// Query: *[_type == "post" && isFeatured == true] | order(date desc){    _id,    'slug': slug.current,    title,    category,    media{      coverImage    },    content{      summary,      "technologies": technologies[]->{ _id, name }    },    date  }
-export type FEATURED_PROJECTS_CARDS_QUERY_RESULT = Array<never>
+// Query: *[_type == "project" && isFeatured == true] | order(date desc){    _id,    'slug': slug.current,    title,    category,    media{      coverImage    },    content{      summary,      "technologies": technologies[]->{ _id, name }    },    date  }
+export type FEATURED_PROJECTS_CARDS_QUERY_RESULT = Array<{
+  _id: string
+  slug: string
+  title: string
+  category:
+    'Backend' | 'Client Work' | 'Frontend' | 'Full Stack' | 'Open Source' | 'UI/UX'
+  media: {
+    coverImage: {
+      asset?: SanityImageAssetReference
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      _type: 'image'
+    }
+  }
+  content: {
+    summary: string
+    technologies: Array<{
+      _id: string
+      name: string
+    }>
+  }
+  date: string
+}>
 
 // Source: src/sanity/lib/queries.ts
 // Variable: PROJECT_QUERY
-// Query: *[_type == "project" && slug.current == $slug][0]{    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      description,      "technologies": coalesce(technologies[]->{ _id, name }, []),      features,      challenges    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    date  }
+// Query: *[_type == "project" && slug.current == $slug][0]{    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      solution,      role,      "technologies": coalesce(technologies[]->{ _id, name }, []),      "features": coalesce(features, []),      technicalDecisions,      "challenges": coalesce(challenges, []),      outcome{        summary,        "metrics": coalesce(metrics, []),        learnings      }    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    date  }
 export type PROJECT_QUERY_RESULT = {
   _id: string
   title: string
@@ -958,8 +1353,7 @@ export type PROJECT_QUERY_RESULT = {
     'Backend' | 'Client Work' | 'Frontend' | 'Full Stack' | 'Open Source' | 'UI/UX'
   content: {
     summary: string
-    problem: string | null
-    description: Array<{
+    problem: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -977,12 +1371,25 @@ export type PROJECT_QUERY_RESULT = {
       _type: 'block'
       _key: string
     }>
-    technologies: Array<{
-      _id: string
-      name: string
+    solution: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
     }>
-    features: Array<string>
-    challenges: Array<{
+    role: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -1000,6 +1407,114 @@ export type PROJECT_QUERY_RESULT = {
       _type: 'block'
       _key: string
     }> | null
+    technologies: Array<{
+      _id: string
+      name: string
+    }>
+    features: Array<{
+      title: string
+      description?: string
+      image?: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      _key: string
+    }>
+    technicalDecisions: Array<
+      | ({
+          _key: string
+        } & Code)
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs?: Array<{
+            href?: string
+            _type: 'link'
+            _key: string
+          }>
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+    > | null
+    challenges:
+      | Array<{
+          problem: string
+          solution: Array<{
+            children?: Array<{
+              marks?: Array<string>
+              text?: string
+              _type: 'span'
+              _key: string
+            }>
+            style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+            listItem?: 'bullet' | 'number'
+            markDefs?: Array<{
+              href?: string
+              _type: 'link'
+              _key: string
+            }>
+            level?: number
+            _type: 'block'
+            _key: string
+          }>
+          _key: string
+        }>
+      | Array<never>
+    outcome: {
+      summary: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+      metrics:
+        | Array<{
+            label?: string
+            value?: string
+            _key: string
+          }>
+        | Array<never>
+      learnings: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+    }
   }
   urls: {
     repo: string | null
@@ -1015,11 +1530,15 @@ export type PROJECT_QUERY_RESULT = {
     }
     screenshots:
       | Array<{
-          asset?: SanityImageAssetReference
-          media?: unknown
-          hotspot?: SanityImageHotspot
-          crop?: SanityImageCrop
-          _type: 'image'
+          image: {
+            asset?: SanityImageAssetReference
+            media?: unknown
+            hotspot?: SanityImageHotspot
+            crop?: SanityImageCrop
+            _type: 'image'
+          }
+          title: string
+          description: string
           _key: string
         }>
       | Array<never>
@@ -1029,7 +1548,7 @@ export type PROJECT_QUERY_RESULT = {
 
 // Source: src/sanity/lib/queries.ts
 // Variable: PAGINATED_PROJECTS_QUERY
-// Query: *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      description,      "technologies": coalesce(technologies[]->{ _id, name }, []),      features,      challenges    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
+// Query: *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{    _id,    title,    'slug': slug.current,    category,    content{      summary,      problem,      solution,      role,      "technologies": coalesce(technologies[]->{ _id, name }, []),      "features": coalesce(features, []),      technicalDecisions,      "challenges": coalesce(challenges, []),      outcome{        summary,        "metrics": coalesce(metrics, []),        learnings      }    },    urls{      repo,      live    },    media{      coverImage,      "screenshots": coalesce(screenshots, []),    },    isFeatured,    date  }
 export type PAGINATED_PROJECTS_QUERY_RESULT = Array<{
   _id: string
   title: string
@@ -1038,8 +1557,7 @@ export type PAGINATED_PROJECTS_QUERY_RESULT = Array<{
     'Backend' | 'Client Work' | 'Frontend' | 'Full Stack' | 'Open Source' | 'UI/UX'
   content: {
     summary: string
-    problem: string | null
-    description: Array<{
+    problem: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -1057,12 +1575,25 @@ export type PAGINATED_PROJECTS_QUERY_RESULT = Array<{
       _type: 'block'
       _key: string
     }>
-    technologies: Array<{
-      _id: string
-      name: string
+    solution: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
     }>
-    features: Array<string>
-    challenges: Array<{
+    role: Array<{
       children?: Array<{
         marks?: Array<string>
         text?: string
@@ -1080,6 +1611,114 @@ export type PAGINATED_PROJECTS_QUERY_RESULT = Array<{
       _type: 'block'
       _key: string
     }> | null
+    technologies: Array<{
+      _id: string
+      name: string
+    }>
+    features: Array<{
+      title: string
+      description?: string
+      image?: {
+        asset?: SanityImageAssetReference
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        _type: 'image'
+      }
+      _key: string
+    }>
+    technicalDecisions: Array<
+      | ({
+          _key: string
+        } & Code)
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs?: Array<{
+            href?: string
+            _type: 'link'
+            _key: string
+          }>
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+    > | null
+    challenges:
+      | Array<{
+          problem: string
+          solution: Array<{
+            children?: Array<{
+              marks?: Array<string>
+              text?: string
+              _type: 'span'
+              _key: string
+            }>
+            style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+            listItem?: 'bullet' | 'number'
+            markDefs?: Array<{
+              href?: string
+              _type: 'link'
+              _key: string
+            }>
+            level?: number
+            _type: 'block'
+            _key: string
+          }>
+          _key: string
+        }>
+      | Array<never>
+    outcome: {
+      summary: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+      metrics:
+        | Array<{
+            label?: string
+            value?: string
+            _key: string
+          }>
+        | Array<never>
+      learnings: Array<{
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs?: Array<{
+          href?: string
+          _type: 'link'
+          _key: string
+        }>
+        level?: number
+        _type: 'block'
+        _key: string
+      }> | null
+    }
   }
   urls: {
     repo: string | null
@@ -1095,11 +1734,15 @@ export type PAGINATED_PROJECTS_QUERY_RESULT = Array<{
     }
     screenshots:
       | Array<{
-          asset?: SanityImageAssetReference
-          media?: unknown
-          hotspot?: SanityImageHotspot
-          crop?: SanityImageCrop
-          _type: 'image'
+          image: {
+            asset?: SanityImageAssetReference
+            media?: unknown
+            hotspot?: SanityImageHotspot
+            crop?: SanityImageCrop
+            _type: 'image'
+          }
+          title: string
+          description: string
           _key: string
         }>
       | Array<never>
@@ -1416,11 +2059,11 @@ declare module '@sanity/client' {
     '\n  *[_type == "siteSettings"][0]{\n    ..., // spreads all existing fields\n    names{\n      ...,\n      "full": first + " " + last\n    },\n    \'ogImage\': *[_type == "about"][0].avatar,\n    favicon{\n      asset->{\n        _id,\n        url\n      }\n    },\n    cv{\n      asset->{\n        _id,\n        url,\n        originalFilename,\n        size\n      }\n    }\n  }\n': SITE_SETTINGS_QUERY_RESULT
     '\n  *[_type == "siteSettings"][0].names{\n      ...,\n      "full": first + " " + last\n    }\n': USER_NAMES_QUERY_RESULT
     '\n  *[_type == "about"][0] {\n    ...,\n    "galleryImages": coalesce(galleryImages, []),\n    "cv": *[_type == "siteSettings"][0].cv,\n    "interests": coalesce(interests, []),\n    "quickFacts": coalesce(quickFacts, [])\n  }\n': ABOUT_QUERY_RESULT
-    '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT
-    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT
-    '\n  *[_type == "post" && isFeatured == true] | order(date desc){\n    _id,\n    \'slug\': slug.current,\n    title,\n    category,\n    media{\n      coverImage\n    },\n    content{\n      summary,\n      "technologies": technologies[]->{ _id, name }\n    },\n    date\n  }\n  ': FEATURED_PROJECTS_CARDS_QUERY_RESULT
-    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    date\n  }\n': PROJECT_QUERY_RESULT
-    '\n  *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      description,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      features,\n      challenges\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PAGINATED_PROJECTS_QUERY_RESULT
+    '\n  *[_type == "project"] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      solution,\n      role,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      "features": coalesce(features, []),\n      technicalDecisions,\n      "challenges": coalesce(challenges, []),\n      outcome{\n        summary,\n        "metrics": coalesce(metrics, []),\n        learnings\n      }\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PROJECTS_QUERY_RESULT
+    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      solution,\n      role,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      "features": coalesce(features, []),\n      technicalDecisions,\n      "challenges": coalesce(challenges, []),\n      outcome{\n        summary,\n        "metrics": coalesce(metrics, []),\n        learnings\n      }\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': FEATURED_PROJECTS_QUERY_RESULT
+    '\n  *[_type == "project" && isFeatured == true] | order(date desc){\n    _id,\n    \'slug\': slug.current,\n    title,\n    category,\n    media{\n      coverImage\n    },\n    content{\n      summary,\n      "technologies": technologies[]->{ _id, name }\n    },\n    date\n  }\n  ': FEATURED_PROJECTS_CARDS_QUERY_RESULT
+    '\n  *[_type == "project" && slug.current == $slug][0]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      solution,\n      role,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      "features": coalesce(features, []),\n      technicalDecisions,\n      "challenges": coalesce(challenges, []),\n      outcome{\n        summary,\n        "metrics": coalesce(metrics, []),\n        learnings\n      }\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    date\n  }\n': PROJECT_QUERY_RESULT
+    '\n  *[_type == "project" && isFeatured != true] | order(date desc) [$start...$end]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    category,\n    content{\n      summary,\n      problem,\n      solution,\n      role,\n      "technologies": coalesce(technologies[]->{ _id, name }, []),\n      "features": coalesce(features, []),\n      technicalDecisions,\n      "challenges": coalesce(challenges, []),\n      outcome{\n        summary,\n        "metrics": coalesce(metrics, []),\n        learnings\n      }\n    },\n    urls{\n      repo,\n      live\n    },\n    media{\n      coverImage,\n      "screenshots": coalesce(screenshots, []),\n    },\n    isFeatured,\n    date\n  }\n': PAGINATED_PROJECTS_QUERY_RESULT
     '\n  count(*[_type == "project" && isFeatured != true])\n': PROJECTS_COUNT_QUERY_RESULT
     '\n  *[_type == "post"] | order(publishedAt desc){\n    _id,\n    title,\n    \'slug\': slug.current,\n    excerpt,\n    coverImage,\n    tags[]->{ _id, name }, // \uD83D\uDCDA Take the tags array and iterate over it. -> means resolve each reference i.e. join the related document using the reference (_ref) it holds\n    publishedAt,\n    updatedAt\n  }\n': POSTS_QUERY_RESULT
     '\n  *[_type == "post"] | order(publishedAt desc) [$start...$end]{\n    _id,\n    title,\n    \'slug\': slug.current,\n    excerpt,\n    coverImage,\n    tags[]->{ _id, name },\n    publishedAt,\n    updatedAt\n  }\n': PAGINATED_POSTS_QUERY_RESULT

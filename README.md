@@ -1,6 +1,6 @@
 # Portfolio
 
-A personal portfolio site built with Next.js and Sanity CMS — projects, blog, experience/education timeline, testimonials, and a contact form, all managed through a custom Sanity Studio embedded at `/studio`.
+A personal portfolio site built with Next.js and Sanity CMS — projects, blog, experience/education timeline, testimonials and a contact form, all managed through a custom Sanity Studio embedded at `/studio`.
 
 **Live site:** _add live URL_
 
@@ -32,7 +32,7 @@ A personal portfolio site built with Next.js and Sanity CMS — projects, blog, 
 
 ## Features
 
-- Home, About, Projects, Blog, Experience, and Contact pages
+- Home, About, Projects, Blog, Experience and Contact pages
 - Dark mode with a theme toggle and responsive navigation (drawer on mobile)
 - Paginated blog and projects listings
 - Individual project and blog post detail pages with code highlighting
@@ -87,7 +87,7 @@ npm run seed
 npm run dev
 ```
 
-Visit `http://localhost:3000` for the site, and `http://localhost:3000/studio` for the CMS.
+Visit `http://localhost:3000` for the site and `http://localhost:3000/studio` for the CMS.
 
 ### Other scripts
 
@@ -159,11 +159,11 @@ Used **only for brand and technology logos**, such as:
 - AWS
 - PostgreSQL
 - Tailwind CSS
-- Other company, framework, and technology logos
+- Other company, framework and technology logos
 
 React Icons aggregates many popular icon packs and provides access to official brand icons that Lucide does not include.
 
-When using React Icons, import individual icons rather than entire icon sets to keep bundle size optimized.
+When using React Icons, import individual icons rather than entire icon sets to keep bundle size optimised.
 
 #### Why both?
 
@@ -175,6 +175,6 @@ Using both libraries provides the benefits of each approach:
 #### Guiding Principle
 
 - ✅ **Lucide React** → UI and application icons
-- ✅ **React Icons** → Brand, company, and technology logos
+- ✅ **React Icons** → Brand, company and technology logos
 
 This separation keeps the interface consistent while allowing official branding where appropriate.

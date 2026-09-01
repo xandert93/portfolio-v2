@@ -6,6 +6,7 @@ import { SendHorizontal } from 'lucide-react'
 
 import { Dropdown, type DropdownOption } from '@/components/ui/Dropdown'
 import { BUDGETS, PROJECT_TYPES, REFERRALS, TIMELINES } from '@/lib/contact-options'
+import Button from '@/components/ui/Button'
 
 const MESSAGE_MAX = 2000
 
@@ -18,7 +19,7 @@ const labelClasses = 'text-sm text-muted tracking-wider uppercase'
 
 // Deliberately outside the label's typographic voice: no uppercase, no wide
 // tracking (letter-spacing inherits from the parent, which is what made the
-// old inline "(optional)" look shouted), and pulled to the opposite edge so
+// old inline "(optional)" look shouted) and pulled to the opposite edge so
 // it reads as a quiet aside rather than a second label.
 const optionalTagClasses =
   'text-muted/50 shrink-0 font-serif text-[0.7rem] italic tracking-normal normal-case'
@@ -297,10 +298,10 @@ export default function ContactForm() {
       </AnimatePresence>
 
       <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="btn btn-primary w-full max-w-50 justify-center"
+          className="w-full max-w-50 justify-center"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
@@ -327,7 +328,7 @@ export default function ContactForm() {
               <SendHorizontal size={14} />
             </>
           )}
-        </button>
+        </Button>
       </div>
 
       {/* Screen-reader status channel */}

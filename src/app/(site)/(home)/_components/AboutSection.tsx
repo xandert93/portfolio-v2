@@ -273,7 +273,7 @@ const Marquee = ({ children }: { children: string[] }) => {
             {children.map((tag) => (
               <span
                 key={`${copy}-${tag}`}
-                className="bg-accent-light border-accent/20 text-accent shrink-0 rounded-sm border px-3.5 py-2 text-[0.65rem] tracking-wide uppercase"
+                className="bg-accent-light border-accent/20 text-accent text-2xs shrink-0 rounded-sm border px-3.5 py-2 tracking-wide uppercase"
               >
                 {tag}
               </span>

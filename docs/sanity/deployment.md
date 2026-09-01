@@ -1,8 +1,8 @@
 # Sanity Studio Deployment
 
-Sanity Studio is the content management interface for this project. It provides a dedicated environment for managing structured content (such as pages, posts, images, and other data types) separately from the frontend application.
+Sanity Studio is the content management interface for this project. It provides a dedicated environment for managing structured content (such as pages, posts, images and other data types) separately from the frontend application.
 
-The frontend consumes content through the Sanity API, while Studio provides the interface used by developers, editors, and clients to create and update that content.
+The frontend consumes content through the Sanity API, while Studio provides the interface used by developers, editors and clients to create and update that content.
 
 ```text
 Sanity Studio → Sanity Content API → Frontend Application
@@ -92,4 +92,4 @@ A typical setup looks like:
                      +-----------------+
 ```
 
-Deploying Sanity Studio ensures that content management remains available independently of the development workflow and provides a clear separation between content, infrastructure, and presentation. Editors interact only with the Studio, while visitors interact only with the frontend application.
+Deploying Sanity Studio ensures that content management remains available independently of the development workflow and provides a clear separation between content, infrastructure and presentation. Editors interact only with the Studio, while visitors interact only with the frontend application.

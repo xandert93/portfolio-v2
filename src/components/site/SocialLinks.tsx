@@ -4,6 +4,7 @@ import { IconType } from 'react-icons'
 import { SiGithub, SiX, SiStackoverflow } from 'react-icons/si'
 import { BsLinkedin } from 'react-icons/bs'
 import clsx from 'clsx'
+import ExternalLink from '../links/ExternalLink'
 
 type Urls = NonNullable<NonNullable<SiteSettings>['socialUrls']>
 
@@ -28,12 +29,10 @@ export default function SocialLinks({ urls, className }: Props) {
           if (!Icon || !href) return null
 
           return (
-            <a
+            <ExternalLink
               key={name}
               href={href}
               aria-label={name}
-              target="_blank"
-              rel="noopener noreferrer"
               className="text-muted hover:text-accent-strong transition-all ease-out hover:-translate-y-px"
             >
               <div className="flex flex-col items-center gap-3">
@@ -42,7 +41,7 @@ export default function SocialLinks({ urls, className }: Props) {
                   {name}
                 </span>
               </div>
-            </a>
+            </ExternalLink>
           )
         },
       )}

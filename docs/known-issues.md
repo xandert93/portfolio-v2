@@ -24,7 +24,7 @@ See "Custom not-found page — parked" below for the plan to bring it back.
 ## Studio's dev compile is heavy on memory — parked memory issue
 
 **What:** Even without the CSS/Turbopack bug above, visiting `/studio` in dev sometimes
-crashes the dev server, the browser tab, and even the editor — accompanied by Rust "raw
+crashes the dev server, the browser tab and even the editor — accompanied by Rust "raw
 alloc" failures and Chrome "insufficient memory" errors. This is Turbopack running out of
 RAM compiling Studio's large admin bundle, not a bug in our code.
 

@@ -13,7 +13,7 @@ where:
 - `B` is the **penultimate commit** (the commit before the latest one)
 - `C` is the **latest commit**
 
-Then you realize:
+Then you realise:
 
 > "I forgot to include a file in commit `B`."
 

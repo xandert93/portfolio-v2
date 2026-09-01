@@ -3,6 +3,7 @@ import { fetchCv, fetchEducations, fetchExperiences } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
 import { Educations } from '@/sanity/types'
 import { ExperienceList } from './_components/ExperienceList'
+import ExternalLink from '@/components/links/ExternalLink'
 
 export default async function ExperiencePage() {
   const [cv, experiences, educations] = await Promise.all([
@@ -31,14 +32,12 @@ export default async function ExperiencePage() {
               </p>
 
               {cvUrl && (
-                <a
+                <ExternalLink
                   href={cvUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="btn-primary shrink-0 self-stretch md:self-center"
                 >
                   View CV ↗
-                </a>
+                </ExternalLink>
               )}
 
               <div className="order-3 mt-2 grow self-stretch">

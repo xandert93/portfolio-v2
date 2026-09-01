@@ -2,33 +2,28 @@ import {
   fetchSiteSettings,
   fetchFeaturedProjects,
   fetchAbout,
-  // fetchTestimonials,
+  fetchTestimonials,
   fetchTechSkills,
 } from '@/sanity/lib/fetch'
 
 import {
   HeroSection,
-  FeaturedProjectsSection,
+  ProjectsSection,
   TechSkillsSection,
-  // TestimonialsSection,
+  TestimonialsSection,
   AboutSection,
   ContactCtaSection,
 } from './(home)/_components'
+import { FEATURES } from '@/config/features'
 
 export default async function Home() {
   // Parallel fetch is best for a a page composed from one CMS payload + if same data is needed in several components e.g. about
-  const [
-    settings,
-    about,
-    projects,
-    techSkills,
-    // testimonials
-  ] = await Promise.all([
+  const [settings, about, projects, techSkills, testimonials] = await Promise.all([
     fetchSiteSettings(),
     fetchAbout(),
     fetchFeaturedProjects(),
     fetchTechSkills(),
-    // fetchTestimonials(),
+    fetchTestimonials(),
   ])
 
   // Page needs settings & about. Fail fast if absent.
@@ -40,9 +35,11 @@ export default async function Home() {
   return (
     <>
       <HeroSection settings={settings} about={about} />
-      {projects.length > 0 && <FeaturedProjectsSection projects={projects} />}
+      {projects.length > 0 && <ProjectsSection projects={projects} />}
       {techSkills.length > 0 && <TechSkillsSection skills={techSkills} />}
-      {/* {testimonials.length > 0 && <TestimonialsSection testimonials={testimonials} />} */}
+      {FEATURES.testimonials && testimonials.length > 0 && (
+        <TestimonialsSection testimonials={testimonials} />
+      )}
       <AboutSection about={about} />
       <ContactCtaSection about={about} settings={settings} />
     </>

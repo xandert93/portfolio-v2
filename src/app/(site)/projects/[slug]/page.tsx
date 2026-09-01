@@ -1,360 +1,351 @@
-import Link from 'next/link'
-import { PortableText, type PortableTextComponents } from '@portabletext/react'
-import { fetchProject } from '@/sanity/lib/fetch'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { PortableText } from '@portabletext/react'
+import clsx from 'clsx'
+
+import { fetchProject, fetchSiteSettings, fetchAbout } from '@/sanity/lib/fetch'
 import { genImageBuilder } from '@/sanity/lib/image'
+import { articleComponents, compactComponents } from './_components/portable-text'
+import ScreenshotGallery from './_components/ScreenshotGallery'
+import ScreenshotLightboxProvider, { type Shot } from './_components/ScreenshotLightbox'
+import ProjectSolutionMedia from './_components/ProjectSolutionMedia'
+
+import ProjectContentsRail from './_components/ProjectContentsRail'
+import ProjectSection from './_components/ProjectSection'
+import ProjectDetailFeature from './_components/ProjectDetailFeature'
+import ProjectDetailChallenges from './_components/ProjectDetailChallenges'
+import ProjectDetailMasthead from './_components/ProjectDetailMasthead'
+import ProjectDetailOutcome from './_components/ProjectDetailOutcome'
+import { hasOutcome } from './_components/hasOutcome'
+import ProjectDetailCTA from './_components/ProjectDetailCTA'
+
+import { buildRailItems } from './_components/buildRailItems'
 import { ROUTES } from '@/config/routes'
-// import ScreenshotGallery from './screenshot-gallery'
 
 type PageProps = {
   params: Promise<{ slug: string }>
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  backend: 'Backend',
-  'client-work': 'Client Work',
-  frontend: 'Frontend',
-  'full-stack': 'Full-Stack',
-  'open-source': 'Open Source',
-  'ui-ux': 'UI / UX',
-}
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const project = await fetchProject(slug)
 
-/* ─── Portable Text styling ──────────────────────────────────────── */
-/* Two variants: the main description reads as an article; challenges
-   read one notch smaller, inside a card, since it's supporting detail. */
+  if (!project) return { title: 'Project not found' }
 
-function makePortableTextComponents(
-  variant: 'article' | 'compact',
-): PortableTextComponents {
-  const heading =
-    variant === 'article'
-      ? 'font-serif text-ink text-2xl md:text-3xl mt-12 mb-4 first:mt-0'
-      : 'font-serif text-ink text-xl mt-8 mb-3 first:mt-0'
+  const description = project.content.summary ?? undefined
 
-  const paragraph =
-    variant === 'article'
-      ? 'text-[0.9375rem] leading-[1.8] text-ink/80 mb-5 last:mb-0'
-      : 'text-sm leading-[1.75] text-ink/75 mb-4 last:mb-0'
+  const ogImage = project.media.coverImage
+    ? genImageBuilder(project.media.coverImage)
+        .width(1200)
+        .height(630)
+        .fit('crop')
+        .auto('format')
+        .url()
+    : undefined
 
   return {
-    block: {
-      h1: ({ children }) => <h2 className={heading}>{children}</h2>,
-      h2: ({ children }) => <h2 className={heading}>{children}</h2>,
-      h3: ({ children }) => <h3 className={heading}>{children}</h3>,
-      h4: ({ children }) => <h4 className={heading}>{children}</h4>,
-      h5: ({ children }) => <h5 className={heading}>{children}</h5>,
-      h6: ({ children }) => <h6 className={heading}>{children}</h6>,
-      normal: ({ children }) => <p className={paragraph}>{children}</p>,
-      blockquote: ({ children }) => (
-        <blockquote className="border-accent/40 my-8 border-l-2 pl-6">
-          <p className="text-ink font-serif text-xl leading-snug italic md:text-2xl">
-            {children}
-          </p>
-        </blockquote>
-      ),
+    title: project.title,
+    description,
+    openGraph: {
+      title: project.title,
+      description,
+      type: 'article',
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
     },
-    list: {
-      bullet: ({ children }) => <ul className="mb-5 space-y-2.5">{children}</ul>,
-      number: ({ children }) => (
-        <ol className="marker:text-accent mb-5 list-inside list-decimal space-y-2.5">
-          {children}
-        </ol>
-      ),
-    },
-    listItem: {
-      bullet: ({ children }) => (
-        <li className="text-ink/80 flex gap-3 text-[0.9375rem] leading-[1.75]">
-          <span className="bg-accent mt-[0.65em] size-1 shrink-0 rounded-full" />
-          <span>{children}</span>
-        </li>
-      ),
-      number: ({ children }) => (
-        <li className="text-ink/80 pl-1 text-[0.9375rem] leading-[1.75]">{children}</li>
-      ),
-    },
-    marks: {
-      strong: ({ children }) => (
-        <strong className="text-ink font-medium">{children}</strong>
-      ),
-      em: ({ children }) => <em className="italic">{children}</em>,
-      code: ({ children }) => (
-        <code className="bg-warm border-faint text-accent rounded border px-1.5 py-0.5 font-mono text-[0.85em]">
-          {children}
-        </code>
-      ),
-      link: ({ children, value }) => (
-        <a
-          href={value?.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-ink decoration-accent/50 hover:decoration-accent hover:text-accent underline underline-offset-2 transition-colors"
-        >
-          {children}
-        </a>
-      ),
-    },
+    alternates: { canonical: `${ROUTES.projects}/${slug}` },
   }
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const project = await fetchProject(slug)
+  const [project, settings, about] = await Promise.all([
+    fetchProject(slug),
+    fetchSiteSettings(),
+    fetchAbout(),
+  ])
 
-  if (!project) {
-    return (
-      <main className="container">
-        <div className="section flex flex-col items-center gap-3 text-center">
-          <p className="eyebrow">404</p>
-          <h1 className="section-heading">This project wandered off.</h1>
-          <Link href={ROUTES.projects} className="link-underline mt-4">
-            ← Back to all projects
-          </Link>
-        </div>
-      </main>
-    )
-  }
+  if (!project) notFound()
 
   const {
     title,
     category,
-    content: { summary, problem, description, technologies, features, challenges },
+    content: {
+      summary,
+      problem,
+      solution,
+      role,
+      features,
+      technicalDecisions,
+      challenges,
+      outcome,
+      technologies,
+    },
     urls,
     media: { coverImage, screenshots },
     date,
   } = project
 
-  const formattedDate = date
-    ? new Date(date).toLocaleDateString('en-GB', {
-        month: 'long',
-        year: 'numeric',
-      })
-    : null
+  const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  })
 
   const coverUrl = coverImage
-    ? genImageBuilder(coverImage).width(1440).height(810).fit('crop').auto('format').url()
+    ? genImageBuilder(coverImage)
+        .width(2000)
+        .height(1000)
+        .fit('crop')
+        .auto('format')
+        .url()
     : null
 
-  const screenshotItems = screenshots.map((shot) => ({
+  const shots: Shot[] = screenshots.map((shot) => ({
     key: shot._key,
-    url: genImageBuilder(shot).width(1200).height(750).fit('crop').auto('format').url(),
+    url: genImageBuilder(shot.image)
+      .width(1200)
+      .height(750)
+      .fit('crop')
+      .auto('format')
+      .url(),
+    full: genImageBuilder(shot.image).width(2000).auto('format').url(),
+    title: shot.title,
+    description: shot.description,
   }))
 
+  // The first shot also gets pulled up as a breather right after "The
+  // solution", but still appears here too so the Screens section is a
+  // complete set of every screenshot on the project.
+  const galleryShots = shots
+
+  // `feature.image` is optional and only appears in Studio content once
+  // it's set — build a URL when present, undefined otherwise, so
+  // ProjectDetailFeature can fall back to its icon-only layout.
+  const featuresWithImages = features.map((feature) => {
+    const featureImage = (feature as { image?: unknown }).image
+    return {
+      ...feature,
+      imageUrl: featureImage
+        ? genImageBuilder(featureImage as Parameters<typeof genImageBuilder>[0])
+            .width(900)
+            .height(560)
+            .fit('crop')
+            .auto('format')
+            .url()
+        : undefined,
+    }
+  })
+
+  const hasAnyFeatureImages = featuresWithImages.some((feature) => feature.imageUrl)
+
+  const showOutcome = hasOutcome(outcome)
+
+  const railItems = buildRailItems({
+    problem,
+    solution,
+    role,
+    features,
+    technicalDecisions,
+    challenges,
+    hasScreenshots: shots.length > 0,
+    hasOutcome: showOutcome,
+  })
+
+  const indexOf = (id: string) => railItems.findIndex((item) => item.id === id) + 1
+
   return (
-    <main className="pb-24 md:pb-32">
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <div className="container">
-        <div className="pt-10 md:pt-16">
-          <Link
-            href={ROUTES.projects}
-            className="text-2xs text-muted hover:text-ink animate-fade-up inline-flex items-center gap-2 tracking-widest uppercase transition-colors"
-          >
-            <span className="transition-transform group-hover:-translate-x-0.5">←</span>{' '}
-            All projects
-          </Link>
+    <>
+      <ProjectDetailMasthead
+        title={title}
+        category={category}
+        formattedDate={formattedDate}
+        summary={summary}
+        technologies={technologies}
+        urls={urls}
+        coverUrl={coverUrl}
+      />
 
-          <p className="eyebrow animate-fade-up mt-10" style={{ animationDelay: '80ms' }}>
-            {CATEGORY_LABELS[category] ?? category}
-          </p>
+      {/* ── Body: sticky contents + flowing sections ──────────── */}
+      <div className="relative overflow-x-clip">
+        <div aria-hidden className="section-glow top-0 -right-40" />
+        <div aria-hidden className="section-glow bottom-0 -left-40" />
 
-          <h1
-            className="text-ink animate-fade-up mt-3 max-w-3xl font-serif text-4xl leading-[1.05] sm:text-5xl md:text-6xl"
-            style={{ animationDelay: '140ms' }}
-          >
-            {title}
-          </h1>
-
-          {summary && (
-            <p
-              className="text-muted animate-fade-up mt-6 max-w-xl text-base leading-relaxed font-light md:text-lg"
-              style={{ animationDelay: '200ms' }}
+        <div className="container">
+          <div className="border-faint text-ink/80 mx-auto mt-14 max-w-4xl border-t md:mt-20">
+            <div
+              className={clsx(
+                'relative z-10 grid grid-cols-1 gap-x-12 gap-y-16 py-16 md:py-24',
+                railItems.length > 0 && 'lg:grid-cols-[200px_1fr]',
+              )}
             >
-              {summary}
-            </p>
-          )}
+              {railItems.length > 0 && <ProjectContentsRail items={railItems} />}
 
-          <div
-            className="animate-fade-up mt-9 flex flex-wrap items-center gap-x-6 gap-y-4"
-            style={{ animationDelay: '260ms' }}
-          >
-            {urls.live && (
-              <span className="badge-open">
-                <span className="bg-accent animate-pulse-dot size-1.5 rounded-full" />
-                Live
-              </span>
-            )}
-            {formattedDate && (
-              <time dateTime={date ?? ''} className="text-muted text-xs tracking-wide">
-                {formattedDate}
-              </time>
-            )}
+              <ScreenshotLightboxProvider shots={shots} title={title}>
+                <div className="flex min-w-0 flex-col gap-16 md:gap-20">
+                  {problem && (
+                    <ProjectSection
+                      id="problem"
+                      index={indexOf('problem')}
+                      eyebrow="The problem"
+                    >
+                      <span
+                        aria-hidden
+                        className="text-accent/25 block font-serif text-6xl leading-none italic md:text-7xl"
+                      >
+                        &ldquo;
+                      </span>
+                      <blockquote className="text-ink border-accent/40 -mt-4 space-y-4 border-l-2 pl-6 font-serif text-lg leading-snug italic md:text-xl">
+                        <PortableText value={problem} />
+                      </blockquote>
+                    </ProjectSection>
+                  )}
 
-            <div className="ml-auto flex gap-3 sm:ml-0">
-              {urls.repo && (
-                <a
-                  href={urls.repo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost text-2xs inline-flex items-center gap-2 px-5! py-2.5! tracking-widest uppercase"
-                >
-                  <svg
-                    viewBox="0 0 16 16"
-                    className="size-3.5 fill-current"
-                    aria-hidden="true"
-                  >
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-                  </svg>
-                  Code
-                </a>
-              )}
-              {urls.live && (
-                <a
-                  href={urls.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary text-2xs inline-flex items-center gap-2 px-5! py-2.5! tracking-widest uppercase"
-                >
-                  Visit site
-                  <span aria-hidden="true">↗</span>
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+                  {solution && (
+                    <ProjectSection
+                      id="solution"
+                      index={indexOf('solution')}
+                      eyebrow="The solution"
+                    >
+                      <div
+                        className={clsx(
+                          '[&>*:first-child]:first-letter:text-accent',
+                          '[&>*:first-child]:first-letter:mr-2',
+                          '[&>*:first-child]:first-letter:float-left',
+                          '[&>*:first-child]:first-letter:font-serif',
+                          '[&>*:first-child]:first-letter:text-6xl',
+                          '[&>*:first-child]:first-letter:leading-[0.8]',
+                          '[&>*:first-child]:first-letter:italic',
+                        )}
+                      >
+                        <PortableText value={solution} components={articleComponents} />
+                      </div>
 
-      {/* ── Cover image ──────────────────────────────────────── */}
-      {coverUrl && (
-        <div className="container mt-12 md:mt-16">
-          <div
-            className="border-faint animate-fade-up relative overflow-hidden rounded-xl border"
-            style={{ animationDelay: '320ms' }}
-          >
-            <img
-              src={coverUrl}
-              alt={title ?? ''}
-              className="block aspect-video w-full object-cover"
-            />
-          </div>
-        </div>
-      )}
+                      {shots.length > 0 && (
+                        <ProjectSolutionMedia shot={shots[0]} title={title} />
+                      )}
+                    </ProjectSection>
+                  )}
 
-      {/* ── Problem ──────────────────────────────────────────── */}
-      {problem && (
-        <div className="container">
-          <div className="section ruled">
-            <div className="max-w-2xl md:pl-10">
-              <p className="eyebrow">The problem</p>
-              <p className="text-ink font-serif text-2xl leading-snug italic md:text-[1.75rem]">
-                {problem}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+                  {role && (
+                    <ProjectSection id="role" index={indexOf('role')} eyebrow="My role">
+                      <div className="text-[0.9375rem] leading-[1.7]">
+                        <PortableText value={role} components={compactComponents} />
+                      </div>
+                    </ProjectSection>
+                  )}
 
-      {/* ── Description ──────────────────────────────────────── */}
-      {description && description.length > 0 && (
-        <div className="container">
-          <div className={problem ? 'ruled mb-4' : 'section ruled'}>
-            <div className="max-w-2xl md:pl-10">
-              {!problem && <p className="eyebrow">About this project</p>}
-              <PortableText
-                value={description}
-                components={makePortableTextComponents('article')}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+                  {features.length > 0 && (
+                    <div className="relative">
+                      <div
+                        aria-hidden
+                        className="section-glow top-0 left-1/2 -translate-x-1/2"
+                      />
 
-      {/* ── Features ─────────────────────────────────────────── */}
-      {features && features.length > 0 && (
-        <div className="container">
-          <div className="section">
-            <p className="eyebrow">What it does</p>
-            <h2 className="section-heading mb-8">Features</h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {features.map((feature, i) => (
-                <div
-                  key={feature}
-                  className="card animate-fade-up flex items-start gap-3 px-5 py-4"
-                  style={{ animationDelay: `${i * 60}ms` }}
-                >
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="stroke-accent mt-0.5 size-4 shrink-0 fill-none"
-                    strokeWidth="1.75"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M4 10.5 8 14.5 16 6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span className="text-ink/85 text-sm leading-snug">{feature}</span>
+                      <ProjectSection
+                        id="features"
+                        index={indexOf('features')}
+                        eyebrow="Key features"
+                      >
+                        <div
+                          className={clsx(
+                            'grid grid-cols-1 sm:grid-cols-2',
+                            'sm:*:odd:border-r sm:*:odd:pl-0 sm:*:even:pr-0',
+                            '*:py-8 *:pl-0 sm:*:p-8',
+                            'max-sm:*:first:pt-0 max-sm:*:last:pb-0',
+                          )}
+                        >
+                          {featuresWithImages.map((feature, i) => {
+                            const count = featuresWithImages.length
+
+                            const isNotLast = i !== count - 1
+                            // start index of the final row in a 2-col grid
+                            const lastRowStart = count % 2 === 0 ? count - 2 : count - 1
+                            const isOnLastRow = i >= lastRowStart
+
+                            return (
+                              <ProjectDetailFeature
+                                key={feature._key + i}
+                                feature={feature}
+                                imageUrl={feature.imageUrl}
+                                hasAnyFeatureImages={hasAnyFeatureImages}
+                                index={i}
+                                className={clsx(
+                                  isOnLastRow && 'sm:border-b-0', // sm+: remove bottom divider on the last row
+                                  isNotLast && 'border-b', // mobile: divider under every item but the last
+                                )}
+                              />
+                            )
+                          })}
+                        </div>
+                      </ProjectSection>
+                    </div>
+                  )}
+
+                  {technicalDecisions && (
+                    <ProjectSection
+                      id="technical-decisions"
+                      index={indexOf('technical-decisions')}
+                      eyebrow="Technical decisions"
+                    >
+                      <PortableText
+                        value={technicalDecisions}
+                        components={articleComponents}
+                      />
+                    </ProjectSection>
+                  )}
+
+                  {challenges.length > 0 && (
+                    <div className="relative">
+                      <div aria-hidden className="section-glow top-0 -left-40" />
+
+                      <ProjectSection
+                        id="challenges"
+                        index={indexOf('challenges')}
+                        eyebrow="Challenges & solutions"
+                      >
+                        <ProjectDetailChallenges challenges={challenges} />
+                      </ProjectSection>
+                    </div>
+                  )}
+
+                  {shots.length > 0 && (
+                    <div className="relative">
+                      <div aria-hidden className="section-glow top-0 -right-40" />
+
+                      <ProjectSection
+                        id="screens"
+                        index={indexOf('screens')}
+                        eyebrow="Screens"
+                      >
+                        <ScreenshotGallery
+                          shots={galleryShots}
+                          title={title}
+                          intro="A closer look at the interface. Click any screen to view it full size."
+                        />
+                      </ProjectSection>
+                    </div>
+                  )}
+
+                  {showOutcome && (
+                    <ProjectSection
+                      id="outcome"
+                      index={indexOf('outcome')}
+                      eyebrow="Outcome"
+                    >
+                      <ProjectDetailOutcome outcome={outcome!} />
+                    </ProjectSection>
+                  )}
                 </div>
-              ))}
+              </ScreenshotLightboxProvider>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* ── Tech stack ───────────────────────────────────────── */}
-      {Boolean(technologies.length) && (
-        <div className="container">
-          <div className="section">
-            <p className="eyebrow">Built with</p>
-            <h2 className="section-heading mb-8">Tech Stack</h2>
-            <div className="flex flex-wrap gap-2.5">
-              {technologies.map((tech, i) => (
-                <span
-                  key={tech._id}
-                  className="bg-warm border-faint text-ink hover:border-accent/30 hover:text-accent animate-fade-up rounded-md border px-3.5 py-2 text-xs font-medium transition-colors"
-                  style={{ animationDelay: `${i * 45}ms` }}
-                >
-                  {tech.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Challenges ───────────────────────────────────────── */}
-      {challenges && challenges.length > 0 && (
-        <div className="container">
-          <div className="section">
-            <p className="eyebrow">Notes from the build</p>
-            <h2 className="section-heading mb-8">Challenges &amp; solutions</h2>
-            <div className="card px-6 py-7 md:px-10 md:py-9">
-              <PortableText
-                value={challenges}
-                components={makePortableTextComponents('compact')}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Screenshots ──────────────────────────────────────── */}
-      {/* {screenshotItems.length > 0 && (
-        <div className="container">
-          <div className="section">
-            <p className="eyebrow">In practice</p>
-            <h2 className="section-heading mb-8">Screenshots</h2>
-            <ScreenshotGallery screenshots={screenshotItems} />
-          </div>
-        </div>
-      )} */}
-
-      {/* ── Footer nav ───────────────────────────────────────── */}
-      <div className="container">
-        <div className="border-faint mt-4 flex justify-center border-t pt-16 md:pt-20">
-          <Link href={ROUTES.projects} className="link-underline">
-            ← Back to all projects
-          </Link>
         </div>
       </div>
-    </main>
+
+      <ProjectDetailCTA
+        isOpenToWork={about?.isOpenToWork ?? false}
+        socialUrls={settings?.socialUrls}
+      />
+    </>
   )
 }

@@ -20,7 +20,7 @@ const FAQS = [
   {
     question: 'What do you need from me to quote?',
     answer:
-      'A rough scope, an idea of timing, and any existing site or designs. I can work from a one-line idea too — it just means more questions first.',
+      'A rough scope, an idea of timing and any existing site or designs. I can work from a one-line idea too — it just means more questions first.',
   },
   {
     question: 'What do you build with?',

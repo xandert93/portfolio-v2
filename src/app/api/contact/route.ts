@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (company) return NextResponse.json({ success: true })
 
     // 📚 Saving enquiry to Sanity gives us a permanent record,
-    // allows lead tracking, and avoids relying solely on email delivery.
+    // allows lead tracking and avoids relying solely on email delivery.
     await writeClient.create({
       _type: 'enquiry',
       name,

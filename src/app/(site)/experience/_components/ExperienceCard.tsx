@@ -28,22 +28,19 @@ export default function ExperienceCard({ experience, index, isLast }: Props) {
 
   return (
     <li
-      className="relative animate-fade-up pl-12 pb-14 last:pb-0 md:pl-20"
+      className="animate-fade-up relative pb-14 pl-12 last:pb-0 md:pl-20"
       style={{ animationDelay: `${index * 90}ms` }}
     >
       {/* Timeline rail — thin, starts at the node centre */}
       {!isLast && (
-        <span
-          aria-hidden
-          className="absolute left-[5px] top-[10px] bottom-0 w-px bg-faint"
-        />
+        <span aria-hidden className="bg-faint absolute top-2.5 bottom-0 left-1.25 w-px" />
       )}
 
       {/* Node — sits exactly at the top of the line */}
       <span
         aria-hidden
-        className={`absolute left-0 top-[4px] block h-[11px] w-[11px] rounded-full ${
-          isCurrent ? 'bg-accent animate-pulse-dot ring-4 ring-accent-dim' : 'bg-muted'
+        className={`absolute top-1 left-0 block h-2.75 w-2.75 rounded-full ${
+          isCurrent ? 'bg-accent animate-pulse-dot ring-accent-dim ring-4' : 'bg-muted'
         }`}
       />
 
@@ -60,13 +57,13 @@ export default function ExperienceCard({ experience, index, isLast }: Props) {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h3 className="font-serif text-xl text-ink md:text-2xl">{title}</h3>
-                <p className="mt-1 text-sm text-accent">{company.name}</p>
+                <h3 className="text-ink font-serif text-xl md:text-2xl">{title}</h3>
+                <p className="text-accent mt-1 text-sm">{company.name}</p>
               </div>
-              {isCurrent && <span className="badge-open">Current</span>}
+              {isCurrent && <span className="badge">Current</span>}
             </div>
 
-            <p className="mt-2 text-2xs uppercase tracking-[0.14em] text-muted">
+            <p className="text-2xs text-muted mt-2 tracking-[0.14em] uppercase">
               {formatDate(startDate)}
               {' — '}
               {isCurrent ? 'Present' : endDate ? formatDate(endDate) : ''}
@@ -87,7 +84,7 @@ export default function ExperienceCard({ experience, index, isLast }: Props) {
 
 const Summary = ({ summary }: { summary: Experience['role']['summary'] }) => {
   return (
-    <p className="mt-6 text-pretty text-[0.95rem] leading-relaxed text-ink/90">
+    <p className="text-ink/90 mt-6 text-[0.95rem] leading-relaxed text-pretty">
       {summary}
     </p>
   )
@@ -101,8 +98,8 @@ const HighlightList = ({
   return (
     <ul className="mt-5 grid gap-2.5">
       {highlights.map((highlight) => (
-        <li key={highlight} className="flex gap-3 text-sm leading-relaxed text-muted">
-          <ArrowUpRight aria-hidden className="mt-1 h-3.5 w-3.5 shrink-0 text-accent" />
+        <li key={highlight} className="text-muted flex gap-3 text-sm leading-relaxed">
+          <ArrowUpRight aria-hidden className="text-accent mt-1 h-3.5 w-3.5 shrink-0" />
           <span>{highlight}</span>
         </li>
       ))}
@@ -112,8 +109,8 @@ const HighlightList = ({
 
 const Impact = ({ impact }: { impact: Experience['role']['impact'] }) => {
   return (
-    <p className="mt-6 border-l-2 rounded-sm border-accent/40 bg-accent-light py-3 pl-4 pr-3 text-sm leading-relaxed text-ink/90">
-      <span className="font-medium text-accent">Impact — </span>
+    <p className="border-accent/40 bg-accent-light text-ink/90 mt-6 rounded-sm border-l-2 py-3 pr-3 pl-4 text-sm leading-relaxed">
+      <span className="text-accent font-medium">Impact — </span>
       {impact}
     </p>
   )
@@ -128,7 +125,7 @@ const SkillBadgeList = ({ skills }: { skills: Experience['skills'] }) => {
         {skills.map(({ _id, name }) => (
           <span
             key={_id}
-            className="rounded-full border border-faint bg-warm px-3 py-1 text-2xs uppercase tracking-widest text-muted transition-colors group-hover:border-accent/25"
+            className="border-faint bg-warm text-2xs text-muted group-hover:border-accent/25 rounded-full border px-3 py-1 tracking-widest uppercase transition-colors"
           >
             {name}
           </span>

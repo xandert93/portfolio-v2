@@ -19,7 +19,7 @@ const estimateReadingTime = (body: any): number => {
 
 // Shiki's highlighter is async, but PortableText's `components` render
 // synchronously. So we walk the body once up front, highlight every
-// `code` block to HTML, and stash it as `_highlighted` on the block
+// `code` block to HTML and stash it as `_highlighted` on the block
 // itself — the actual `code` component below just renders that HTML.
 const highlightCodeBlocks = async (body: any[]): Promise<any[]> => {
   if (!Array.isArray(body)) return body
@@ -52,22 +52,22 @@ const highlightCodeBlocks = async (body: any[]): Promise<any[]> => {
 const portableTextComponents: PortableTextComponents = {
   block: {
     h2: ({ children }) => (
-      <h2 className="font-serif text-2xl sm:text-3xl text-ink mt-8 sm:mt-10 mb-4 sm:mb-5 leading-snug">
+      <h2 className="text-ink mt-8 mb-4 font-serif text-2xl leading-snug sm:mt-10 sm:mb-5 sm:text-3xl">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="font-serif text-xl sm:text-2xl text-ink mt-6 sm:mt-8 mb-3 sm:mb-4 leading-snug">
+      <h3 className="text-ink mt-6 mb-3 font-serif text-xl leading-snug sm:mt-8 sm:mb-4 sm:text-2xl">
         {children}
       </h3>
     ),
     normal: ({ children }) => (
-      <p className="text-base sm:text-[1.05rem] leading-[1.75] sm:leading-[1.85] text-ink/90 mb-5 sm:mb-6 font-light">
+      <p className="text-ink/90 mb-5 text-base leading-[1.75] font-light sm:mb-6 sm:text-[1.05rem] sm:leading-[1.85]">
         {children}
       </p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-2 border-accent/40 pl-5 sm:pl-6 my-7 sm:my-8 text-muted italic font-light text-base sm:text-lg leading-relaxed">
+      <blockquote className="border-accent/40 text-muted my-7 border-l-2 pl-5 text-base leading-relaxed font-light italic sm:my-8 sm:pl-6 sm:text-lg">
         {children}
       </blockquote>
     ),
@@ -76,7 +76,7 @@ const portableTextComponents: PortableTextComponents = {
   list: {
     bullet: ({ children }) => <ul className="my-6 space-y-2.5 pl-1">{children}</ul>,
     number: ({ children }) => (
-      <ol className="my-6 space-y-2.5 pl-1 list-decimal list-inside marker:text-accent marker:font-medium">
+      <ol className="marker:text-accent my-6 list-inside list-decimal space-y-2.5 pl-1 marker:font-medium">
         {children}
       </ol>
     ),
@@ -84,13 +84,13 @@ const portableTextComponents: PortableTextComponents = {
 
   listItem: {
     bullet: ({ children }) => (
-      <li className="flex gap-3 text-base sm:text-[1.05rem] leading-[1.7] sm:leading-[1.75] text-ink/90 font-light">
-        <span className="text-accent mt-[0.6em] block w-1 h-1 rounded-full bg-accent shrink-0" />
+      <li className="text-ink/90 flex gap-3 text-base leading-[1.7] font-light sm:text-[1.05rem] sm:leading-[1.75]">
+        <span className="text-accent bg-accent mt-[0.6em] block h-1 w-1 shrink-0 rounded-full" />
         <span>{children}</span>
       </li>
     ),
     number: ({ children }) => (
-      <li className="text-base sm:text-[1.05rem] leading-[1.7] sm:leading-[1.75] text-ink/90 font-light pl-1">
+      <li className="text-ink/90 pl-1 text-base leading-[1.7] font-light sm:text-[1.05rem] sm:leading-[1.75]">
         {children}
       </li>
     ),
@@ -98,11 +98,11 @@ const portableTextComponents: PortableTextComponents = {
 
   marks: {
     strong: ({ children }) => (
-      <strong className="font-medium text-ink">{children}</strong>
+      <strong className="text-ink font-medium">{children}</strong>
     ),
     em: ({ children }) => <em className="italic">{children}</em>,
     code: ({ children }) => (
-      <code className="font-mono text-[0.85em] bg-accent-light text-accent px-1.5 py-0.5 rounded-md border border-faint">
+      <code className="bg-accent-light text-accent border-faint rounded-md border px-1.5 py-0.5 font-mono text-[0.85em]">
         {children}
       </code>
     ),
@@ -111,7 +111,7 @@ const portableTextComponents: PortableTextComponents = {
         href={value?.href}
         target={value?.href?.startsWith('http') ? '_blank' : undefined}
         rel={value?.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-        className="text-accent underline underline-offset-[3px] decoration-accent/30 hover:decoration-accent transition-colors"
+        className="text-accent decoration-accent/30 hover:decoration-accent underline underline-offset-[3px] transition-colors"
       >
         {children}
       </a>
@@ -126,10 +126,10 @@ const portableTextComponents: PortableTextComponents = {
           <img
             src={genImageBuilder(value).width(1400).fit('max').auto('format').url()}
             alt={value.alt ?? ''}
-            className="w-full rounded-xl border border-faint"
+            className="border-faint w-full rounded-xl border"
           />
           {value.caption && (
-            <figcaption className="mt-3 text-center text-xs text-muted tracking-wide">
+            <figcaption className="text-muted mt-3 text-center text-xs tracking-wide">
               {value.caption}
             </figcaption>
           )}
@@ -141,15 +141,15 @@ const portableTextComponents: PortableTextComponents = {
       const lang = value?.language || 'text'
 
       return (
-        <div className="my-6 sm:my-8 -mx-5 sm:mx-0 rounded-none sm:rounded-xl overflow-hidden border-y sm:border border-black/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.25)]">
+        <div className="-mx-5 my-6 overflow-hidden rounded-none border-y border-black/10 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.25)] sm:mx-0 sm:my-8 sm:rounded-xl sm:border">
           {/* window chrome */}
-          <div className="flex items-center justify-between bg-[#161b22] px-4 sm:px-4 py-2.5 border-b border-white/5">
+          <div className="flex items-center justify-between border-b border-white/5 bg-[#161b22] px-4 py-2.5 sm:px-4">
             <div className="flex gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
             </div>
-            <span className="text-2xs tracking-widest uppercase text-white/35 font-mono">
+            <span className="text-2xs font-mono tracking-widest text-white/35 uppercase">
               {lang}
             </span>
           </div>
@@ -157,12 +157,12 @@ const portableTextComponents: PortableTextComponents = {
           {/* code — Shiki-highlighted HTML if available, plain fallback otherwise */}
           {value?._highlighted ? (
             <div
-              className="shiki-block [&>pre]:bg-[#0d1117] [&>pre]:px-4 sm:[&>pre]:px-5 [&>pre]:py-4 sm:[&>pre]:py-5 [&>pre]:overflow-x-auto [&>pre]:m-0 [&_code]:font-mono [&_code]:text-[0.8rem] sm:[&_code]:text-[0.85rem] [&_code]:leading-relaxed"
+              className="shiki-block [&_code]:font-mono [&_code]:text-[0.8rem] [&_code]:leading-relaxed sm:[&_code]:text-[0.85rem] [&>pre]:m-0 [&>pre]:overflow-x-auto [&>pre]:bg-[#0d1117] [&>pre]:px-4 [&>pre]:py-4 sm:[&>pre]:px-5 sm:[&>pre]:py-5"
               dangerouslySetInnerHTML={{ __html: value._highlighted }}
             />
           ) : (
-            <pre className="bg-[#0d1117] px-4 sm:px-5 py-4 sm:py-5 overflow-x-auto">
-              <code className="font-mono text-[0.8rem] sm:text-[0.85rem] leading-relaxed text-[#e4e4e4] whitespace-pre">
+            <pre className="overflow-x-auto bg-[#0d1117] px-4 py-4 sm:px-5 sm:py-5">
+              <code className="font-mono text-[0.8rem] leading-relaxed whitespace-pre text-[#e4e4e4] sm:text-[0.85rem]">
                 {value?.code}
               </code>
             </pre>
@@ -184,14 +184,14 @@ export default async function PostDetailPage({ params }: PageProps) {
 
   if (!post)
     return (
-      <main className="max-w-4xl mx-auto px-5 sm:px-6 py-20 sm:py-32 text-center">
-        <p className="text-2xs tracking-widest uppercase text-muted mb-4">404</p>
-        <h1 className="font-serif text-2xl sm:text-3xl text-ink mb-6">
+      <main className="mx-auto max-w-4xl px-5 py-20 text-center sm:px-6 sm:py-32">
+        <p className="text-2xs text-muted mb-4 tracking-widest uppercase">404</p>
+        <h1 className="text-ink mb-6 font-serif text-2xl sm:text-3xl">
           We couldn't find that post
         </h1>
         <Link
           href={ROUTES.blog}
-          className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-accent hover:text-ink transition-colors"
+          className="text-2xs text-accent hover:text-ink inline-flex items-center gap-2 tracking-widest uppercase transition-colors"
         >
           ← Back to all posts
         </Link>
@@ -225,22 +225,22 @@ export default async function PostDetailPage({ params }: PageProps) {
     !!updatedAt && !!publishedAt && new Date(updatedAt) > new Date(publishedAt)
 
   return (
-    <main className="max-w-3xl mx-auto px-5 sm:px-6 py-12 sm:py-20">
+    <main className="mx-auto max-w-3xl px-5 py-12 sm:px-6 sm:py-20">
       {/* back nav */}
       <Link
         href={ROUTES.blog}
-        className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors mb-8 sm:mb-12"
+        className="text-2xs text-muted hover:text-ink mb-8 inline-flex items-center gap-2 tracking-widest uppercase transition-colors sm:mb-12"
       >
         ← All posts
       </Link>
 
       {/* tags */}
       {tags.length > 0 && (
-        <div className="flex gap-2 flex-wrap mb-6">
+        <div className="mb-6 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <span
               key={tag._id}
-              className="text-2xs tracking-widest uppercase px-2.5 py-1 bg-accent-light border border-faint rounded-full text-accent"
+              className="text-2xs bg-accent-light border-faint text-accent rounded-full border px-2.5 py-1 tracking-widest uppercase"
             >
               {tag.name}
             </span>
@@ -249,21 +249,21 @@ export default async function PostDetailPage({ params }: PageProps) {
       )}
 
       {/* title block */}
-      <header className="mt-4 sm:mt-6 mb-8 sm:mb-10">
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-tight text-ink">
+      <header className="mt-4 mb-8 sm:mt-6 sm:mb-10">
+        <h1 className="text-ink font-serif text-3xl leading-tight sm:text-4xl md:text-5xl">
           {title}
         </h1>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted">
+        <div className="text-muted mt-4 flex flex-wrap items-center gap-3 text-xs">
           {formattedDate && <time dateTime={publishedAt ?? ''}>{formattedDate}</time>}
-          {formattedDate && <span className="w-1 h-1 rounded-full bg-faint" />}
+          {formattedDate && <span className="bg-faint h-1 w-1 rounded-full" />}
           <span>{readingTime} min read</span>
 
           {isMeaningfullyUpdated && (
             <>
-              <span className="w-1 h-1 rounded-full bg-faint" />
-              <span className="inline-flex items-center gap-1.5 text-accent">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span className="bg-faint h-1 w-1 rounded-full" />
+              <span className="text-accent inline-flex items-center gap-1.5">
+                <span className="bg-accent h-1.5 w-1.5 rounded-full" />
                 Updated{' '}
                 <time dateTime={updatedAt ?? ''} className="font-medium">
                   {formattedUpdatedDate}
@@ -274,7 +274,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         </div>
 
         {excerpt && (
-          <p className="mt-6 text-base text-muted leading-relaxed font-light">
+          <p className="text-muted mt-6 text-base leading-relaxed font-light">
             {excerpt}
           </p>
         )}
@@ -291,7 +291,7 @@ export default async function PostDetailPage({ params }: PageProps) {
               .auto('format')
               .url()}
             alt={title ?? ''}
-            className="w-full aspect-video object-cover rounded-xl border border-faint"
+            className="border-faint aspect-video w-full rounded-xl border object-cover"
           />
         </figure>
       )}
@@ -302,10 +302,10 @@ export default async function PostDetailPage({ params }: PageProps) {
       </article>
 
       {/* footer nav */}
-      <footer className="mt-16 sm:mt-20 pt-8 border-t border-faint">
+      <footer className="border-faint mt-16 border-t pt-8 sm:mt-20">
         <Link
           href={ROUTES.blog}
-          className="inline-flex items-center gap-2 text-2xs tracking-widest uppercase text-muted hover:text-ink transition-colors"
+          className="text-2xs text-muted hover:text-ink inline-flex items-center gap-2 tracking-widest uppercase transition-colors"
         >
           ← All posts
         </Link>

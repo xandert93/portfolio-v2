@@ -26,7 +26,7 @@ export const uploadImage = async (
 }
 
 /*
-📚 pluralize is a small JavaScript utility that converts words between singular and plural forms correctly. It's used for production and shared code since English pluralization is not a simple “add s” rule, and edge cases are common in UI labels, logs, CMS systems, etc.
+📚 pluralize is a small JavaScript utility that converts words between singular and plural forms correctly. It's used for production and shared code since English pluralization is not a simple “add s” rule and edge cases are common in UI labels, logs, CMS systems, etc.
 
 Instead of just doing:
 "cat" + "s" // cats

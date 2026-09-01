@@ -159,7 +159,7 @@ type NumberGlyphProps = {
 const NumberGlyph = ({
   glowVertical,
   glyphSide,
-  className = '',
+  className,
   style,
   ...props
 }: NumberGlyphProps) => {

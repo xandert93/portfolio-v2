@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+
 import { genImageBuilder } from '@/sanity/lib/image'
 import { Testimonials } from '@/sanity/types'
 
@@ -66,7 +67,7 @@ export default function TestimonialsSection({ testimonials }: Props) {
                   .fit('crop')
                   .auto('format')
                   .url()}
-                alt={main.author.name ?? ''}
+                alt={main.author.name}
                 width={58}
                 height={58}
                 className="border-accent/40 rounded-full border"
