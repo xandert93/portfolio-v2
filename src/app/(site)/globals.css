@@ -312,6 +312,19 @@
     transform: none;
   }
 
+  /* Cards used as a Framer Motion animation target (e.g. AnimatedCard's
+     scroll-reveal) must not also have a CSS transition on `transform` —
+     the two fight over the same property, with the CSS transition trying
+     to ease toward every intermediate value the JS animation writes each
+     frame, producing a visible stutter. `no-hover-transform` already means
+     "this card doesn't do the hover-lift", so it's the right place to also
+     drop transform from the transition list entirely. */
+  .card.no-hover-transform {
+    transition:
+      border-color 0.3s ease,
+      background 0.3s ease;
+  }
+
   /* Fallback shown when a card has no cover image */
   .no-image {
     display: flex;
