@@ -3,6 +3,8 @@ import type { Projects } from '@/sanity/types'
 import { Section } from '@/components/ui/Section'
 
 import FeaturedProjectList from '@/components/projects/FeaturedProjectList'
+import { ArrowLink } from '@/components/links/ArrowLink'
+import { ROUTES } from '@/config/routes'
 
 type Props = {
   projects: Projects
@@ -25,7 +27,7 @@ export default function ProjectsSection({ projects }: Props) {
         eyebrow: 'Selected work',
         heading: 'Featured projects',
         lead: 'A few recent builds where design, performance and clean architecture had to work together.',
-        // aside: <ArrowLink href={ROUTES.projects} children="All Work" />,
+        aside: <ArrowLink href={ROUTES.projects} children="All Work" />,
       }}
     >
       <FeaturedProjectList projects={projects} />

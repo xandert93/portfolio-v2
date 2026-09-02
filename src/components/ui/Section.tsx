@@ -24,7 +24,12 @@ type Props = {
     heading: ReactNode
     /** Optional intro paragraph under the heading. */
     lead?: ReactNode
-    /** Small italic note shown on the opposite side of the eyebrow. */
+    /**
+     * Optional content shown on the opposite side of the eyebrow — e.g. a
+     * link or a short note. Unstyled beyond the shared reveal animation, so
+     * bring your own typography (this used to force a small-italic-note
+     * look, which fought any richer content like a styled link).
+     */
     aside?: ReactNode
   }
 
@@ -113,12 +118,7 @@ export const Section = ({
                 {header.eyebrow}
               </motion.span>
               {header.aside && (
-                <motion.span
-                  variants={itemVariants}
-                  className="text-muted font-serif text-xs italic"
-                >
-                  {header.aside}
-                </motion.span>
+                <motion.span variants={itemVariants}>{header.aside}</motion.span>
               )}
             </div>
 
