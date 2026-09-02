@@ -41,19 +41,29 @@
   --radius: 4px;
 }
 
-/* Light — warm off-white paper, deep warm ink, burnished gold */
+/* Light — warm off-white paper, deep warm ink, burnished gold.
+   Dark mode gets its "pop" from luminosity: a warm glow or a lightened
+   card reads dramatically against near-black. That same low-alpha recipe
+   is nearly invisible against a light paper — light-on-light barely
+   registers. So light mode leans on the techniques that actually read on
+   a light ground instead: real shadow-based depth for cards (--card-shadow)
+   and meaningfully stronger accent-wash alpha for glows/highlights, rather
+   than just a paler copy of the dark values. */
 :root {
   color-scheme: light;
   --paper: #f7f4ed;
   --paper-2: #fffdf8;
   --ink: #1b1813;
   --muted: #6c655a;
-  --faint: rgba(27, 24, 19, 0.1);
-  --warm: rgba(27, 24, 19, 0.025);
+  --faint: rgba(27, 24, 19, 0.14);
+  --warm: rgba(27, 24, 19, 0.035);
   --accent: #9a6f2e;
   --accent-strong: #82591f;
-  --accent-dim: rgba(154, 111, 46, 0.1);
-  --accent-light: rgba(154, 111, 46, 0.07);
+  --accent-dim: rgba(154, 111, 46, 0.22);
+  --accent-light: rgba(154, 111, 46, 0.14);
+  --card-shadow:
+    0 1px 2px rgba(27, 24, 19, 0.04),
+    0 16px 32px -20px rgba(154, 111, 46, 0.35);
 }
 
 /* Dark — uniform warm near-black, soft ivory ink, luminous gold */
@@ -69,6 +79,7 @@
   --accent-strong: #e2c495;
   --accent-dim: rgba(214, 178, 122, 0.14);
   --accent-light: rgba(214, 178, 122, 0.08);
+  --card-shadow: none;
 }
 
 /* ─── Reset ───────────────────────────────────────── */
@@ -295,10 +306,12 @@
     background: var(--warm);
     border: 1px solid var(--faint);
     border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
     transition:
       border-color 0.3s ease,
       background 0.3s ease,
-      transform 0.3s ease;
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .card:hover {
