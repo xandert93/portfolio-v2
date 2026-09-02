@@ -1,6 +1,8 @@
 import { ArrowUpRight } from 'lucide-react'
 import { genImageBuilder } from '@/sanity/lib/image'
 import { Experience } from '@/sanity/types'
+import StatusDot from '@/components/ui/StatusDot'
+import Badge from '@/components/ui/Badge'
 
 type Props = {
   experience: Experience
@@ -60,7 +62,12 @@ export default function ExperienceCard({ experience, index, isLast }: Props) {
                 <h3 className="text-ink font-serif text-xl md:text-2xl">{title}</h3>
                 <p className="text-accent mt-1 text-sm">{company.name}</p>
               </div>
-              {isCurrent && <span className="badge">Current</span>}
+              {isCurrent && (
+                <Badge>
+                  <StatusDot />
+                  Current
+                </Badge>
+              )}
             </div>
 
             <p className="text-2xs text-muted mt-2 tracking-[0.14em] uppercase">
