@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 
 import clsx from 'clsx'
@@ -43,11 +43,30 @@ export default function TestimonialsSection({ testimonials, autoPlayMs = 7000 }:
   const goToNextTestimonial = useCallback(() => changeIndex(1), [changeIndex])
   const goToPrevTestimonial = useCallback(() => changeIndex(-1), [changeIndex])
 
+  // How long is left on the current testimonial's countdown — full duration
+  // whenever a different testimonial becomes active (auto-advance or manual
+  // nav), ticked down by however long a pause actually lasted otherwise, so
+  // resuming continues the same countdown instead of granting a fresh one.
+  const remainingMsRef = useRef(autoPlayMs)
+  const runStartedAtRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    remainingMsRef.current = autoPlayMs
+  }, [activeIndex, autoPlayMs])
+
   useEffect(() => {
     if (!canCycle || isPaused) return
-    const timer = setTimeout(() => goToNextTestimonial(), autoPlayMs)
 
-    return () => clearTimeout(timer)
+    runStartedAtRef.current = Date.now()
+    const timer = setTimeout(() => goToNextTestimonial(), remainingMsRef.current)
+
+    return () => {
+      clearTimeout(timer)
+      if (runStartedAtRef.current !== null) {
+        const elapsed = Date.now() - runStartedAtRef.current
+        remainingMsRef.current = Math.max(remainingMsRef.current - elapsed, 0)
+      }
+    }
   }, [activeIndex, isPaused, canCycle, autoPlayMs, goToNextTestimonial])
 
   const handleMouseEnter = useCallback(() => setIsPaused(true), [])
@@ -237,7 +256,6 @@ const ProgressIndicator = ({
     >
       {isActive && (
         <span
-          key={String(isPaused)}
           className="bg-accent absolute inset-y-0 left-0 block"
           style={{
             animationName: 'testimonial-progress',
