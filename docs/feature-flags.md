@@ -1,7 +1,7 @@
 # Feature Flags (deploying unfinished features safely)
 
-**Problem:** `main` is your only branch and it's always deployed to production. Some sections
-of the site are half-built and shouldn't be visible in production yet — but you still want to
+**Problem:** `main` is our only branch and it's always deployed to production. Some sections
+of the site are half-built and shouldn't be visible in production yet — but we still want to
 work on them normally, see them locally and check them on Vercel preview deployments.
 
 **Solution:** one config file + a central route guard (middleware) + different env var values
@@ -10,25 +10,27 @@ per Vercel environment. No branches, no commenting code out before deploying.
 ## 1. One source of truth
 
 List every top-level section of the site, not just the half-built ones — flags default to
-`true` (feature counts as "on"/deployable) unless explicitly turned off.
+`false` (feature counts as "off"/not deployable) unless explicitly turned on.
 
 ```ts
 // src/config/features.ts
 export const FEATURES = {
-  project: process.env.NEXT_PUBLIC_FEATURE_PROJECT !== 'false',
-  about: process.env.NEXT_PUBLIC_FEATURE_ABOUT !== 'false',
-  experience: process.env.NEXT_PUBLIC_FEATURE_EXPERIENCE !== 'false',
-  blog: process.env.NEXT_PUBLIC_FEATURE_BLOG !== 'false',
+  projects: process.env.NEXT_PUBLIC_FEATURE_PROJECTS === 'true',
+  testimonials: process.env.NEXT_PUBLIC_FEATURE_TESTIMONIALS === 'true',
+  about: process.env.NEXT_PUBLIC_FEATURE_ABOUT === 'true',
+  experience: process.env.NEXT_PUBLIC_FEATURE_EXPERIENCE === 'true',
+  blog: process.env.NEXT_PUBLIC_FEATURE_BLOG === 'true',
+  contact: process.env.NEXT_PUBLIC_FEATURE_CONTACT === 'true',
 } as const
 ```
 
 Notes on the pattern above:
 
-- `!== 'false'` means "visible unless explicitly disabled" — safe if you forget to set the
-  env var somewhere, it just stays visible. The flip side: if you _mean_ to hide something in
-  production, you must actively set its env var to `'false'` there — forgetting to set it
-  means it defaults to visible, not hidden. Double-check Vercel's env vars for anything you're
-  relying on being gated.
+- `=== 'true'` means "hidden unless explicitly enabled" — safe if we forget to set the env
+  var somewhere, it just stays hidden rather than accidentally shipping. The flip side: if we
+  _mean_ for something to be live in production, we must actively set its env var to `'true'`
+  there — forgetting to set it means it defaults to hidden, not visible. Double-check Vercel's
+  env vars for anything we expect to be live.
 - `NEXT_PUBLIC_` is only required because `Navbar.tsx` is a client component and reads
   `FEATURES` too. The prefix has nothing to do with middleware specifically — see the note at
   the bottom on why.
@@ -38,7 +40,7 @@ Notes on the pattern above:
 ```ts
 // Navbar.tsx
 const NAV_LINKS = [
-  FEATURES.project && { label: 'Work', href: '/projects' },
+  FEATURES.projects && { label: 'Work', href: '/projects' },
   FEATURES.about && { label: 'About', href: '/about' },
   FEATURES.experience && { label: 'Experience', href: '/experience' },
   FEATURES.blog && { label: 'Blog', href: '/blog' },
@@ -47,6 +49,22 @@ const NAV_LINKS = [
 
 This alone is NOT enough — someone could still visit the URL directly. It just declutters the
 UI for real visitors. The actual gate is the middleware below.
+
+**The same flags occasionally gate a smaller fragment of an otherwise-live page, too** — not
+just a nav link. This is called **conditional gating**: conditionally rendering one specific
+piece of UI based on a flag, rather than gating a whole route or nav entry. Example: the home
+page's About section links to `/about`, so that link is hidden the same way — otherwise
+visitors would be sent to a route the guard below then blocks anyway:
+
+```tsx
+// AboutSection.tsx
+{
+  FEATURES.about && <ArrowLink href={ROUTES.about} children="Read My Story" />
+}
+```
+
+Same trade-off as above — this only hides the link; it isn't what actually blocks `/about`.
+That's still the route guard in the next section.
 
 ## 3. Block the routes themselves — centrally, via middleware
 
@@ -65,6 +83,7 @@ const GATED_ROUTES: Record<string, keyof typeof FEATURES> = {
   '/about': 'about',
   '/experience': 'experience',
   '/blog': 'blog',
+  '/contact': 'contact',
 }
 
 /* 📚 Request URL terminology:
@@ -80,10 +99,16 @@ const GATED_ROUTES: Record<string, keyof typeof FEATURES> = {
 // second, manually-maintained list, which is the trade-off of doing it
 // this way. See the alternative at the bottom of this section.
 export const config = {
-  matcher: ['/projects/:path*', '/about/:path*', '/experience/:path*', '/blog/:path*'],
+  matcher: [
+    '/projects/:path*',
+    '/about/:path*',
+    '/experience/:path*',
+    '/blog/:path*',
+    '/contact/:path*',
+  ],
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const reqPathname = request.nextUrl.pathname // e.g. '/about' or '/blog/post-1'
 
   const reqPrefix = Object.keys(GATED_ROUTES).find(
@@ -98,9 +123,9 @@ export function middleware(request: NextRequest) {
 
   if (isGateActive) {
     // "Internal rewrite" — the client's URL does not change. Next tries to
-    // render app/__gone/page.tsx; since that file doesn't exist, normal 404
+    // render app/whocares/page.tsx; since that file doesn't exist, normal 404
     // handling kicks in, which is exactly what we want.
-    return NextResponse.rewrite(new URL('/__gone', request.url))
+    return NextResponse.rewrite(new URL('/whocares', request.url))
   }
 }
 
@@ -114,11 +139,11 @@ export function middleware(request: NextRequest) {
 
 **Guard-clause structure matters here, not just style:** `reqPrefix` is `string | undefined`.
 Looking it up in `GATED_ROUTES`/`FEATURES` _before_ checking it exists won't compile under
-strict TypeScript and even where it does run, you'd be doing the lookup for every single
+strict TypeScript and even where it does run, we'd be doing the lookup for every single
 non-gated request instead of bailing out immediately. Return early when there's no match, then
 compute the gate — don't compute the gate and rely on an `if` at the end to ignore a bad result.
 
-**Scaling this up:** once you have more than ~4 gated sections, keeping `GATED_ROUTES` and
+**Scaling this up:** once we have more than ~4 gated sections, keeping `GATED_ROUTES` and
 `matcher` in sync by hand gets error-prone (forgetting to add a route to `matcher` silently
 un-gates it — middleware simply never runs for that path). At that point, swap the matcher for
 a broad catch-all so `GATED_ROUTES` becomes the _only_ list to maintain:
@@ -140,12 +165,13 @@ _same key_ per environment:
 
 | Env var                          | Production | Preview | Development (`.env.local`) |
 | -------------------------------- | ---------- | ------- | -------------------------- |
-| `NEXT_PUBLIC_FEATURE_PROJECT`    | `true`     | `true`  | `true`                     |
+| `NEXT_PUBLIC_FEATURE_PROJECTS`   | `true`     | `true`  | `true`                     |
 | `NEXT_PUBLIC_FEATURE_ABOUT`      | `true`     | `true`  | `true`                     |
 | `NEXT_PUBLIC_FEATURE_EXPERIENCE` | `false`    | `true`  | `true`                     |
 | `NEXT_PUBLIC_FEATURE_BLOG`       | `false`    | `true`  | `true`                     |
+| `NEXT_PUBLIC_FEATURE_CONTACT`    | `true`     | `true`  | `true`                     |
 
-Result: you build every section normally, see it locally and on every preview URL (every
+Result: we build every section normally, see it locally and on every preview URL (every
 branch/PR gets its own preview deployment automatically) — and unfinished sections simply
 aren't reachable in production. When one's ready, flip its value in the dashboard. No code
 changes, no redeploy juggling, no branches involved.
