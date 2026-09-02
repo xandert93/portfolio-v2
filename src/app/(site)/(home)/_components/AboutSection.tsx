@@ -11,6 +11,7 @@ import { genImageBuilder } from '@/sanity/lib/image'
 
 import { Section } from '@/components/ui/Section'
 import { ArrowLink } from '@/components/links/ArrowLink'
+import { FEATURES } from '@/config/features'
 import { ROUTES } from '@/config/routes'
 import { About } from '@/sanity/types'
 import { containerVariants, fadeUp } from '@/lib/motion'
@@ -163,9 +164,11 @@ export default function AboutSection({ about }: Props) {
             ))}
           </motion.dl>
 
-          <motion.div variants={fadeUp}>
-            <ArrowLink href={ROUTES.about} children="Read My Story" />
-          </motion.div>
+          {FEATURES.about && (
+            <motion.div variants={fadeUp}>
+              <ArrowLink href={ROUTES.about} children="Read My Story" />
+            </motion.div>
+          )}
         </motion.div>
       </div>
 
@@ -201,6 +204,7 @@ const Polaroid = ({
       whileTap={{
         y: -10,
         scale: 0.985,
+        zIndex: 50,
         transition: { type: 'spring', stiffness: 400, damping: 28 },
       }}
       transition={{ type: 'spring', stiffness: 320, damping: 24, mass: 0.7 }}
