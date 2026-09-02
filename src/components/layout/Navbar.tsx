@@ -104,7 +104,7 @@ export default function Navbar({ names }: NavbarProps) {
             <div className="flex items-center gap-2 md:gap-3">
               <ThemeToggleButton />
               {/* 💻 - hidden @ < md  */}
-              <ContactLink />
+              {FEATURES.contact && <ContactLink />}
               {/* 📲 - hidden @ >= md  */}
               <HamburgerMenuButton
                 ref={toggleButtonRef}
@@ -253,13 +253,15 @@ const MobileNavDrawer = ({ id, isOpen, handleLinkClick }: MobileNavDrawerProps) 
         />
       ))}
 
-      <Link
-        href={ROUTES.contact}
-        onClick={handleLinkClick}
-        className="border-accent/40 text-accent hover:bg-accent-dim mt-6 rounded-sm border py-3 text-center text-[0.72rem] tracking-[0.16em] uppercase transition-colors"
-      >
-        Contact
-      </Link>
+      {FEATURES.contact && (
+        <Link
+          href={ROUTES.contact}
+          onClick={handleLinkClick}
+          className="border-accent/40 text-accent hover:bg-accent-dim mt-6 rounded-sm border py-3 text-center text-[0.72rem] tracking-[0.16em] uppercase transition-colors"
+        >
+          Contact
+        </Link>
+      )}
     </aside>
   )
 }

@@ -10,14 +10,14 @@ projects feature is ready for production but about is not, we can set
 NEXT_PUBLIC_FEATURE_PROJECTS=true and
 NEXT_PUBLIC_FEATURE_ABOUT=false.
 
-When a request reaches the Next.js middleware, the middleware uses these
-flags to determine whether the requested route is currently enabled.
-If a feature is disabled, access to its route is blocked and the
-request is redirected to a 404 page. Otherwise, the requested page is
-allowed to proceed.
+When a request reaches src/proxy.ts (this Next.js version's equivalent
+of middleware), it uses these flags to determine whether the requested
+route is currently enabled. If a feature is disabled, access to its
+route is blocked and the request is rewritten to a 404 page. Otherwise,
+the requested page is allowed to proceed.
 
-A feature is enabled by default unless its corresponding environment
-variable is explicitly set to "false".
+A feature is disabled by default unless its corresponding environment
+variable is explicitly set to "true".
 */
 
 export const FEATURES = {

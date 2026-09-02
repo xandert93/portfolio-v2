@@ -9,6 +9,7 @@ const GATED_ROUTES: Record<string, keyof typeof FEATURES> = {
   [ROUTES.about]: 'about',
   [ROUTES.experience]: 'experience',
   [ROUTES.blog]: 'blog',
+  [ROUTES.contact]: 'contact',
 }
 
 /* 📚 Request URL terminology:
@@ -35,7 +36,13 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/projects/:path*', '/experience/:path*', '/about/:path*', '/blog/:path*'],
+  matcher: [
+    '/projects/:path*',
+    '/experience/:path*',
+    '/about/:path*',
+    '/blog/:path*',
+    '/contact/:path*',
+  ],
 }
 
 /* 📚 config.matcher
